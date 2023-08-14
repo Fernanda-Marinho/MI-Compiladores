@@ -1,0 +1,12 @@
+1<PRE,int>
+1<PRE,const>
+1<IDE,inta>
+2<PRE,for>
+2<IDE,fora>
+2<IDE,afor>
+3<PRE,int>
+3<IDE,a>
+4<PRE,int>
+4<IDE,a>
+4<REL,=>
+4<NRO,2>
