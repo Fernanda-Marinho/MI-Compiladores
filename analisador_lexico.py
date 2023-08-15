@@ -7,32 +7,35 @@ logicos = ["!", "&&", "||"]
 delimitadores = [";", ",", ".", "(", ")", "[", "]", "{", "}", "->"]
 espaco = [" ", "\t","\n"]
 
-file = open('exemplos/01.txt')
-
-
 '''entrada: handler de arquivo
     saida: lista com tokens identificados e erros
 '''
 def leitura (arquivo):
     acumulador = ''
-    chaves = ['PRE','OTHERS']
-    tokens = {}
-    for k in chaves:
-        tokens[k] = []
+    tokens = []
     n_linha = 0
-    for linha in arquivo: 
+    for linha in arquivo.read(): 
         n_linha +=1
         for char in linha:  #quando EOF ele não entra no loop
             if char.isspace() or char in espaco:    
                 if acumulador in reservadas:
-                    tokens['PRE'].append(acumulador)
+                    token = dict(linha=n_linha, PRE=acumulador)
+                    tokens.append(token)
+                elif acumulador in relacionais:
+                    token = dict(linha=n_linha, REL=acumulador)
+                    tokens.append(token)
+                elif acumulador in logicos:
+                    token = dict(linha=n_linha, LOG=acumulador)
+                    tokens.append(token)
+                elif acumulador in aritmeticos:
+                    token = dict(linha=n_linha, ART=acumulador)
+                    tokens.append(token)
+                #TODO classificar identificador, string, numero, delimitador e erros
                 else: 
-                    tokens['OTHERS'].append(acumulador)
+                    token = dict(linha=n_linha, OUTRO=acumulador)
+                    tokens.append(token)
                 acumulador = ''
             else:
                 acumulador += char
-                
     print(tokens)
 
-
-leitura(file)

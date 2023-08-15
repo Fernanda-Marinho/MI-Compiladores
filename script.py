@@ -1,11 +1,9 @@
 import os
-current = os.getcwd()
+from analisador_lexico import leitura
+
+current = f'{os.getcwd()}/exemplos'
 for file_path in (os.listdir(current)):
-    if (not file_path.endswith(".txt")): continue
-    with open(file_path, 'r') as file:
-        with open(f'{current}/files/{os.path.splitext(os.path.basename(file.name))[0]}-saida.txt', 'w') as newfile:
-            str = file.read()
-            for letter in str:
-                newfile.write(f'{letter}\n')
-            newfile.close()
+    if (file_path.endswith('-saida.txt') or not file_path.endswith(".txt")): continue
+    with open(f'{current}/{file_path}', 'r') as file:
+        leitura(file)
         file.close()
