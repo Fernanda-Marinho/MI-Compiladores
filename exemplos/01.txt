@@ -1,3 +1,3 @@
-const variable int class function main
-if else else if for boolean while true false 
+const variables int class main
+if else else if for boolean true false 
 "&@#!$"
