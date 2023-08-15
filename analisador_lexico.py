@@ -15,17 +15,23 @@ file = open('exemplos/01.txt')
 '''
 def leitura (arquivo):
     acumulador = ''
-    tokens = []
+    chaves = ['PRE','OTHERS']
+    tokens = {}
+    for k in chaves:
+        tokens[k] = []
     n_linha = 0
     for linha in arquivo: 
         n_linha +=1
         for char in linha:  #quando EOF ele não entra no loop
             if char.isspace() or char in espaco:    
                 if acumulador in reservadas:
-                    tokens.append(acumulador)
+                    tokens['PRE'].append(acumulador)
+                else: 
+                    tokens['OTHERS'].append(acumulador)
                 acumulador = ''
             else:
                 acumulador += char
+                
     print(tokens)
 
 
