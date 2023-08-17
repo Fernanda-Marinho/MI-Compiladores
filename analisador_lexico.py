@@ -14,28 +14,60 @@ def leitura (arquivo):
     acumulador = ''
     tokens = []
     n_linha = 0
+    cont = 0 
     for linha in arquivo.read(): 
         n_linha +=1
-        for char in linha:  #quando EOF ele não entra no loop
-            if char.isspace() or char in espaco:    
-                if acumulador in reservadas:
-                    token = dict(linha=n_linha, PRE=acumulador)
-                    tokens.append(token)
-                elif acumulador in relacionais:
-                    token = dict(linha=n_linha, REL=acumulador)
-                    tokens.append(token)
-                elif acumulador in logicos:
-                    token = dict(linha=n_linha, LOG=acumulador)
-                    tokens.append(token)
-                elif acumulador in aritmeticos:
-                    token = dict(linha=n_linha, ART=acumulador)
-                    tokens.append(token)
-                #TODO classificar identificador, string, numero, delimitador e erros
+        for char in linha: 
+            if char == "-":
+                if acumulador:
+                    if acumulador[0] in letra:
+                        if acumulador in reservadas:
+                            token = dict(linha=n_linha, PRE=acumulador)
+                            tokens.append(token)
+                        else:
+                            token = dict(linha=n_linha, IDE=acumulador)
+                            tokens.append(token)
+                        acumulador = ''
+                        acumulador += char
                 else: 
-                    token = dict(linha=n_linha, OUTRO=acumulador)
+                    acumulador += char
+            elif char == ">":
+                print(f"acumulador -> {acumulador}")
+                if acumulador == "-":
+                    acumulador += char 
+                    token = dict(linha=n_linha, DEL=acumulador)
+                    tokens.append(token)
+                    acumulador = ''
+            elif char in letra:
+                acumulador += char 
+            elif char in espaco:
+                if acumulador:
+                    if acumulador in reservadas:
+                        token = dict(linha=n_linha, PRE=acumulador)
+                        tokens.append(token)
+                    else:
+                        token = dict(linha=n_linha, IDE=acumulador)
+                        tokens.append(token)
+                    acumulador = ''
+            elif char in delimitadores:
+                if acumulador:
+                    token = dict(linha=n_linha, IDE=acumulador)
+                    tokens.append(token)
+                    acumulador = char
+                    token = dict(linha=n_linha, DEL=acumulador)
+                    tokens.append(token)
+                else:
+                    acumulador += char
+                    token = dict(linha=n_linha, DEL=acumulador)
                     tokens.append(token)
                 acumulador = ''
+
+
             else:
                 acumulador += char
-    print(tokens)
+    for i in tokens:
+        print(i)
 
+file = open('teste.txt')
+
+leitura(file)
