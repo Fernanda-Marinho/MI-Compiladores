@@ -18,7 +18,7 @@ def leitura (arquivo):
     for linha in arquivo.read(): 
         n_linha +=1
         for char in linha: 
-            if char == "-":
+            if char == "-": #possivel delimitador 
                 if acumulador:
                     if acumulador[0] in letra:
                         if acumulador in reservadas:
@@ -31,8 +31,7 @@ def leitura (arquivo):
                         acumulador += char
                 else: 
                     acumulador += char
-            elif char == ">":
-                print(f"acumulador -> {acumulador}")
+            elif char == ">": #possivel delimitador 
                 if acumulador == "-":
                     acumulador += char 
                     token = dict(linha=n_linha, DEL=acumulador)
@@ -40,10 +39,13 @@ def leitura (arquivo):
                     acumulador = ''
             elif char in letra:
                 acumulador += char 
-            elif char in espaco:
+            elif char in espaco: #provavel condicao de parada 
                 if acumulador:
-                    if acumulador in reservadas:
+                    if acumulador in reservadas: #eh uma pre
                         token = dict(linha=n_linha, PRE=acumulador)
+                        tokens.append(token)
+                    elif acumulador[0] in digito: #eh um numero
+                        token = dict(linha=n_linha, NRO=acumulador)
                         tokens.append(token)
                     else:
                         token = dict(linha=n_linha, IDE=acumulador)
@@ -51,18 +53,27 @@ def leitura (arquivo):
                     acumulador = ''
             elif char in delimitadores:
                 if acumulador:
-                    token = dict(linha=n_linha, IDE=acumulador)
-                    tokens.append(token)
-                    acumulador = char
-                    token = dict(linha=n_linha, DEL=acumulador)
-                    tokens.append(token)
+                    if char == ".": #gerar numeros float
+                        if acumulador[len(acumulador)-1] in digito:
+                            acumulador += char
+                    else:
+                        token = dict(linha=n_linha, IDE=acumulador)
+                        tokens.append(token)
+                        acumulador = char
+                        token = dict(linha=n_linha, DEL=acumulador)
+                        tokens.append(token)
+                        acumulador = ''
                 else:
                     acumulador += char
                     token = dict(linha=n_linha, DEL=acumulador)
                     tokens.append(token)
-                acumulador = ''
-
-
+                    acumulador = ''        
+            elif char in digito:
+                if acumulador: #pode ser ide ou nro 
+                    if acumulador[len(acumulador)-1] in letra or acumulador[len(acumulador)-1] in digito or acumulador[len(acumulador)-1] == ".":
+                        acumulador += char 
+                else:
+                    acumulador += char
             else:
                 acumulador += char
     for i in tokens:
