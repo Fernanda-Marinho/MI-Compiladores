@@ -15,7 +15,7 @@ def leitura (arquivo):
     tokens = []
     n_linha = 0
     cont = 0 
-    for linha in arquivo.read(): 
+    for linha in arquivo.readlines():
         n_linha +=1
         for char in linha: 
             if char == "-": #possivel delimitador 
@@ -69,7 +69,7 @@ def leitura (arquivo):
                     tokens.append(token)
                     acumulador = ''        
             elif char in digito:
-                if acumulador: #pode ser ide ou nro 
+                if acumulador: # pode ser ide ou nro 
                     if acumulador[len(acumulador)-1] in letra or acumulador[len(acumulador)-1] in digito or acumulador[len(acumulador)-1] == ".":
                         acumulador += char 
                 else:
