@@ -26,3 +26,7 @@ def isPre(char):
 def isErr(char): 
     # TODO ascii erro 
     return (char in ERR)
+
+def isEOF(char):
+    #TODO
+    pass

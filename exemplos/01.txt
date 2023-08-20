@@ -1,1 +1,8 @@
-\
+with open('seuarquivo.txt', 'r') as arquivo:
+    for linha in arquivo:  # Le o arquivo linha por linha
+        for caractere in linha:  # Le cada caractere na linha
+            # Realize as operacoes que voce precisa fazer com cada caractere aqui
+            
+        # Verifique se a linha este vazia (final de linha)
+        if not linha.strip():
+            break  # Se a linha estiver vazia, o arquivo chegou ao final

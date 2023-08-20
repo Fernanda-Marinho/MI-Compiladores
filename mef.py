@@ -8,7 +8,11 @@ def start(n_line, line):
     }
     for i_curr in range(line_len):
         if token['state'] == 0:
-            if isLetter(line[i_curr]):
+            if isEOF(line[i_curr]) and token['ac']:
+                # write_token(n_line, token['ac'], token[])
+                # TODO GRANDE PROBLEMA A SE RESOLVER COM O FINAL DO ARQUIVO
+                pass
+            elif isLetter(line[i_curr]):
                 token["ac"]+=line[i_curr]
                 token["state"]=1
             elif isDigit(line[i_curr]):
@@ -19,8 +23,8 @@ def start(n_line, line):
                 write_token(n_line,token["ac"],'TMF')
                 clear_token(token)
             elif line[i_curr] == "+":
-                token["ac"] = line[i_curr]
-                token["state"] = 5
+                #TODO 
+                pass
             elif line[i_curr] == '-':
                 token["ac"] += line[i_curr]
                 token["state"] = 6
@@ -38,7 +42,7 @@ def start(n_line, line):
             elif isLetter(line[i_curr]) or isDigit(line[i_curr]) or line[i_curr] == "_":
                 token["ac"]+=line[i_curr]
             else:
-                #TODO identificador mal formado
+                # TODO identificador mal formado
                 # clear_token(token)
                 pass
         elif token['state'] == 3:
@@ -74,13 +78,8 @@ def start(n_line, line):
             else:
                 write_token(n_line, token["ac"], 'ART' ) #token +
                 clear_token(token)
-                token["ac"] = line[i_curr]
+                token["ac"] = line[i_curr]  # nao eh + !!!!
                 token["state"] = 0
-        elif token["state"] == 6:
-            if line[i_curr] == "-":
-                token["ac"] += line[i_curr]
-                
-
 
 def clear_token(t):
     t['state'] = 0
@@ -88,15 +87,14 @@ def clear_token(t):
 
 def write_token(line_number, buffer, class_token):
     # TODO separar erros e escreve-los apenas no final  
-    # TODO escrever mensagem de sucesso caso não haja erros
+    # TODO escrever mensagem de sucesso caso nao haja erros
     t = {
         'linha': line_number,
         class_token : buffer
     }
     print(t)
 
-with open('exemplos/01.txt', 'r') as file:
+with open('teste.txt', 'r') as file:
     for index, line in enumerate(file.readlines(), start=1):
         # print(f'{index} {line}')
-        start(index, line)
-        # n_line += 1
+        start(index, (line+" "))
