@@ -1,6 +1,6 @@
 from inspections import *
 
-def start(n_line, line):
+def start (n_line, line):
     line_len = len(line)
     token = {
         'ac': '',
@@ -8,17 +8,13 @@ def start(n_line, line):
     }
     for i_curr in range(line_len):
         if token['state'] == 0:
-            if isEOF(line[i_curr]) and token['ac']:
-                # write_token(n_line, token['ac'], token[])
-                # TODO GRANDE PROBLEMA A SE RESOLVER COM O FINAL DO ARQUIVO
-                pass
-            elif isLetter(line[i_curr]):
+            if isLetter(line[i_curr]):
                 token["ac"]+=line[i_curr]
                 token["state"]=1
             elif isDigit(line[i_curr]):
                 token["ac"]+=line[i_curr]
                 token["state"]=3
-            elif isErr(line[i_curr]):
+            elif isErrTMF(line[i_curr]):
                 token["ac"] = line[i_curr]
                 write_token(n_line,token["ac"],'TMF')
                 clear_token(token)
@@ -26,8 +22,10 @@ def start(n_line, line):
                 #TODO 
                 pass
             elif line[i_curr] == '-':
-                token["ac"] += line[i_curr]
-                token["state"] = 6
+                ###############################TODO
+                # token["ac"] += line[i_curr]
+                # token["state"] = 6
+                pass
         elif token["state"]==1:
             if isSep(line[i_curr]):
                 # token["state"] = 2
@@ -48,38 +46,33 @@ def start(n_line, line):
         elif token['state'] == 3:
             if isDigit(line[i_curr]):
                 token['ac'] += line[i_curr]
-            elif isLetter(line[i_curr]):
+            elif line[i_curr] != "." and (isLetter(line[i_curr]) or isErrTMF(line[i_curr])):
                 token['ac'] += line[i_curr]
-                write_token(n_line, token["ac"], 'NMF')
-                clear_token(token)
+                token['state'] = 5
             elif line[i_curr] == ".":
-                token['state'] = 4
                 token['ac'] += line[i_curr]
+                token['state'] = 4
             elif isSep(line[i_curr]):
                 write_token(n_line,token["ac"],'NRO')
                 clear_token(token)
-        elif token['state'] == 4:
+        elif token['state'] == 4:       # NRO com 1 ponto
             if isDigit(line[i_curr]):
                 token['ac'] += line[i_curr]
-            elif isLetter(line[i_curr]) or line[i_curr] == "." or isErr(line[i_curr]): 
+            elif line[i_curr] == "." or isLetter(line[i_curr]) or (not isSep(line[i_curr])): # segundo ponto ou letra (NMF)
                 token['ac'] += line[i_curr]
+                token['state'] = 5
+            elif isSep(line[i_curr]):
+                # TODO quando o separador é diferente de espaço ({[.,:; etc é preciso GUARDAR antes de limpar o token
+                write_token(n_line,token["ac"],'NRO')
+                # classifySep() deve escrever o token do delimitador encontrado para que não se perca ??
+                #       ou uma solução com mais estados.
+                clear_token(token)
+        elif token['state'] == 5:       # Estado de "acumulação" do NMF!
+            if (line[i_curr] == ".") or (not isSep(line[i_curr])):
+                token['ac'] += line[i_curr]
+            else:
                 write_token(n_line, token["ac"], 'NMF')
                 clear_token(token)
-            elif isSep(line[i_curr]):
-                write_token(n_line,token["ac"],'NRO')
-                clear_token(token)
-        elif token['state'] == 5:
-            if line[i_curr] == "+":
-                token["ac"] += line[i_curr]
-                write_token(n_line, token["ac"], 'ART') #token ++
-                clear_token(token)
-                token["ac"] = line[i_curr]
-                token["state"] = 0
-            else:
-                write_token(n_line, token["ac"], 'ART' ) #token +
-                clear_token(token)
-                token["ac"] = line[i_curr]  # nao eh + !!!!
-                token["state"] = 0
 
 def clear_token(t):
     t['state'] = 0

@@ -8,7 +8,6 @@ LOG = ["!", "&&", "||"]
 DEL = [";", ",", ".", "(", ")", "[", "]", "{", "}", "->"]
 ESP = [" ", "\t","\n"]
 SEP = ART+REL+LOG+DEL+ESP
-ERR = ["#", "$", "%", "@", "\\", "^", "`", "~"]
 
 def isLetter(char):
     return bool(re.match(r'[a-zA-Z]', char))
@@ -17,15 +16,21 @@ def isDigit(char):
     return bool(re.match(r'[0-9]',char))
 
 def isSep(char):
-    # return bool(re.match(r'[+/*\[\]\(\)\"=<>,.&\\n\n\\t\t\s-]', char))
+    # return bool(re.match(r'[\+\-\/\*\+\+\-\-!=<>=!&\|;,.\(\)\[\]\{\}\-> \t\n]', char))
     return (char in SEP)
+
+def isEsp(char):
+    return (char in ESP)
 
 def isPre(char):
     return (char in PRE)
 
-def isErr(char): 
-    # TODO ascii erro 
-    return (char in ERR)
+def isErrTMF(char):
+    return bool(re.match(r'[!-~]',char))
+
+def classifySep(char):
+    if (char in DEL): return 'DEL'
+    else: return char
 
 def isEOF(char):
     #TODO
