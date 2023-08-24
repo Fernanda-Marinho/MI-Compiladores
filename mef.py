@@ -33,17 +33,26 @@ def start (n_line, line):
                     else:
                         token["ac"] += line[i_curr]
                         write_token(n_line,token["ac"],'ART')
+                        clear_token(token)    
+                elif line[i_curr] == "-":
+                    if i_curr < line_len - 1:
+                        if line[i_curr+1] == "-":
+                            double = True
+                            token["ac"] = line[i_curr]+line[i_curr+1]
+                            write_token(n_line,token["ac"],'ART')
+                            clear_token(token)
+                        else:
+                            token["ac"] += line[i_curr]
+                            write_token(n_line,token["ac"],'ART')
+                            clear_token(token)
+                    else:
+                        token["ac"] += line[i_curr]
+                        write_token(n_line,token["ac"],'ART')
                         clear_token(token)
                 elif isErrTMF(line[i_curr]):
                     token["ac"] = line[i_curr]
                     write_token(n_line,token["ac"],'TMF')
                     clear_token(token)
-                
-                elif line[i_curr] == '-':
-                    ###############################TODO
-                    # token["ac"] += line[i_curr]
-                    # token["state"] = 6
-                    pass
             elif token["state"]==1:
                 if isSep(line[i_curr]):
                     # token["state"] = 2
