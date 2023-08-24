@@ -64,6 +64,9 @@ def start (n_line, line):
                         token["ac"] += line[i_curr]
                         write_token(n_line,token["ac"],'TMF')
                         clear_token(token)
+                elif line[i_curr] == '"':
+                    token["ac"] += line[i_curr]
+                    token["state"] = 7 
                 elif isErrTMF(line[i_curr]):
                     token["ac"] = line[i_curr]
                     write_token(n_line,token["ac"],'TMF')
@@ -85,7 +88,7 @@ def start (n_line, line):
                 else:
                     token['ac'] += line[i_curr]
                     token['state'] = 6 
-            elif token['state'] == 3:
+            elif token['state'] == 3: #recebeu um numero 
                 if isDigit(line[i_curr]):
                     token['ac'] += line[i_curr]
                 elif line[i_curr] != "." and (isLetter(line[i_curr]) or isErrTMF(line[i_curr])):
@@ -121,6 +124,20 @@ def start (n_line, line):
                 else:
                     write_token(n_line, token['ac'], "IMF")
                     clear_token(token)
+            elif token["state"] == 7: #pode ser cadeia de caracteres ou cadeia mal formada  
+                #TODO mostrar erro quando tem letra com acento 
+                if (line[i_curr] != '"') and not isSep(line[i_curr]):
+                    token["ac"] += line[i_curr]
+                    
+                else:
+                    token["ac"] += line[i_curr]
+                    if line[i_curr] == '"':
+                        write_token(n_line, token['ac'], "CAD")
+                        clear_token(token)
+                    else:
+                        write_token(n_line, token['ac'], "CMF")
+                        clear_token(token)
+
 
 def clear_token(t):
     t['state'] = 0
