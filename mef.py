@@ -12,7 +12,7 @@ def start (n_line, line):
             double = False
             pass
         else:
-            if token['state'] == 0:
+            if token['state'] == 0: #estado inicial, pode receber qualquer coisa 
                 if isLetter(line[i_curr]):
                     token["ac"]+=line[i_curr]
                     token["state"]=1
@@ -69,7 +69,7 @@ def start (n_line, line):
                     write_token(n_line,token["ac"],'TMF')
                     clear_token(token)
 
-            elif token["state"]==1:
+            elif token["state"]==1: #recebeu uma letra 
                 if isSep(line[i_curr]):
                     # token["state"] = 2
                     if isPre(token["ac"]):
@@ -83,9 +83,8 @@ def start (n_line, line):
                 elif isLetter(line[i_curr]) or isDigit(line[i_curr]) or line[i_curr] == "_":
                     token["ac"]+=line[i_curr]
                 else:
-                    # TODO identificador mal formado
-                    # clear_token(token)
-                    pass
+                    token['ac'] += line[i_curr]
+                    token['state'] = 6 
             elif token['state'] == 3:
                 if isDigit(line[i_curr]):
                     token['ac'] += line[i_curr]
@@ -115,6 +114,12 @@ def start (n_line, line):
                     token['ac'] += line[i_curr]
                 else:
                     write_token(n_line, token["ac"], 'NMF')
+                    clear_token(token)
+            elif token['state'] == 6:
+                if not isSep(line[i_curr]):
+                    token["ac"] += line[i_curr]
+                else:
+                    write_token(n_line, token['ac'], "IMF")
                     clear_token(token)
 
 def clear_token(t):
