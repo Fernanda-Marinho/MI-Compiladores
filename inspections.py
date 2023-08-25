@@ -25,8 +25,15 @@ def isEsp(char):
 def isPre(char):
     return (char in PRE)
 
-def isErrTMF(char):
+def isErrTMF(char):     #TODO trocar o uso disso por in range
     return bool(re.match(r'[!-~]',char))
+
+def isErrCMF(char):
+    return bool(re.match(r'[#$&%´@^`~]', char))
+
+def isInRange(char):
+    ascii_v = ord(char)
+    return (ascii_v in range (32,127))
 
 def classifySep(char):
     if (char in DEL): return 'DEL'

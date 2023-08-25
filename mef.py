@@ -10,7 +10,7 @@ def start (n_line, line):
     for i_curr in range(line_len):
         if double == True:
             double = False
-            pass
+            continue
         else:
             if token['state'] == 0: #estado inicial, pode receber qualquer coisa 
                 if isLetter(line[i_curr]):
@@ -74,7 +74,6 @@ def start (n_line, line):
 
             elif token["state"]==1: #recebeu uma letra 
                 if isSep(line[i_curr]):
-                    # token["state"] = 2
                     if isPre(token["ac"]):
                         write_token(n_line,token["ac"],'PRE')
                         token["ac"] = line[i_curr]
@@ -125,19 +124,25 @@ def start (n_line, line):
                     write_token(n_line, token['ac'], "IMF")
                     clear_token(token)
             elif token["state"] == 7: #pode ser cadeia de caracteres ou cadeia mal formada  
-                #TODO mostrar erro quando tem letra com acento 
-                if (line[i_curr] != '"') and not isSep(line[i_curr]):
+                if isInRange(line[i_curr]) and (line[i_curr] != '"') and (i_curr<line_len-1):
                     token["ac"] += line[i_curr]
-                    
+                elif line[i_curr] == '"':
+                    token["ac"] += line[i_curr]
+                    write_token(n_line, token['ac'], "CAC")
+                    clear_token(token)
+                elif not isInRange(line[i_curr]):
+                    token['ac'] += line[i_curr]
+                    token['state'] = 8
+                else: # \n
+                    write_token(n_line, token['ac'], "CMF")
+                    clear_token(token)
+            elif token['state'] == 8: # acumular erro de CAC
+                if line[i_curr] != '"' and i_curr < line_len-1:
+                    token['ac'] += line[i_curr]
                 else:
-                    token["ac"] += line[i_curr]
-                    if line[i_curr] == '"':
-                        write_token(n_line, token['ac'], "CAD")
-                        clear_token(token)
-                    else:
-                        write_token(n_line, token['ac'], "CMF")
-                        clear_token(token)
-
+                    if line[i_curr] == '"': token['ac'] += line[i_curr]
+                    write_token(n_line, token['ac'], "CMF")
+                    clear_token(token)
 
 def clear_token(t):
     t['state'] = 0
