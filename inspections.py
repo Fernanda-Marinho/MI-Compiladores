@@ -33,12 +33,19 @@ def isErrCMF(char):
 
 def isInRange(char):
     ascii_v = ord(char)
-    return (ascii_v in range (32,127))
+    return (ascii_v in range (32,35) and ascii_v in range (35,127))
 
 def classifySep(char):
-    if (char in DEL): return 'DEL'
-    else: return char
-
+    sem_esp = list(set(SEP)-set(ESP))
+    if char in ART:
+        return 'ART'
+    elif char in REL:
+        return 'DEL'
+    elif char in LOG:
+        return 'DEL'
+    elif char in DEL:
+        return 'DEL'
+    else: return 'TMF'
 def isEOF(char):
     #TODO
     pass

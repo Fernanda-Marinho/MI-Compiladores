@@ -90,7 +90,7 @@ def start (n_line, line):
             elif token['state'] == 3: #recebeu um numero 
                 if isDigit(line[i_curr]):
                     token['ac'] += line[i_curr]
-                elif line[i_curr] != "." and (isLetter(line[i_curr]) or isErrTMF(line[i_curr])):
+                elif line[i_curr] != "." and (isLetter(line[i_curr]) or not isInRange(line[i_curr])):
                     token['ac'] += line[i_curr]
                     token['state'] = 5
                 elif line[i_curr] == ".":
@@ -110,7 +110,10 @@ def start (n_line, line):
                     write_token(n_line,token["ac"],'NRO')
                     # classifySep() deve escrever o token do delimitador encontrado para que não se perca ??
                     #       ou uma solução com mais estados.
+                    #    IDEIA: usar lookahead para o caso especial dos não-espaços (logo no inicio do bloco)
+                    ##   e nesse elif fazer apenas o isEsp
                     clear_token(token)
+                    if not isEsp(line[i_curr]): classifySep(line[i_curr])
             elif token['state'] == 5:       # Estado de "acumulação" do NMF!
                 if (line[i_curr] == ".") or (not isSep(line[i_curr])):
                     token['ac'] += line[i_curr]
