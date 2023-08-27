@@ -7,7 +7,7 @@ REL = ["!=", "==", "<", "<=", ">", ">=", "="]
 LOG = ["!", "&&", "||"]
 DEL = [";", ",", ".", "(", ")", "[", "]", "{", "}", "->"]
 ESP = [" ", "\t","\n"]
-SEP = ART+REL+LOG+DEL+ESP
+SEP = ART+REL+LOG+DEL
 
 def isLetter(char):
     return bool(re.match(r'[a-zA-Z]', char))
@@ -16,11 +16,16 @@ def isDigit(char):
     return bool(re.match(r'[0-9]',char))
 
 def isSep(char):
-    # return bool(re.match(r'[\+\-\/\*\+\+\-\-!=<>=!&\|;,.\(\)\[\]\{\}\-> \t\n]', char))
-    return (char in SEP)
+    return ((char in SEP) or (char in ESP))
 
 def isEsp(char):
     return (char in ESP)
+
+def isSepNotEsp(char):
+    return (char in SEP)
+
+def isDel(char):
+    return (char in SEP)
 
 def isPre(char):
     return (char in PRE)
@@ -35,17 +40,27 @@ def isInRange(char):
     ascii_v = ord(char)
     return (ascii_v in range (32,35) and ascii_v in range (35,127))
 
-def classifySep(char):
-    sem_esp = list(set(SEP)-set(ESP))
-    if char in ART:
+
+def isNextSymbolDouble(current, next):
+    if f'{current}{next}' in ART:
         return 'ART'
-    elif char in REL:
-        return 'DEL'
-    elif char in LOG:
-        return 'DEL'
-    elif char in DEL:
-        return 'DEL'
-    else: return 'TMF'
+    elif f'{current}{next}' in REL:
+        return 'REL'
+    elif f'{current}{next}' in LOG:
+        return 'LOG'
+    else:
+        return None
+
+def currentSymbolClass(current):
+    if current in ART:
+        return 'ART'
+    elif current in REL:
+        return 'REL'
+    elif current in LOG:
+        return 'LOG'
+    else:
+        return None
+
 def isEOF(char):
     #TODO
     pass

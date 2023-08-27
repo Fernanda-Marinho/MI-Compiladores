@@ -96,9 +96,29 @@ def start (n_line, line):
                 elif line[i_curr] == ".":
                     token['ac'] += line[i_curr]
                     token['state'] = 4
-                elif isSep(line[i_curr]):
+                elif isEsp(line[i_curr]):   # Separador espaço
                     write_token(n_line,token["ac"],'NRO')
                     clear_token(token)
+                elif isSepNotEsp(line[i_curr]):   # Separador != espaço
+                    if (i_curr < line_len - 1):
+                        token_class = isNextSymbolDouble(line[i_curr],line[i_curr+1])
+                        if token_class:
+                            write_token(n_line,token["ac"],'NRO')
+                            token["ac"] = f'{line[i_curr]}{line[i_curr+1]}'
+                            write_token(n_line,token["ac"],token_class)
+                            clear_token(token)
+                            double = True
+                        else:
+                            write_token(n_line,token["ac"],'NRO')
+                            token["ac"] = line[i_curr]
+                            write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]))        # atenção para se isso resulta None alguma vez
+                            clear_token(token)
+                    else: 
+                        write_token(n_line,token["ac"],'NRO')
+                        token["ac"] = line[i_curr]
+                        write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]))
+                        clear_token(token)
+
             elif token['state'] == 4:       # NRO com 1 ponto
                 if isDigit(line[i_curr]):
                     token['ac'] += line[i_curr]
@@ -113,7 +133,6 @@ def start (n_line, line):
                     #    IDEIA: usar lookahead para o caso especial dos não-espaços (logo no inicio do bloco)
                     ##   e nesse elif fazer apenas o isEsp
                     clear_token(token)
-                    if not isEsp(line[i_curr]): classifySep(line[i_curr])
             elif token['state'] == 5:       # Estado de "acumulação" do NMF!
                 if (line[i_curr] == ".") or (not isSep(line[i_curr])):
                     token['ac'] += line[i_curr]
