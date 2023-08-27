@@ -24,62 +24,62 @@ def start (n_line, line):
                         if line[i_curr+1] == "+":
                             double = True
                             token["ac"] = line[i_curr]+line[i_curr+1]
-                            write_token(n_line,token["ac"],'ART')
+                            write_token(n_line,token["ac"],'ART',errors_tokens)
                             clear_token(token)
                         else:
                             token["ac"] += line[i_curr]
-                            write_token(n_line,token["ac"],'ART')
+                            write_token(n_line,token["ac"],'ART',errors_tokens)
                             clear_token(token)
                     else:
                         token["ac"] += line[i_curr]
-                        write_token(n_line,token["ac"],'ART')
+                        write_token(n_line,token["ac"],'ART',errors_tokens)
                         clear_token(token)    
                 elif line[i_curr] == "-":
                     if i_curr < line_len - 1:
                         if line[i_curr+1] == "-":
                             double = True
                             token["ac"] = line[i_curr]+line[i_curr+1]
-                            write_token(n_line,token["ac"],'ART')
+                            write_token(n_line,token["ac"],'ART',errors_tokens)
                             clear_token(token)
                         else:
                             token["ac"] += line[i_curr]
-                            write_token(n_line,token["ac"],'ART')
+                            write_token(n_line,token["ac"],'ART',errors_tokens)
                             clear_token(token)
                     else:
                         token["ac"] += line[i_curr]
-                        write_token(n_line,token["ac"],'ART')
+                        write_token(n_line,token["ac"],'ART',errors_tokens)
                         clear_token(token)
                 elif line[i_curr] == "&":
                     if i_curr < line_len - 1:
                         if line[i_curr+1] == "&":
                             double = True 
                             token["ac"] = line[i_curr]+line[i_curr+1]
-                            write_token(n_line,token["ac"],'LOG')
+                            write_token(n_line,token["ac"],'LOG',errors_tokens)
                             clear_token(token)
                         else:
                             token["ac"] += line[i_curr]
-                            write_token(n_line,token["ac"],'TMF')
+                            write_token(n_line,token["ac"],'TMF',errors_tokens)
                             clear_token(token)
                     else:
                         token["ac"] += line[i_curr]
-                        write_token(n_line,token["ac"],'TMF')
+                        write_token(n_line,token["ac"],'TMF',errors_tokens)
                         clear_token(token)
                 elif line[i_curr] == '"':
                     token["ac"] += line[i_curr]
                     token["state"] = 7 
                 elif isErrTMF(line[i_curr]):
                     token["ac"] = line[i_curr]
-                    write_token(n_line,token["ac"],'TMF')
+                    write_token(n_line,token["ac"],'TMF',errors_tokens)
                     clear_token(token)
 
             elif token["state"]==1: #recebeu uma letra 
                 if isSep(line[i_curr]):
                     if isPre(token["ac"]):
-                        write_token(n_line,token["ac"],'PRE')
+                        write_token(n_line,token["ac"],'PRE',errors_tokens)
                         token["ac"] = line[i_curr]
                         clear_token(token)
                     else:
-                        write_token(n_line,token["ac"],'IDE')
+                        write_token(n_line,token["ac"],'IDE',errors_tokens)
                         token["ac"] = line[i_curr]
                         clear_token(token)
                 elif isLetter(line[i_curr]) or isDigit(line[i_curr]) or line[i_curr] == "_":
@@ -97,26 +97,26 @@ def start (n_line, line):
                     token['ac'] += line[i_curr]
                     token['state'] = 4
                 elif isEsp(line[i_curr]):   # Separador espaço
-                    write_token(n_line,token["ac"],'NRO')
+                    write_token(n_line,token["ac"],'NRO',errors_tokens)
                     clear_token(token)
                 elif isSepNotEsp(line[i_curr]):   # Separador != espaço
                     if (i_curr < line_len - 1):
                         token_class = isNextSymbolDouble(line[i_curr],line[i_curr+1])
                         if token_class:
-                            write_token(n_line,token["ac"],'NRO')
+                            write_token(n_line,token["ac"],'NRO',errors_tokens)
                             token["ac"] = f'{line[i_curr]}{line[i_curr+1]}'
-                            write_token(n_line,token["ac"],token_class)
+                            write_token(n_line,token["ac"],token_class,errors_tokens)
                             clear_token(token)
                             double = True
                         else:
-                            write_token(n_line,token["ac"],'NRO')
+                            write_token(n_line,token["ac"],'NRO',errors_tokens)
                             token["ac"] = line[i_curr]
-                            write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]))        # atenção para se isso resulta None alguma vez
+                            write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)        # atenção para se isso resulta None alguma vez
                             clear_token(token)
                     else: 
-                        write_token(n_line,token["ac"],'NRO')
+                        write_token(n_line,token["ac"],'NRO',errors_tokens)
                         token["ac"] = line[i_curr]
-                        write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]))
+                        write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)
                         clear_token(token)
 
             elif token['state'] == 4:       # NRO com 1 ponto
@@ -127,30 +127,30 @@ def start (n_line, line):
                     token['state'] = 5
                 elif isEsp(line[i_curr]):   # Separador espaço
                     if isDigit(line[i_curr-1]):
-                        write_token(n_line,token["ac"],'NRO')
+                        write_token(n_line,token["ac"],'NRO',errors_tokens)
                         clear_token(token)
                     else:
-                        write_token(n_line,token["ac"],'NMF')
+                        write_token(n_line,token["ac"],'NMF',errors_tokens)
                         clear_token(token)
                 elif isSepNotEsp(line[i_curr]):   # Separador != espaço
                     if isDigit(line[i_curr-1]):
                         if (i_curr < line_len - 1):
                             token_class = isNextSymbolDouble(line[i_curr],line[i_curr+1])
                             if token_class:
-                                write_token(n_line,token["ac"],'NRO')
+                                write_token(n_line,token["ac"],'NRO',errors_tokens)
                                 token["ac"] = f'{line[i_curr]}{line[i_curr+1]}'
-                                write_token(n_line,token["ac"],token_class)
+                                write_token(n_line,token["ac"],token_class,errors_tokens)
                                 clear_token(token)
                                 double = True
                             else:
-                                write_token(n_line,token["ac"],'NRO')
+                                write_token(n_line,token["ac"],'NRO',errors_tokens)
                                 token["ac"] = line[i_curr]
-                                write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]))        # atenção para se isso resulta None alguma vez
+                                write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)        # atenção para se isso resulta None alguma vez
                                 clear_token(token)
                         else: 
-                            write_token(n_line,token["ac"],'NRO')
+                            write_token(n_line,token["ac"],'NRO',errors_tokens)
                             token["ac"] = line[i_curr]
-                            write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]))
+                            write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)
                             clear_token(token)
                     else:
                         token['ac'] += line[i_curr]
@@ -163,66 +163,81 @@ def start (n_line, line):
                     if (i_curr < line_len - 1):
                         token_class = isNextSymbolDouble(line[i_curr],line[i_curr+1])
                         if token_class:
-                            write_token(n_line,token["ac"],'NMF')
+                            write_token(n_line,token["ac"],'NMF',errors_tokens)
                             token["ac"] = f'{line[i_curr]}{line[i_curr+1]}'
-                            write_token(n_line,token["ac"],token_class)
+                            write_token(n_line,token["ac"],token_class,errors_tokens)
                             clear_token(token)
                             double = True
                         else:
-                            write_token(n_line,token["ac"],'NMF')
+                            write_token(n_line,token["ac"],'NMF',errors_tokens)
                             token["ac"] = line[i_curr]
-                            write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]))        # atenção para se isso resulta None alguma vez
+                            write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)        # atenção para se isso resulta None alguma vez
                             clear_token(token)
                     else: 
-                        write_token(n_line,token["ac"],'NMF')
+                        write_token(n_line,token["ac"],'NMF',errors_tokens)
                         token["ac"] = line[i_curr]
-                        write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]))
+                        write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)
                         clear_token(token)
                 elif isEsp(line[i_curr]):
-                    write_token(n_line, token["ac"], 'NMF')
+                    write_token(n_line, token["ac"], 'NMF',errors_tokens)
                     clear_token(token)
             elif token['state'] == 6:
                 if not isSep(line[i_curr]):
                     token["ac"] += line[i_curr]
                 else:
-                    write_token(n_line, token['ac'], "IMF")
+                    write_token(n_line, token['ac'], "IMF",errors_tokens)
                     clear_token(token)
             elif token["state"] == 7: #pode ser cadeia de caracteres ou cadeia mal formada  
                 if isInRange(line[i_curr]) and (line[i_curr] != '"') and (i_curr<line_len-1):
                     token["ac"] += line[i_curr]
                 elif line[i_curr] == '"':
                     token["ac"] += line[i_curr]
-                    write_token(n_line, token['ac'], "CAC")
+                    write_token(n_line, token['ac'], "CAC",errors_tokens)
                     clear_token(token)
                 elif not isInRange(line[i_curr]):
                     token['ac'] += line[i_curr]
                     token['state'] = 8
                 else: # \n
-                    write_token(n_line, token['ac'], "CMF")
+                    write_token(n_line, token['ac'], "CMF",errors_tokens)
                     clear_token(token)
             elif token['state'] == 8: # acumular erro de CAC
                 if line[i_curr] != '"' and i_curr < line_len-1:
                     token['ac'] += line[i_curr]
                 else:
                     if line[i_curr] == '"': token['ac'] += line[i_curr]
-                    write_token(n_line, token['ac'], "CMF")
+                    write_token(n_line, token['ac'], "CMF",errors_tokens)
                     clear_token(token)
 
 def clear_token(t):
     t['state'] = 0
     t['ac'] = ''
 
-def write_token(line_number, buffer, class_token):
+def write_token(line_number, buffer, class_token, errors_t):
+    errors = ['CMF', 'CoMF', 'NMF', 'IMF', 'TMF']
+    
+    
     # TODO separar erros e escreve-los apenas no final  
     # TODO escrever mensagem de sucesso caso nao haja erros
-    if ('\n' in buffer): buffer = buffer.replace('\n','')
-    t = {
+    
+    if class_token in errors:
+        e_t = {
+            'linha' : line_number, 
+            class_token : buffer
+        }
+        errors_t.append(e_t)
+    else: 
+        if ('\n' in buffer): buffer = buffer.replace('\n','')
+        t = {
         'linha': line_number,
         class_token : buffer
-    }
-    print(t)
+        }
+        print(t)
 
+errors_tokens = []
 with open('teste.txt', 'r') as file:
     for index, line in enumerate(file.readlines(), start=1):
         # print(f'{index} {line}')
         start(index, (line+" "))
+
+print("erros")
+print(errors_tokens)
