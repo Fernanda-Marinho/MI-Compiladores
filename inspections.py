@@ -38,7 +38,7 @@ def isErrCMF(char):
 
 def isInRange(char):
     ascii_v = ord(char)
-    return (ascii_v in range (32,35) and ascii_v in range (35,127))
+    return (ascii_v in range (32,35) or ascii_v in range (35,127))
 
 
 def isNextSymbolDouble(current, next):
@@ -58,6 +58,8 @@ def currentSymbolClass(current):
         return 'REL'
     elif current in LOG:
         return 'LOG'
+    elif current in DEL:
+        return 'DEL'
     else:
         return None
 

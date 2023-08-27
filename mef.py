@@ -125,18 +125,60 @@ def start (n_line, line):
                 elif line[i_curr] == "." or isLetter(line[i_curr]) or (not isSep(line[i_curr])): # segundo ponto ou letra (NMF)
                     token['ac'] += line[i_curr]
                     token['state'] = 5
-                elif isSep(line[i_curr]):
-                    # TODO quando o separador é diferente de espaço ({[.,:; etc é preciso GUARDAR antes de limpar o token
-                    write_token(n_line,token["ac"],'NRO')
-                    # classifySep() deve escrever o token do delimitador encontrado para que não se perca ??
-                    #       ou uma solução com mais estados.
-                    #    IDEIA: usar lookahead para o caso especial dos não-espaços (logo no inicio do bloco)
-                    ##   e nesse elif fazer apenas o isEsp
-                    clear_token(token)
+                elif isEsp(line[i_curr]):   # Separador espaço
+                    if isDigit(line[i_curr-1]):
+                        write_token(n_line,token["ac"],'NRO')
+                        clear_token(token)
+                    else:
+                        write_token(n_line,token["ac"],'NMF')
+                        clear_token(token)
+                elif isSepNotEsp(line[i_curr]):   # Separador != espaço
+                    if isDigit(line[i_curr-1]):
+                        if (i_curr < line_len - 1):
+                            token_class = isNextSymbolDouble(line[i_curr],line[i_curr+1])
+                            if token_class:
+                                write_token(n_line,token["ac"],'NRO')
+                                token["ac"] = f'{line[i_curr]}{line[i_curr+1]}'
+                                write_token(n_line,token["ac"],token_class)
+                                clear_token(token)
+                                double = True
+                            else:
+                                write_token(n_line,token["ac"],'NRO')
+                                token["ac"] = line[i_curr]
+                                write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]))        # atenção para se isso resulta None alguma vez
+                                clear_token(token)
+                        else: 
+                            write_token(n_line,token["ac"],'NRO')
+                            token["ac"] = line[i_curr]
+                            write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]))
+                            clear_token(token)
+                    else:
+                        token['ac'] += line[i_curr]
+                        token['state'] = 5
+                        
             elif token['state'] == 5:       # Estado de "acumulação" do NMF!
                 if (line[i_curr] == ".") or (not isSep(line[i_curr])):
                     token['ac'] += line[i_curr]
-                else:
+                elif isSepNotEsp(line[i_curr]):
+                    if (i_curr < line_len - 1):
+                        token_class = isNextSymbolDouble(line[i_curr],line[i_curr+1])
+                        if token_class:
+                            write_token(n_line,token["ac"],'NMF')
+                            token["ac"] = f'{line[i_curr]}{line[i_curr+1]}'
+                            write_token(n_line,token["ac"],token_class)
+                            clear_token(token)
+                            double = True
+                        else:
+                            write_token(n_line,token["ac"],'NMF')
+                            token["ac"] = line[i_curr]
+                            write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]))        # atenção para se isso resulta None alguma vez
+                            clear_token(token)
+                    else: 
+                        write_token(n_line,token["ac"],'NMF')
+                        token["ac"] = line[i_curr]
+                        write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]))
+                        clear_token(token)
+                elif isEsp(line[i_curr]):
                     write_token(n_line, token["ac"], 'NMF')
                     clear_token(token)
             elif token['state'] == 6:
@@ -173,6 +215,7 @@ def clear_token(t):
 def write_token(line_number, buffer, class_token):
     # TODO separar erros e escreve-los apenas no final  
     # TODO escrever mensagem de sucesso caso nao haja erros
+    if ('\n' in buffer): buffer = buffer.replace('\n','')
     t = {
         'linha': line_number,
         class_token : buffer
