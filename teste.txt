@@ -1,4 +1,1 @@
-abc
-/* teste 
-cert  
-a b c 
+abc//comentario

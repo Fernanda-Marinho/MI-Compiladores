@@ -110,17 +110,16 @@ def start (n_line, line, token):
                     clear_token(token)
 
             elif token["state"]==1: #recebeu uma letra 
-                if isSep(line[i_curr]):
-                    if isPre(token["ac"]):
-                        write_token(n_line,token["ac"],'PRE',errors_tokens)
-                        token["ac"] = line[i_curr]
-                        clear_token(token)
-                    else:
-                        write_token(n_line,token["ac"],'IDE',errors_tokens)
-                        token["ac"] = line[i_curr]
-                        clear_token(token)
-                elif isLetter(line[i_curr]) or isDigit(line[i_curr]) or line[i_curr] == "_":
+                if isLetter(line[i_curr]) or isDigit(line[i_curr]) or line[i_curr] == "_":
                     token["ac"]+=line[i_curr]
+                    if i_curr < line_len - 1:
+                        if isSep(line[i_curr+1]):
+                            if isPre(token["ac"]):
+                                write_token(n_line,token["ac"],'PRE',errors_tokens)
+                                clear_token(token)
+                            else:
+                                write_token(n_line,token["ac"],'IDE',errors_tokens)
+                                clear_token(token)
                 else:
                     token['ac'] += line[i_curr]
                     token['state'] = 6 
@@ -259,6 +258,16 @@ def start (n_line, line, token):
                         clear_token(token)
                     else:
                         token['ac'] += line[i_curr]     
+            elif token["state"] == 11:
+                if isSep(line[i_curr]):
+                    if isPre(token["ac"]):
+                        write_token(n_line,token["ac"],'PRE',errors_tokens)
+                        token["ac"] = line[i_curr]
+                        clear_token(token)
+                    else:
+                        write_token(n_line,token["ac"],'IDE',errors_tokens)
+                        token["ac"] = line[i_curr]
+                        clear_token(token)
 
                 
                 
