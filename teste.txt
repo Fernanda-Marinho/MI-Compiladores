@@ -1,1 +1,6 @@
-abc//comentario
+abc //comentario 
+abcc /* teste
+teste 
+*/ 
+bccc /* testeee
+eeeeeee

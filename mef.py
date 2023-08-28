@@ -257,26 +257,20 @@ def start (n_line, line, token):
                         right_comment = 2 #significa que o comentario foi certo 
                         clear_token(token)
                     else:
+                        right_comment = 1
                         token['ac'] += line[i_curr]     
-            elif token["state"] == 11:
-                if isSep(line[i_curr]):
-                    if isPre(token["ac"]):
-                        write_token(n_line,token["ac"],'PRE',errors_tokens)
-                        token["ac"] = line[i_curr]
-                        clear_token(token)
-                    else:
-                        write_token(n_line,token["ac"],'IDE',errors_tokens)
-                        token["ac"] = line[i_curr]
-                        clear_token(token)
 
                 
                 
 
 def comment_line(l, buffer):
+    # TODO a linha ta pegando sempre a ultima :( 
     global had_comment
     global line_comment
     global ac_comment
     if had_comment == 1: 
+        line_comment = l
+    else:
         line_comment = l
     ac_comment = buffer 
   
