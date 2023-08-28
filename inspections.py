@@ -69,3 +69,4 @@ def currentSymbolClass(current):
 def isEOF(char):
     #TODO
     pass
+

@@ -1,2 +1,4 @@
-5&&5
-1.0&&2
+abc
+/* teste 
+cert  
+a b c 

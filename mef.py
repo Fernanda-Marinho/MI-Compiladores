@@ -1,11 +1,10 @@
 from inspections import *
 
-def start (n_line, line):
+def start (n_line, line, token):
+    global right_comment
+    global had_comment 
     line_len = len(line)
-    token = {
-        'ac': '',
-        'state': 0
-    }
+    
     double = False
     for i_curr in range(line_len):
         if double == True:
@@ -34,6 +33,14 @@ def start (n_line, line):
                         token["ac"] += line[i_curr]
                         write_token(n_line,token["ac"],'ART',errors_tokens)
                         clear_token(token)    
+                elif line[i_curr] == "/":
+                    if i_curr < line_len - 1:
+                        if line[i_curr+1] == "/":
+                            double = True 
+                            token["state"] = 9
+                        elif line[i_curr+1] == "*":
+                            double = True 
+                            token["state"] = 10
                 elif line[i_curr] == "-":
                     if i_curr < line_len - 1:
                         if line[i_curr+1] == "-":
@@ -238,6 +245,32 @@ def start (n_line, line):
                     if line[i_curr] == '"': token['ac'] += line[i_curr]
                     write_token(n_line, token['ac'], "CMF",errors_tokens)
                     clear_token(token)
+            elif token["state"] == 9:
+                if i_curr < line_len - 1:
+                    pass
+                else: 
+                    token['state'] = 0
+            elif token["state"] == 10:  
+                comment_line(n_line, token["ac"])
+                had_comment = 2 
+                if i_curr < line_len - 1:
+                    if line[i_curr+1] == "*" and line[i_curr+2] == "/":
+                        right_comment = 2 #significa que o comentario foi certo 
+                        clear_token(token)
+                    else:
+                        token['ac'] += line[i_curr]     
+
+                
+                
+
+def comment_line(l, buffer):
+    global had_comment
+    global line_comment
+    global ac_comment
+    if had_comment == 1: 
+        line_comment = l
+    ac_comment = buffer 
+  
 
 def clear_token(t):
     t['state'] = 0
@@ -268,10 +301,26 @@ def write_token(line_number, buffer, class_token, errors_t):
 
 
 errors_tokens = []
+t = {
+        'ac': '',
+        'state': 0
+    }
+had_comment = 1 #1 significa que nao teve comentario e 2 significa que teve 
+right_comment = 1 
 with open('teste.txt', 'r') as file:
     for index, line in enumerate(file.readlines(), start=1):
         # print(f'{index} {line}')
-        start(index, (line+" "))
+        start(index, (line+" "),t)
 
-print("erros")
-print(errors_tokens)
+if had_comment == 2:
+    if right_comment == 2:
+        pass
+    else:   
+        write_token(line_comment,ac_comment,'CoMF',errors_tokens)
+
+if errors_tokens: 
+    print("erros")
+    for i in errors_tokens:
+        print(i)
+else: 
+    print("sucesso!")
