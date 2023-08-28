@@ -8,6 +8,7 @@ LOG = ["!", "&&", "||"]
 DEL = [";", ",", ".", "(", ")", "[", "]", "{", "}", "->"]
 ESP = [" ", "\t","\n"]
 SEP = ART+REL+LOG+DEL
+POSSIBLE_LOG = ["&", "|"]
 
 def isLetter(char):
     return bool(re.match(r'[a-zA-Z]', char))
@@ -24,6 +25,9 @@ def isEsp(char):
 def isSepNotEsp(char):
     return (char in SEP)
 
+def isPossibleLog(char):
+    return (char in POSSIBLE_LOG)
+
 def isDel(char):
     return (char in SEP)
 
@@ -39,7 +43,6 @@ def isErrCMF(char):
 def isInRange(char):
     ascii_v = ord(char)
     return (ascii_v in range (32,35) or ascii_v in range (35,127))
-
 
 def isNextSymbolDouble(current, next):
     if f'{current}{next}' in ART:
