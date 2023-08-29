@@ -68,8 +68,6 @@ def currentSymbolClass(current):
         return 'LOG'
     elif current in DEL:
         return 'DEL'
-    else:
-        return None
 
 def isEOF(char):
     #TODO

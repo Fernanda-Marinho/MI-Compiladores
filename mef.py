@@ -254,8 +254,33 @@ def start (n_line, line, token):
                 if not isSep(line[i_curr]):
                     token["ac"] += line[i_curr]
                 else:
-                    write_token(n_line, token['ac'], "IMF",errors_tokens)
+                    write_token(n_line, token['ac'], "IMF",errors_tokens)   # salva token acumulado
                     clear_token(token)
+                    # TODO Analisar tipo do delimitador/separador
+                    if isSepNotEsp(line[i_curr]):
+                        if (i_curr < line_len - 1):
+                            token_class = isNextSymbolDouble(line[i_curr],line[i_curr+1])
+                            if token_class:
+                                write_token(n_line,token["ac"],'IMF',errors_tokens)
+                                token["ac"] = f'{line[i_curr]}{line[i_curr+1]}'
+                                write_token(n_line,token["ac"],token_class,errors_tokens)
+                                clear_token(token)
+                                double = True
+                            else:
+                                write_token(n_line,token["ac"],'IMF',errors_tokens)
+                                token["ac"] = line[i_curr]
+                                write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)        # atenção para se isso resulta None alguma vez
+                                clear_token(token)
+                        else: 
+                            write_token(n_line,token["ac"],'IMF',errors_tokens)
+                            token["ac"] = line[i_curr]
+                            write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)
+                            clear_token(token)
+                    else:   # isEspaco
+                        write_token(n_line, token["ac"], "IMF",errors_tokens)
+                        clear_token(token)
+
+
             elif token["state"] == 7: #pode ser cadeia de caracteres ou cadeia mal formada  
                 if isInRange(line[i_curr]) and (line[i_curr] != '"') and (i_curr<line_len-1):
                     token["ac"] += line[i_curr]
