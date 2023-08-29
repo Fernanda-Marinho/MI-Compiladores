@@ -18,6 +18,10 @@ def start (n_line, line, token):
                 elif isDigit(line[i_curr]):
                     token["ac"]+=line[i_curr]
                     token["state"]=3
+                elif isDel(line[i_curr]):
+                    token["ac"]+=line[i_curr]
+                    write_token(n_line,token["ac"],'DEL',errors_tokens)
+                    clear_token(token)
                 elif line[i_curr] == "+":
                     if i_curr < line_len - 1:
                         if line[i_curr+1] == "+":

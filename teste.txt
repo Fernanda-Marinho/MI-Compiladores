@@ -1,9 +1,6 @@
-test@test = 5
-abc"s"
-
-/* Este
-não
-é um
-comentário de bloco
-*
-/
+void main() {
+    int i = 0, j = 0
+    int k = i + j
+    print(k)
+}
+A -> 0
