@@ -1,4 +1,9 @@
-espaco
-aa++
-1234.00 && 2
-f
+test@test = 5
+abc"s"
+
+/* Este
+não
+é um
+comentário de bloco
+*
+/

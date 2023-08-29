@@ -29,16 +29,19 @@ def isPossibleLog(char):
     return (char in POSSIBLE_LOG)
 
 def isDel(char):
-    return (char in SEP)
+    return (char in DEL)
 
 def isPre(char):
     return (char in PRE)
 
-def isErrTMF(char):     #TODO trocar o uso disso por in range
+def isErrTMF(char):     
     return bool(re.match(r'[!-~]',char))
 
 def isErrCMF(char):
     return bool(re.match(r'[#$&%´@^`~]', char))
+
+def isErrIMF(char):
+    return bool(re.match(r'[#$%´@^`~]', char))
 
 def isInRange(char):
     ascii_v = ord(char)
@@ -51,6 +54,8 @@ def isNextSymbolDouble(current, next):
         return 'REL'
     elif f'{current}{next}' in LOG:
         return 'LOG'
+    elif f'{current}{next}' == '->':
+        return 'DEL'
     else:
         return None
 

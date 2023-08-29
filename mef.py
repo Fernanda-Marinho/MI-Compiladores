@@ -48,6 +48,11 @@ def start (n_line, line, token):
                             token["ac"] = line[i_curr]+line[i_curr+1]
                             write_token(n_line,token["ac"],'ART',errors_tokens)
                             clear_token(token)
+                        elif line[i_curr+1] == ">":
+                            double = True
+                            token["ac"] = line[i_curr]+line[i_curr+1]
+                            write_token(n_line,token["ac"],'DEL',errors_tokens)
+                            clear_token(token)
                         else:
                             token["ac"] += line[i_curr]
                             write_token(n_line,token["ac"],'ART',errors_tokens)
@@ -112,18 +117,38 @@ def start (n_line, line, token):
             elif token["state"]==1: #recebeu uma letra 
                 if isLetter(line[i_curr]) or isDigit(line[i_curr]) or line[i_curr] == "_":
                     token["ac"]+=line[i_curr]
-                    if i_curr < line_len - 1:
-                        if isSep(line[i_curr+1]):
-                            if isPre(token["ac"]):
-                                write_token(n_line,token["ac"],'PRE',errors_tokens)
-                                clear_token(token)
-                            else:
-                                write_token(n_line,token["ac"],'IDE',errors_tokens)
-                                clear_token(token)
-                else:
+                elif (not isInRange(line[i_curr]) and line[i_curr]!='"') or isErrIMF(line[i_curr]):   # IMF
                     token['ac'] += line[i_curr]
                     token['state'] = 6 
-
+                else: pass
+                if i_curr < line_len - 1:
+                    if isSep(line[i_curr+1]):
+                        if isPre(token["ac"]):
+                            write_token(n_line,token["ac"],'PRE',errors_tokens)
+                            clear_token(token)
+                        else:
+                            write_token(n_line,token["ac"],'IDE',errors_tokens)
+                            clear_token(token)
+                        token_class = isNextSymbolDouble(line[i_curr],line[i_curr+1])
+                        if token_class:
+                            token["ac"] = f'{line[i_curr]}{line[i_curr+1]}'
+                            write_token(n_line,token["ac"],token_class,errors_tokens)
+                            clear_token(token)
+                            double = True
+                        else:
+                            if (f'{line[i_curr]}{line[i_curr+1]}' == "//"):
+                                # estado de comentario de linha pulando 1 iteracao
+                                double=True
+                                token['ac'] = ''
+                                token["state"] = 9
+                            elif (f'{line[i_curr]}{line[i_curr+1]}' == "/*"):
+                                # estado de comentario de bloco pulando 1 iteracao
+                                token["ac"] = ''
+                                token["state"] = 10
+                            else:
+                                # passar para o estado 0 e deixar acontecer pq é operador aritmetico ou relacional simples
+                                token['state'] = 0
+                    else: continue # caso delimitador simples TODO confirmar dps se é mesmo
             elif token['state'] == 3: #recebeu um numero 
                 if isDigit(line[i_curr]):
                     token['ac'] += line[i_curr]
@@ -155,7 +180,6 @@ def start (n_line, line, token):
                         token["ac"] = line[i_curr]
                         write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)
                         clear_token(token)
-
             elif token['state'] == 4:       # NRO com 1 ponto
                 if isDigit(line[i_curr]):
                     token['ac'] += line[i_curr]
@@ -239,6 +263,7 @@ def start (n_line, line, token):
                     token['ac'] += line[i_curr]
                     token['state'] = 8
                 else: # \n
+                    ''' como e q ele pega isso se a linha ja e quebrada na leitura??? '''
                     write_token(n_line, token['ac'], "CMF",errors_tokens)
                     clear_token(token)
             elif token['state'] == 8: # acumular erro de CAC
@@ -250,7 +275,7 @@ def start (n_line, line, token):
                     clear_token(token)
             elif token["state"] == 9:
                 if i_curr < line_len - 1:
-                    pass
+                    continue
                 else: 
                     token['state'] = 0
             elif token["state"] == 10:  
@@ -258,7 +283,8 @@ def start (n_line, line, token):
                 had_comment = 2 
                 if i_curr < line_len - 1:
                     if line[i_curr+1] == "*" and line[i_curr+2] == "/":
-                        right_comment = 2 #significa que o comentario foi certo 
+                        right_comment = 2 # significa que o comentario foi certo 
+                        double=True
                         clear_token(token)
                     else:
                         right_comment = 1
