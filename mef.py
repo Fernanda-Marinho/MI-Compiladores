@@ -104,7 +104,7 @@ def start (n_line, line, token):
                 elif line[i_curr] == '"':
                     token["ac"] += line[i_curr]
                     token["state"] = 7 
-                elif not isInRange(line[i_curr]):
+                elif isErrTMF(line[i_curr]):
                     token["ac"] = line[i_curr]
                     write_token(n_line,token["ac"],'TMF',errors_tokens)
                     clear_token(token)
