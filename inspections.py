@@ -9,6 +9,7 @@ DEL = [";", ",", ".", "(", ")", "[", "]", "{", "}", "->"]
 ESP = [" ", "\t","\n"]
 SEP = ART+REL+LOG+DEL+['"']
 POSSIBLE_LOG = ["&", "|"]
+POSSIBLE_REL = ["!", "<", ">", "="]
 
 def isLetter(char):
     return bool(re.match(r'[a-zA-Z]', char))
@@ -27,6 +28,9 @@ def isSepNotEsp(char):
 
 def isPossibleLog(char):
     return (char in POSSIBLE_LOG)
+
+def isRel(char):
+    return (char in REL)
 
 def isDel(char):
     return (char in DEL)

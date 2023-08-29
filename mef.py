@@ -65,9 +65,9 @@ def start (n_line, line, token):
                         token["ac"] += line[i_curr]
                         write_token(n_line,token["ac"],'ART',errors_tokens)
                         clear_token(token)
-                elif line[i_curr] == "=":
+                elif line[i_curr] == "=" or line[i_curr] == ">" or line[i_curr] == "<":
                     if i_curr < line_len - 1:
-                        if line[i_curr+1] == "=":
+                        if isRel(f'{line[i_curr]}{line[i_curr+1]}'):
                             double = True
                             token["ac"] = line[i_curr]+line[i_curr+1]
                             write_token(n_line,token["ac"],'REL',errors_tokens)
@@ -256,7 +256,6 @@ def start (n_line, line, token):
                 else:
                     write_token(n_line, token['ac'], "IMF",errors_tokens)   # salva token acumulado
                     clear_token(token)
-                    # TODO Analisar tipo do delimitador/separador
                     if isSepNotEsp(line[i_curr]):
                         if (i_curr < line_len - 1):
                             token_class = isNextSymbolDouble(line[i_curr],line[i_curr+1])
@@ -267,7 +266,7 @@ def start (n_line, line, token):
                                 clear_token(token)
                                 double = True
                             else:
-                                write_token(n_line,token["ac"],'IMF',errors_tokens)
+                                if token["ac"]: write_token(n_line,token["ac"],'IMF',errors_tokens)
                                 token["ac"] = line[i_curr]
                                 write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)        # atenção para se isso resulta None alguma vez
                                 clear_token(token)

@@ -1,10 +1,9 @@
-/*exemplo tes#te;
-
+exemplo tes#te;
 real f = 3.0;
 @
 texto msg = "teste
 
-if ( f */ >= 10.3.4) && (f < ) 
+if ( f  >= 10.3.4) && (f < ) 
 	print("mensagem);
 	print("menÇagem");
 // exemplo de teste do lexico
