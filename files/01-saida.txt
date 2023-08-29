@@ -1,6 +1,23 @@
-H
-e
-l
-l
-o
-!
+6<IDE,as>
+6<DEL,.>
+6<NRO,2>
+10<IDE,as>
+10<DEL,;>
+Erros:
+2<NMF,2..2>
+2<NMF,2.......>
+2<NMF,2.>
+2<NMF,2.a>
+2<NMF,2.2.2>
+2<NMF,2.+asdas>
+6<TMF,@>
+6<TMF,#>
+6<TMF,$>
+6<TMF,@>
+6<TMF,$>
+6<TMF,@>
+6<TMF,@>
+6<TMF,#>
+9<IMF,as@>
+13<CMF,"asdasdas 212038yu890 ja0j)*)UY)* @J) >
+16<CoMF, adsad>

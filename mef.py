@@ -1,3 +1,4 @@
+import os
 from inspections import *
 
 def start (n_line, line, token):
@@ -124,6 +125,7 @@ def start (n_line, line, token):
                 elif (not isInRange(line[i_curr]) and line[i_curr]!='"') or isErrIMF(line[i_curr]):   # IMF
                     token['ac'] += line[i_curr]
                     token['state'] = 6 
+                    continue
                 else: pass
                 if i_curr < line_len - 1:
                     if isSep(line[i_curr+1]):
@@ -340,27 +342,32 @@ def clear_token(t):
 def write_token(line_number, buffer, class_token, errors_t):
     errors = ['CMF', 'CoMF', 'NMF', 'IMF', 'TMF']
     # TODO escrever mensagem de sucesso caso nao haja erros
-    
-    if ('\n' in buffer): buffer = buffer.replace('\n','')
-    if class_token in errors:
-        e_t = {
-            'linha' : line_number, 
-            class_token : buffer
-        }
-        errors_t.append(e_t)
-    else: 
-        t = {
-        'linha': line_number,
-        class_token : buffer
-        }
-        print(t)
-    # t = {
-    # 'linha': line_number,
-    # class_token : buffer
-    # }
-    # print(t)
+    if buffer == '':
+        pass
+    else:
+        if ('\n' in buffer): buffer = buffer.replace('\n','')
+        if class_token in errors:
+            e_t = {
+                'linha' : line_number, 
+                'classe' : class_token ,
+                'ac': buffer
+            }
+            errors_t.append(e_t)
+        else: 
+            t = {
+                'linha' : line_number, 
+                'classe' : class_token ,
+                'ac': buffer
+            }
+            tokens.append(t)
 
+def makeString(lista):
+    string = ''
+    for t in lista:
+        string += f'{t.get("linha")}<{t.get("classe")},{t.get("ac")}>\n'
+    return string
 
+tokens = []
 errors_tokens = []
 t = {
         'ac': '',
@@ -368,20 +375,25 @@ t = {
     }
 had_comment = 1 #1 significa que nao teve comentario e 2 significa que teve 
 right_comment = 1 
-with open('teste.txt', 'r') as file:
+
+
+current = f'{os.getcwd()}/files'
+for file_path in (os.listdir(current)):
+    if (file_path.endswith('-saida.txt') or not file_path.endswith(".txt")): continue
+    file = open(f'{current}/{file_path}', 'r')
+    newfile = open(f'{current}/{os.path.splitext(os.path.basename(file.name))[0]}-saida.txt', 'w')
     for index, line in enumerate(file.readlines(), start=1):
-        # print(f'{index} {line}')
         start(index, (line+" "),t)
+    # escrever string em newfile
 
-if had_comment == 2:
-    if right_comment == 2:
-        pass
-    else:   
-        write_token(line_comment,ac_comment,'CoMF',errors_tokens)
+    if had_comment == 2:
+        if right_comment == 2: pass
+        else:
+            write_token(line_comment,ac_comment,'CoMF',errors_tokens)
 
-if errors_tokens: 
-    print("erros")
-    for i in errors_tokens:
-        print(i)
-else: 
-    print("sucesso!")
+    tks = makeString(tokens)
+    errs = makeString(errors_tokens)
+    if (len(errs) > 0):
+        newfile.write(f'{tks}Erros:\n{errs}')
+    else:
+        newfile.write(f'{tks}A análise foi um sucesso =)')

@@ -45,7 +45,8 @@ def isErrCMF(char):
     return bool(re.match(r'[#$&%´@^`~]', char))
 
 def isErrIMF(char):
-    return bool(re.match(r'[#$%´@^`~]', char))
+    # return bool(re.match(r'[#$%´@^`~]', char))
+    return bool(char in ['#','$','%','´','@','^',"`",'~'])
 
 def isInRange(char):
     ascii_v = ord(char)

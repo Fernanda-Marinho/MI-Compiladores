@@ -1,1 +1,16 @@
-Hello! const 
+// erro numero:
+2..2 2....... 2.@ 2.a 2.2.2 2.+asdas
+// .2 é erro?
+
+// erro token
+@as #$@$ @.2 @#
+
+// erro identificador
+as@
+as;
+
+// erro cadia mal formada
+"asdasdas 212038yu890 ja0j)*)UY)* @J) 
+
+// erro comentario mal formador
+/* adsad
