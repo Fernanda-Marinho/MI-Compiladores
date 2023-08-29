@@ -7,7 +7,7 @@ REL = ["!=", "==", "<", "<=", ">", ">=", "="]
 LOG = ["!", "&&", "||"]
 DEL = [";", ",", ".", "(", ")", "[", "]", "{", "}", "->"]
 ESP = [" ", "\t","\n"]
-SEP = ART+REL+LOG+DEL
+SEP = ART+REL+LOG+DEL+['"']
 POSSIBLE_LOG = ["&", "|"]
 
 def isLetter(char):
@@ -42,7 +42,7 @@ def isErrCMF(char):
 
 def isInRange(char):
     ascii_v = ord(char)
-    return (ascii_v in range (32,35) or ascii_v in range (35,127))
+    return (ascii_v in range (32,34) or ascii_v in range (35,127))
 
 def isNextSymbolDouble(current, next):
     if f'{current}{next}' in ART:

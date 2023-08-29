@@ -159,7 +159,7 @@ def start (n_line, line, token):
             elif token['state'] == 4:       # NRO com 1 ponto
                 if isDigit(line[i_curr]):
                     token['ac'] += line[i_curr]
-                elif line[i_curr] == "." or isLetter(line[i_curr]): # segundo ponto ou letra (NMF)
+                elif line[i_curr] == "." or isLetter(line[i_curr]) or not isInRange(line[i_curr]): # segundo ponto ou letra (NMF)
                     token['ac'] += line[i_curr]
                     token['state'] = 5
                 elif isEsp(line[i_curr]):   # Separador espaço
@@ -196,6 +196,10 @@ def start (n_line, line, token):
             elif token['state'] == 5:       # Estado de "acumulação" do NMF!
                 if (line[i_curr] == ".") or (not isSep(line[i_curr])):
                     token['ac'] += line[i_curr]
+                elif (line[i_curr] == '"'):
+                    write_token(n_line,token["ac"],'NMF',errors_tokens)
+                    token["ac"] = line[i_curr]
+                    token['state'] = 7     # cac ou cmf
                 elif isSepNotEsp(line[i_curr]):
                     if (i_curr < line_len - 1):
                         token_class = isNextSymbolDouble(line[i_curr],line[i_curr+1])

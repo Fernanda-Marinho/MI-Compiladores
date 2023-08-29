@@ -1,6 +1,1 @@
-abc //comentario 
-abcc /* teste
-teste 
-*/ 
-bccc /* testeee
-eeeeeee
+5."abc"
