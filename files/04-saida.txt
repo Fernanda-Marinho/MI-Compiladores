@@ -7,6 +7,5 @@
 3<PRE,int>
 3<IDE,a>
 4<PRE,int>
-4<IDE,a>
-4<REL,=>
-4<NRO,2>
+4<IDE,a2>
+A análise foi um sucesso =)

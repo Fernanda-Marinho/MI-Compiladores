@@ -1,13 +1,8 @@
-exemplo tes#te;
-
-real f = 3.0;
-@
-texto msg = "teste
-
-if ( f >= 10.3.4) && (f < ) 
-	print("mensagem);
-	print("menÃ‡agem");
-// exemplo de teste do lexico
-
-/* exa869 mi processadores de
-		linguagem de programacao
+with open('seuarquivo.txt', 'r') as arquivo:
+    for linha in arquivo:  # Le o arquivo linha por linha
+        for caractere in linha:  # Le cada caractere na linha
+            # Realize as operacoes que voce precisa fazer com cada caractere aqui
+            
+        # Verifique se a linha este vazia (final de linha)
+        if not linha.strip():
+            break  # Se a linha estiver vazia, o arquivo chegou ao final

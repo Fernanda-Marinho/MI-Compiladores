@@ -377,7 +377,7 @@ t = {
 had_comment = 1 #1 significa que nao teve comentario e 2 significa que teve 
 right_comment = 1 
 
-current = f'{os.getcwd()}/exemplos'
+current = f'{os.getcwd()}/files'
 for file_path in (os.listdir(current)):
 
     if (file_path.endswith('-saida.txt') or not file_path.endswith(".txt")): 
