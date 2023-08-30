@@ -1,16 +1,13 @@
-// erro numero:
-2..2 2....... 2.@ 2.a 2.2.2 2.+asdas
-// .2 é erro?
+exemplo tes#te;
 
-// erro token
-@as #$@$ @.2 @#
+real f = 3.0;
+@
+texto msg = "teste
 
-// erro identificador
-as@
-as;
+if ( f >= 10.3.4) && (f < ) 
+	print("mensagem);
+	print("menÃ‡agem");
+// exemplo de teste do lexico
 
-// erro cadia mal formada
-"asdasdas 212038yu890 ja0j)*)UY)* @J) 
-
-// erro comentario mal formador
-/* adsad
+/* exa869 mi processadores de
+		linguagem de programacao

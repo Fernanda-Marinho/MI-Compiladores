@@ -373,23 +373,34 @@ t = {
         'ac': '',
         'state': 0
     }
+
 had_comment = 1 #1 significa que nao teve comentario e 2 significa que teve 
 right_comment = 1 
 
-
 current = f'{os.getcwd()}/files'
 for file_path in (os.listdir(current)):
-    if (file_path.endswith('-saida.txt') or not file_path.endswith(".txt")): continue
+    
+    print(f"arquivo -> {file_path}")
+    if (file_path.endswith('-saida.txt') or not file_path.endswith(".txt")): 
+        continue
     file = open(f'{current}/{file_path}', 'r')
     newfile = open(f'{current}/{os.path.splitext(os.path.basename(file.name))[0]}-saida.txt', 'w')
     for index, line in enumerate(file.readlines(), start=1):
         start(index, (line+" "),t)
     # escrever string em newfile
-
+    print(f"comentario -> {had_comment}")
     if had_comment == 2:
         if right_comment == 2: pass
         else:
             write_token(line_comment,ac_comment,'CoMF',errors_tokens)
+
+    had_comment = 1 #1 significa que nao teve comentario e 2 significa que teve 
+    right_comment = 1 
+
+    t = {
+        'ac': '',
+        'state': 0
+    }
 
     tks = makeString(tokens)
     errs = makeString(errors_tokens)
@@ -397,3 +408,8 @@ for file_path in (os.listdir(current)):
         newfile.write(f'{tks}Erros:\n{errs}')
     else:
         newfile.write(f'{tks}A análise foi um sucesso =)')
+    tokens = []
+    errors_tokens = []
+    file.close()
+    newfile.close()
+    
