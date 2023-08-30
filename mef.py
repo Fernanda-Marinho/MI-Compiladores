@@ -377,10 +377,9 @@ t = {
 had_comment = 1 #1 significa que nao teve comentario e 2 significa que teve 
 right_comment = 1 
 
-current = f'{os.getcwd()}/files'
+current = f'{os.getcwd()}/exemplos'
 for file_path in (os.listdir(current)):
-    
-    print(f"arquivo -> {file_path}")
+
     if (file_path.endswith('-saida.txt') or not file_path.endswith(".txt")): 
         continue
     file = open(f'{current}/{file_path}', 'r')
@@ -388,7 +387,6 @@ for file_path in (os.listdir(current)):
     for index, line in enumerate(file.readlines(), start=1):
         start(index, (line+" "),t)
     # escrever string em newfile
-    print(f"comentario -> {had_comment}")
     if had_comment == 2:
         if right_comment == 2: pass
         else:
