@@ -3,8 +3,8 @@ const{
 	real RAIZ_2 = 1.41; 
 int UM = 1, ZERO = 0;
 int DOIS = 2;
-string HELLO = “hello”, WORLD = “world!” ;
-string HELLO_WORLD = “hello world!”
+string HELLO = "hello", WORLD = "world!" ;
+string HELLO_WORLD = "hello world!"
 boolean IS_TRUE = true, IS_FALSE = false;
 }
 
@@ -99,11 +99,11 @@ methods{
 		variables{}
 		objects{}
 		if (this.idade >= 18) then {
-			print(“Sim”);
+			print("Sim");
 			return true;
 		}
 		else{
-			print(“Nao”);
+			print("Nao");
 			return false;
 		}
 	}
@@ -113,13 +113,13 @@ methods{
 			string homem;
 }
 		objects{}
-mulher = “mulher”;
-homem = “homem”;
+mulher = "mulher";
+homem = "homem";
 if (this.genero) then {
-	print( “eh mulher”);
+	print( "eh mulher");
 return mulher;
 } else {
-	print(“eh homem”);
+	print("eh homem");
 	return homem;
 }
 	}
@@ -149,16 +149,16 @@ methos{
 		variables{}
 		objects{}
 	if(is_gerente) then {
-		print(“Gerente”);
+		print("Gerente");
 } else {
-	print(“Nao eh gerente”);
+	print("Nao eh gerente");
 }
 return;
 }
 void folga(){
 	variables{}
 		objects{}
-	print(“informe quantos dias de folga serao adicionados”);
+	print("informe quantos dias de folga serao adicionados");
 	read(this.folga);
 	return;
 }
@@ -195,15 +195,15 @@ methods{
 func1.num_registro = 1;
 func2.num_registro = 2; 
 func3.num_registro = 3; 
-func1.setor = “setor1”;
-func2.setor = “setor2”;
-func3.setor = “setor3”;
+func1.setor = "setor1";
+func2.setor = "setor2";
+func3.setor = "setor3";
 func1.is_gerente = false; 
 func2.is_gerente = true; 
 func3.is_gerente = true; 
 this.funcionarios = [func1, func2, func3]; 
 for (i = 0; i<= 3; i++){
-	print(“Dados do funcionario”);
+	print("Dados do funcionario");
 	this.funcionarios[i].is_gerente(); 
 	this.funcionarios[i].folga(); 
 }

@@ -31,16 +31,16 @@
 6<PRE,string>
 6<IDE,HELLO>
 6<REL,=>
+6<CAC,"hello">
 6<DEL,,>
 6<IDE,WORLD>
 6<REL,=>
-6<IDE,world>
+6<CAC,"world!">
 6<DEL,;>
 7<PRE,string>
 7<IDE,HELLO_WORLD>
 7<REL,=>
-7<IDE,hello>
-7<IDE,world>
+7<CAC,"hello world!">
 8<PRE,boolean>
 8<IDE,IS_TRUE>
 8<REL,=>
@@ -384,6 +384,7 @@
 101<DEL,{>
 102<PRE,print>
 102<DEL,(>
+102<CAC,"Sim">
 102<DEL,)>
 102<DEL,;>
 103<PRE,return>
@@ -394,6 +395,7 @@
 105<DEL,{>
 106<PRE,print>
 106<DEL,(>
+106<CAC,"Nao">
 106<DEL,)>
 106<DEL,;>
 107<PRE,return>
@@ -420,9 +422,11 @@
 115<DEL,}>
 116<IDE,mulher>
 116<REL,=>
+116<CAC,"mulher">
 116<DEL,;>
 117<IDE,homem>
 117<REL,=>
+117<CAC,"homem">
 117<DEL,;>
 118<PRE,if>
 118<DEL,(>
@@ -434,7 +438,7 @@
 118<DEL,{>
 119<PRE,print>
 119<DEL,(>
-119<IDE,eh>
+119<CAC,"eh mulher">
 119<DEL,)>
 119<DEL,;>
 120<PRE,return>
@@ -445,7 +449,7 @@
 121<DEL,{>
 122<PRE,print>
 122<DEL,(>
-122<IDE,eh>
+122<CAC,"eh homem">
 122<DEL,)>
 122<DEL,;>
 123<PRE,return>
@@ -548,6 +552,7 @@
 151<DEL,{>
 152<PRE,print>
 152<DEL,(>
+152<CAC,"Gerente">
 152<DEL,)>
 152<DEL,;>
 153<DEL,}>
@@ -555,8 +560,7 @@
 153<DEL,{>
 154<PRE,print>
 154<DEL,(>
-154<IDE,Nao>
-154<IDE,eh>
+154<CAC,"Nao eh gerente">
 154<DEL,)>
 154<DEL,;>
 155<DEL,}>
@@ -576,12 +580,7 @@
 160<DEL,}>
 161<PRE,print>
 161<DEL,(>
-161<IDE,informe>
-161<IDE,quantos>
-161<IDE,dias>
-161<IDE,de>
-161<IDE,folga>
-161<IDE,serao>
+161<CAC,"informe quantos dias de folga serao adicionados">
 161<DEL,)>
 161<DEL,;>
 162<PRE,read>
@@ -762,16 +761,19 @@
 198<DEL,.>
 198<IDE,setor>
 198<REL,=>
+198<CAC,"setor1">
 198<DEL,;>
 199<IDE,func2>
 199<DEL,.>
 199<IDE,setor>
 199<REL,=>
+199<CAC,"setor2">
 199<DEL,;>
 200<IDE,func3>
 200<DEL,.>
 200<IDE,setor>
 200<REL,=>
+200<CAC,"setor3">
 200<DEL,;>
 201<IDE,func1>
 201<DEL,.>
@@ -819,8 +821,7 @@
 205<DEL,{>
 206<PRE,print>
 206<DEL,(>
-206<IDE,Dados>
-206<IDE,do>
+206<CAC,"Dados do funcionario">
 206<DEL,)>
 206<DEL,;>
 207<PRE,this>
@@ -1797,22 +1798,6 @@
 434<DEL,}>
 435<DEL,}>
 Erros:
-6<IMF,hello”>
-6<TMF,!>
-7<TMF,!>
 63<TMF,*>
-102<IMF,Sim”>
-106<IMF,Nao”>
-116<IMF,mulher”>
-117<IMF,homem”>
-119<IMF,mulher”>
-122<IMF,homem”>
-152<IMF,Gerente”>
-154<IMF,gerente”>
-161<IMF,adicionados”>
-198<IMF,setor1”>
-199<IMF,setor2”>
-200<IMF,setor3”>
-206<IMF,funcionario”>
 221<IMF,reunião>
 286<TMF,*>
