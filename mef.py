@@ -161,9 +161,6 @@ def start (n_line, line, token):
                 elif isEsp(line[i_curr]):   # Separador espaço
                     write_token(n_line,token["ac"],'NRO',errors_tokens)
                     clear_token(token)
-                elif line[i_curr] != "." and (isLetter(line[i_curr]) or not isInRange(line[i_curr])):
-                    token['ac'] += line[i_curr]
-                    token['state'] = 5
                 elif line[i_curr] == ".":
                     token['ac'] += line[i_curr]
                     token['state'] = 4
@@ -186,6 +183,9 @@ def start (n_line, line, token):
                         token["ac"] = line[i_curr]
                         write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)
                         clear_token(token)
+                elif line[i_curr] != "." and (not isDigit(line[i_curr])):   # NMF
+                    token['ac'] += line[i_curr]
+                    token['state'] = 5
             elif token['state'] == 4:       # NRO com 1 ponto
                 if isDigit(line[i_curr]):
                     token['ac'] += line[i_curr]
@@ -377,13 +377,13 @@ t = {
 had_comment = 1 #1 significa que nao teve comentario e 2 significa que teve 
 right_comment = 1 
 
-current = f'{os.getcwd()}/files'
+current = f'{os.getcwd()}/codigos teste lexico 2023.2'
 for file_path in (os.listdir(current)):
 
-    if (file_path.endswith('-saida.txt') or not file_path.endswith(".txt")): 
+    if ((file_path.endswith('-saida.txt') or file_path.endswith('-saida0.txt')) or not file_path.endswith(".txt")): 
         continue
     file = open(f'{current}/{file_path}', 'r')
-    newfile = open(f'{current}/{os.path.splitext(os.path.basename(file.name))[0]}-saida.txt', 'w')
+    newfile = open(f'{current}/{os.path.splitext(os.path.basename(file.name))[0]}-saida0.txt', 'w')
     for index, line in enumerate(file.readlines(), start=1):
         start(index, (line+" "),t)
     # escrever string em newfile
@@ -410,4 +410,3 @@ for file_path in (os.listdir(current)):
     errors_tokens = []
     file.close()
     newfile.close()
-    

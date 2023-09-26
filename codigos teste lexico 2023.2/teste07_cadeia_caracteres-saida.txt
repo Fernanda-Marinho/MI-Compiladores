@@ -1,0 +1,10 @@
+03 CAC " ok "
+07 IDE outra
+07 IDE string
+11 CAC " diga  "
+11 IDE oi
+11 CAC ""
+
+05 CMF "cadeia
+07 CMF "
+09 CMF " string com simbolo invalido ¶ "

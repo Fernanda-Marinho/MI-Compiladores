@@ -1,0 +1,7 @@
+4<PRE,real>
+4<IDE,b>
+11<IDE,a>
+11<REL,=>
+Erros:
+9<NMF,1.2>
+14<CoMF, comeca aquicade o fim de comentario?>
