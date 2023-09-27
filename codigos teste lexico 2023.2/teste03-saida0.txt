@@ -1,0 +1,27 @@
+3<IDE,a>
+3<ART,++>
+3<ART,+>
+3<IDE,b>
+5<IDE,a>
+5<ART,++>
+5<ART,->
+5<IDE,b>
+7<IDE,a>
+7<ART,->
+7<ART,->
+7<IDE,b>
+9<IDE,a>
+9<ART,++>
+9<ART,->
+9<NRO,3>
+11<IDE,a>
+11<ART,++>
+11<ART,->
+11<ART,->
+11<NRO,3>
+13<IDE,a>
+13<ART,++>
+13<ART,-->
+13<ART,->
+13<IDE,b>
+A análise foi um sucesso =)

@@ -82,7 +82,11 @@ def start (n_line, line, token):
                         write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)
                         clear_token(token)
                 elif line[i_curr] == "&":
-                    if i_curr < line_len - 1:
+                    if token['ac'] + line[i_curr] == "&&":
+                        token['ac'] += line[i_curr]
+                        write_token(n_line,token["ac"],'LOG',errors_tokens)
+                        clear_token(token)
+                    elif i_curr < line_len - 1:
                         if line[i_curr+1] == "&":
                             double = True 
                             token["ac"] = line[i_curr]+line[i_curr+1]
@@ -126,7 +130,16 @@ def start (n_line, line, token):
                     token['ac'] += line[i_curr]
                     token['state'] = 6 
                     continue
-                else: pass
+                elif (line[i_curr] == '&'):
+                    if isPre(token["ac"]):
+                        write_token(n_line,token["ac"],'PRE',errors_tokens)
+                    else:
+                        write_token(n_line,token["ac"],'IDE',errors_tokens)
+                    clear_token(token)
+                    token['ac'] = line[i_curr]
+                    token['state'] = 0
+                else: 
+                    pass
                 if i_curr < line_len - 1:
                     if isSep(line[i_curr+1]):
                         if isPre(token["ac"]):
@@ -381,7 +394,7 @@ t = {
 had_comment = 1 #1 significa que nao teve comentario e 2 significa que teve 
 right_comment = 1 
 
-current = f'{os.getcwd()}/codigos teste lexico 2023.2'
+current = f'{os.getcwd()}/testes'
 for file_path in (os.listdir(current)):
 
     if ((file_path.endswith('-saida.txt') or file_path.endswith('-saida0.txt')) or not file_path.endswith(".txt")): 

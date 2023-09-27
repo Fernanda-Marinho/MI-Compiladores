@@ -1,0 +1,4 @@
+1<IDE,a>
+1<LOG,&&>
+1<IDE,n>
+A análise foi um sucesso =)
