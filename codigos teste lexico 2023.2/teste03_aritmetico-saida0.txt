@@ -8,6 +8,7 @@
 5<IDE,b>
 7<IDE,a>
 7<ART,->
+7<ART,->
 7<IDE,b>
 9<IDE,a>
 9<ART,++>
@@ -22,4 +23,5 @@
 13<ART,++>
 13<ART,-->
 13<ART,->
+13<IDE,b>
 A análise foi um sucesso =)

@@ -1,2 +1,2 @@
 Erros:
-24<CoMF,  	teste08 - sem erros */  const int MAX = 10, MAX2 = 50; 	 string Mensagem = "Hello world";  methods main {  // comeca aqui o programa principal   	int idade;  	string nome;  	print("Digite o nome"); 	read(nome); 	print("Digite a idade"); 	read(idade); 	 	if (idade >= 150) print("pode aposentar kkkk"); 	else { 		print("vai trabalhar"); // hehehe 	}	    >
+24<CoMF,  	teste08 - sem erros */  const int MAX = 10, MAX2 = 50; 	 string Mensagem = "Hello world";  methods main {  // comeca aqui o programa principal   	int idade;  	string nome;  	print("Digite o nome"); 	read(nome); 	print("Digite a idade"); 	read(idade); 	 	if (idade >= 150) print("pode aposentar kkkk"); 	else { 		print("vai trabalhar"); // hehehe 	}	   } >

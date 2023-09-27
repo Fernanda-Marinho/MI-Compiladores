@@ -152,8 +152,12 @@ def start (n_line, line, token):
                                 token["ac"] = ''
                                 token["state"] = 10
                             else:
-                                # passar para o estado 0 e deixar acontecer pq é operador aritmetico ou relacional simples
-                                token['state'] = 0
+                                # nao é duplo, porem e aritmetico ou relacional, portanto:
+                                token_class = currentSymbolClass(line[i_curr])
+                                if token_class: 
+                                    token['ac'] += line[i_curr]
+                                    write_token(n_line,token["ac"],token_class,errors_tokens)
+                                    clear_token(token)
                     else: continue # caso delimitador simples TODO confirmar dps se é mesmo
             elif token['state'] == 3: #recebeu um numero 
                 if isDigit(line[i_curr]):
@@ -385,7 +389,10 @@ for file_path in (os.listdir(current)):
     file = open(f'{current}/{file_path}', 'r')
     newfile = open(f'{current}/{os.path.splitext(os.path.basename(file.name))[0]}-saida0.txt', 'w')
     for index, line in enumerate(file.readlines(), start=1):
-        line = " ".join([line[:-1], line[-1]])
+        if (line[-1] == '\u000a'):  # quebra de linha unicode
+            line = " ".join([line[:-1], line[-1]])
+        else:
+            line = " ".join([line, '\n'])
         start(index, (line),t)
     # escrever string em newfile
     if had_comment == 2:

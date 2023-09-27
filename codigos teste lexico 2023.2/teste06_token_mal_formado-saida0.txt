@@ -2,6 +2,7 @@
 4<REL,>>
 4<IDE,b>
 5<PRE,print>
+6<IDE,x>
 Erros:
 3<TMF,@>
 5<TMF,$>
