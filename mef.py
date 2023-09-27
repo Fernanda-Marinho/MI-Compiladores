@@ -158,7 +158,7 @@ def start (n_line, line, token):
             elif token['state'] == 3: #recebeu um numero 
                 if isDigit(line[i_curr]):
                     token['ac'] += line[i_curr]
-                elif isEsp(line[i_curr]):   # Separador espaço
+                elif isEsp(line[i_curr]) or line[i_curr]=='':   # Separador espaço
                     write_token(n_line,token["ac"],'NRO',errors_tokens)
                     clear_token(token)
                 elif line[i_curr] == ".":
@@ -385,7 +385,8 @@ for file_path in (os.listdir(current)):
     file = open(f'{current}/{file_path}', 'r')
     newfile = open(f'{current}/{os.path.splitext(os.path.basename(file.name))[0]}-saida0.txt', 'w')
     for index, line in enumerate(file.readlines(), start=1):
-        start(index, (line+" "),t)
+        line = " ".join([line[:-1], line[-1]])
+        start(index, (line),t)
     # escrever string em newfile
     if had_comment == 2:
         if right_comment == 2: pass

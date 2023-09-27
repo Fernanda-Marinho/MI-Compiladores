@@ -5,5 +5,5 @@
 Erros:
 5<IMF,menÇagem>
 7<NMF,123#.45>
-9<CMF,"erro na cadeia. falta fecha aspas>
-12<CoMF, nao fechou //comentario //>
+10<CMF,"erro na cadeia. falta fecha aspas  >
+12<CoMF, nao fechou // comentario / >
