@@ -66,7 +66,7 @@ def start (n_line, line, token):
                         token["ac"] += line[i_curr]
                         write_token(n_line,token["ac"],'ART',errors_tokens)
                         clear_token(token)
-                elif line[i_curr] == "=" or line[i_curr] == ">" or line[i_curr] == "<" or line[i_curr] == "!":
+                elif line[i_curr] == "=" or line[i_curr] == ">" or line[i_curr] == "<":
                     if i_curr < line_len - 1:
                         if isRel(f'{line[i_curr]}{line[i_curr+1]}'):
                             double = True
@@ -79,7 +79,7 @@ def start (n_line, line, token):
                             clear_token(token)
                     else:
                         token["ac"] += line[i_curr]
-                        write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)
+                        write_token(n_line,token["ac"],'REL',errors_tokens)
                         clear_token(token)
                 elif line[i_curr] == "&":
                     if token['ac'] + line[i_curr] == "&&":

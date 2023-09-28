@@ -39,7 +39,7 @@ def isPre(char):
     return (char in PRE)
 
 def isErrTMF(char):     
-    return bool(re.match(r'[#-~]',char))
+    return bool(re.match(r'[!-~]',char))
 
 def isErrCMF(char):
     return bool(re.match(r'[#$&%´@^`~]', char))

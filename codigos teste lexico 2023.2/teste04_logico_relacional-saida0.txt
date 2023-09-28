@@ -1,10 +1,8 @@
 3<IDE,a>
-3<REL,!>
-3<REL,!=>
+3<REL,=>
 3<IDE,b>
 5<IDE,a>
-5<REL,!=>
-5<REL,!>
+5<REL,=>
 5<IDE,b>
 7<IDE,a>
 7<REL,>=>
@@ -21,6 +19,10 @@
 11<REL,=>
 11<IDE,d>
 Erros:
+3<TMF,!>
+3<TMF,!>
+5<TMF,!>
+5<TMF,!>
 7<TMF,&>
 11<TMF,|>
 11<TMF,|>
