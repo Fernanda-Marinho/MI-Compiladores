@@ -1,0 +1,8 @@
+1<IDE,b>
+1<ART,-->
+1<REL,<=>
+1<REL,=>
+1<IDE,d>
+Erros:
+1<TMF,|>
+1<TMF,|>
