@@ -10,6 +10,8 @@ ESP = [" ", "\t","\n"]
 SEP = ART+REL+LOG+DEL+['"']
 POSSIBLE_LOG = ["&", "|"]
 POSSIBLE_REL = ["!", "<", ">", "="]
+POSSIBLE_ART = ["+", "-"]
+POSSIBLE_DOUBLE = POSSIBLE_LOG+POSSIBLE_REL+POSSIBLE_ART
 
 def isLetter(char):
     return bool(re.match(r'[a-zA-Z]', char))
@@ -29,8 +31,14 @@ def isSepNotEsp(char):
 def isPossibleLog(char):
     return (char in POSSIBLE_LOG)
 
+def isPossibleDouble(char):
+    return (char in POSSIBLE_DOUBLE)
+
 def isRel(char):
     return (char in REL)
+
+def isArt(char):
+    return (char in ART)
 
 def isDel(char):
     return (char in DEL)
@@ -39,7 +47,7 @@ def isPre(char):
     return (char in PRE)
 
 def isErrTMF(char):     
-    return bool(re.match(r'[!-~]',char))
+    return bool(re.match(r'[#-~]',char))
 
 def isErrCMF(char):
     return bool(re.match(r'[#$&%´@^`~]', char))

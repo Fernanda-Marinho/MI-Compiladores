@@ -66,7 +66,7 @@ def start (n_line, line, token):
                         token["ac"] += line[i_curr]
                         write_token(n_line,token["ac"],'ART',errors_tokens)
                         clear_token(token)
-                elif line[i_curr] == "=" or line[i_curr] == ">" or line[i_curr] == "<":
+                elif line[i_curr] == "=" or line[i_curr] == ">" or line[i_curr] == "<" or line[i_curr] == "!":
                     if i_curr < line_len - 1:
                         if isRel(f'{line[i_curr]}{line[i_curr+1]}'):
                             double = True
@@ -75,38 +75,20 @@ def start (n_line, line, token):
                             clear_token(token)
                         else:
                             token["ac"] += line[i_curr]
-                            write_token(n_line,token["ac"],'REL',errors_tokens)
+                            write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)
                             clear_token(token)
                     else:
                         token["ac"] += line[i_curr]
-                        write_token(n_line,token["ac"],'REL',errors_tokens)
+                        write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)
                         clear_token(token)
-                elif line[i_curr] == "&":
-                    if token['ac'] + line[i_curr] == "&&":
-                        token['ac'] += line[i_curr]
-                        write_token(n_line,token["ac"],'LOG',errors_tokens)
-                        clear_token(token)
-                    elif i_curr < line_len - 1:
-                        if line[i_curr+1] == "&":
-                            double = True 
-                            token["ac"] = line[i_curr]+line[i_curr+1]
-                            write_token(n_line,token["ac"],'LOG',errors_tokens)
-                            clear_token(token)
-                        else:
-                            token["ac"] += line[i_curr]
-                            write_token(n_line,token["ac"],'TMF',errors_tokens)
-                            clear_token(token)
-                    else:
-                        token["ac"] += line[i_curr]
-                        write_token(n_line,token["ac"],'TMF',errors_tokens)
-                        clear_token(token)
-                elif line[i_curr] == "|":
+                elif isPossibleLog(line[i_curr]):
                     if i_curr < line_len - 1:
-                        if line[i_curr+1] == "|":
-                            double = True 
-                            token["ac"] = line[i_curr]+line[i_curr+1]
-                            write_token(n_line,token["ac"],'LOG',errors_tokens)
+                        token_class = isNextSymbolDouble(line[i_curr], line[i_curr+1])
+                        if token_class:
+                            token["ac"] = f'{line[i_curr]}{line[i_curr+1]}'
+                            write_token(n_line,token["ac"],token_class,errors_tokens)
                             clear_token(token)
+                            double = True
                         else:
                             token["ac"] += line[i_curr]
                             write_token(n_line,token["ac"],'TMF',errors_tokens)
@@ -130,16 +112,40 @@ def start (n_line, line, token):
                     token['ac'] += line[i_curr]
                     token['state'] = 6 
                     continue
-                elif (line[i_curr] == '&'):
-                    if isPre(token["ac"]):
-                        write_token(n_line,token["ac"],'PRE',errors_tokens)
-                    else:
-                        write_token(n_line,token["ac"],'IDE',errors_tokens)
+                elif isEsp(line[i_curr]):
+                    write_token(n_line,token["ac"],'IDE',errors_tokens)
                     clear_token(token)
-                    token['ac'] = line[i_curr]
-                    token['state'] = 0
-                else: 
-                    pass
+                elif isSepNotEsp(line[i_curr]):
+                    write_token(n_line,token["ac"],'IDE',errors_tokens)
+                    clear_token(token)
+                    #Agora precisa: identificar qual tipo é o separador e 
+                    # 1. ou acumular e mandar p/ estado CAC ou CMF (caso ASPAS)
+                    # 2. ou identificar possivel simbolo duplo (caso REL LOG ART)
+                    # 3. ou ver que é delimitador
+                    if (line[i_curr] == '"'):
+                        token['ac'] += line[i_curr]
+                        token['state'] = 7      # CAC ou CMF
+                    elif isPossibleDouble(line[i_curr]):
+                        if i_curr < line_len - 1:
+                            token_class = isNextSymbolDouble(line[i_curr], line[i_curr+1])
+                            if token_class:
+                                double = True
+                                token['ac'] += line[i_curr]
+                                write_token(n_line,token["ac"],token_class,errors_tokens)
+                                clear_token(token)
+                            else:
+                                token['ac'] += line[i_curr]
+                                write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)
+                                clear_token(token)
+                        else:
+                            token['ac'] += line[i_curr]
+                            write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)
+                            clear_token(token)
+                    elif currentSymbolClass(line[i_curr]): # vai pegar ART REL LOG DEL que nao sao possiveis duplos
+                        token['ac'] += line[i_curr]
+                        write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)
+                        clear_token(token)
+                else: pass
                 if i_curr < line_len - 1:
                     if isSep(line[i_curr+1]):
                         if isPre(token["ac"]):
@@ -394,7 +400,7 @@ t = {
 had_comment = 1 #1 significa que nao teve comentario e 2 significa que teve 
 right_comment = 1 
 
-current = f'{os.getcwd()}/testes'
+current = f'{os.getcwd()}/codigos teste lexico 2023.2'
 for file_path in (os.listdir(current)):
 
     if ((file_path.endswith('-saida.txt') or file_path.endswith('-saida0.txt')) or not file_path.endswith(".txt")): 
