@@ -1,5 +1,0 @@
-for i=2 i++; 
-int variavel 3.555     
-if !a "a!" 
-//int a=2 
-texto="cadeia de caracteres/*88/8594@#%*&(*" 

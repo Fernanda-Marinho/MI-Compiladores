@@ -50,12 +50,12 @@ def start (n_line, line, token):
                     if i_curr < line_len - 1:
                         if line[i_curr+1] == "-":
                             double = True
-                            token["ac"] = line[i_curr]+line[i_curr+1]
+                            token["ac"] = f'{line[i_curr]}{line[i_curr+1]}'
                             write_token(n_line,token["ac"],'ART',errors_tokens)
                             clear_token(token)
                         elif line[i_curr+1] == ">":
                             double = True
-                            token["ac"] = line[i_curr]+line[i_curr+1]
+                            token["ac"] = f'{line[i_curr]}{line[i_curr+1]}'
                             write_token(n_line,token["ac"],'DEL',errors_tokens)
                             clear_token(token)
                         else:
@@ -130,8 +130,7 @@ def start (n_line, line, token):
                             token_class = isNextSymbolDouble(line[i_curr], line[i_curr+1])
                             if token_class:
                                 double = True
-                                token['ac'] = line[i_curr]
-                                token['ac'] += line[i_curr]
+                                token['ac'] += f'{line[i_curr]}{line[i_curr+1]}'
                                 write_token(n_line,token["ac"],token_class,errors_tokens)
                                 clear_token(token)
                             else:
@@ -145,42 +144,43 @@ def start (n_line, line, token):
                             clear_token(token)
                     elif currentSymbolClass(line[i_curr]): # vai pegar ART REL LOG DEL que nao sao possiveis duplos
                         token['ac'] += line[i_curr]
+                        print(f'delimitador {line[i_curr]}')
                         write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)
                         clear_token(token)
                 else: pass
-                if double == False:
-                    if i_curr < line_len - 1:  
-                        if isSep(line[i_curr+1]):
-                            if isPre(token["ac"]):
-                                write_token(n_line,token["ac"],'PRE',errors_tokens)
-                                clear_token(token)
+                # if double == False:
+                if i_curr < line_len - 1:  
+                    if isSep(line[i_curr+1]):
+                        if isPre(token["ac"]):
+                            write_token(n_line,token["ac"],'PRE',errors_tokens)
+                            clear_token(token)
+                        else:
+                            write_token(n_line,token["ac"],'IDE',errors_tokens)
+                            clear_token(token)
+                        token_class = isNextSymbolDouble(line[i_curr],line[i_curr+1])
+                        if token_class:
+                            token["ac"] = f'{line[i_curr]}{line[i_curr+1]}'
+                            write_token(n_line,token["ac"],token_class,errors_tokens)
+                            clear_token(token)
+                            double = True
+                        else:
+                            if (f'{line[i_curr]}{line[i_curr+1]}' == "//"):
+                                # estado de comentario de linha pulando 1 iteracao
+                                double=True
+                                token['ac'] = ''
+                                token["state"] = 9
+                            elif (f'{line[i_curr]}{line[i_curr+1]}' == "/*"):
+                                # estado de comentario de bloco pulando 1 iteracao
+                                token["ac"] = ''
+                                token["state"] = 10
                             else:
-                                write_token(n_line,token["ac"],'IDE',errors_tokens)
-                                clear_token(token)
-                            token_class = isNextSymbolDouble(line[i_curr],line[i_curr+1])
-                            if token_class:
-                                token["ac"] = f'{line[i_curr]}{line[i_curr+1]}'
-                                write_token(n_line,token["ac"],token_class,errors_tokens)
-                                clear_token(token)
-                                double = True
-                            else:
-                                if (f'{line[i_curr]}{line[i_curr+1]}' == "//"):
-                                    # estado de comentario de linha pulando 1 iteracao
-                                    double=True
-                                    token['ac'] = ''
-                                    token["state"] = 9
-                                elif (f'{line[i_curr]}{line[i_curr+1]}' == "/*"):
-                                    # estado de comentario de bloco pulando 1 iteracao
-                                    token["ac"] = ''
-                                    token["state"] = 10
-                                else:
-                                    # nao é duplo, porem e aritmetico ou relacional, portanto:
-                                    token_class = currentSymbolClass(line[i_curr])
-                                    if token_class: 
-                                        token['ac'] += line[i_curr]
-                                        write_token(n_line,token["ac"],token_class,errors_tokens)
-                                        clear_token(token)
-                        else: continue # caso delimitador simples TODO confirmar dps se é mesmo
+                                # nao é duplo, porem e aritmetico ou relacional, portanto:
+                                token_class = currentSymbolClass(line[i_curr])
+                                if token_class: 
+                                    token['ac'] += line[i_curr]
+                                    write_token(n_line,token["ac"],token_class,errors_tokens)
+                                    clear_token(token)
+                    else: continue # caso delimitador simples TODO confirmar dps se é mesmo
             elif token['state'] == 3: #recebeu um numero 
                 if isDigit(line[i_curr]):
                     token['ac'] += line[i_curr]
@@ -403,7 +403,7 @@ t = {
 had_comment = 1 #1 significa que nao teve comentario e 2 significa que teve 
 right_comment = 1 
 
-current = f'{os.getcwd()}/codigos teste lexico 2023.2'
+current = f'{os.getcwd()}/testes'
 for file_path in (os.listdir(current)):
 
     if ((file_path.endswith('-saida.txt') or file_path.endswith('-saida0.txt')) or not file_path.endswith(".txt")): 

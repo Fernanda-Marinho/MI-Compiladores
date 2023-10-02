@@ -1,4 +1,0 @@
-int const inta 
-for fora afor 
-int a 
-int a=2 
