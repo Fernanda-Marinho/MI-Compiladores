@@ -11,12 +11,10 @@ for file in (os.listdir(directory)):
     with open(f'{directory}/{file}','r') as f:
         lines = f.readlines()
         for line in lines:
-            parte1 = line.split("<")[1]
-            valor = parte1.split(",")[1]
-            valor = valor.replace(">", "").strip()
+            valor = line.split(",")[1].strip()
             lista.append(valor)
 
-bloco = False
+''''bloco = False
 abreChave = False
 for i in lista:
     if bloco == True:
@@ -32,6 +30,6 @@ for i in lista:
                 abreChave = False 
                 print("sucesso")
     if i == "const":
-        bloco = True
+        bloco = True'''
             
 
