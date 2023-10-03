@@ -14,22 +14,29 @@ for file in (os.listdir(directory)):
             valor = line.split(",")[1].strip()
             lista.append(valor)
 
-''''bloco = False
-abreChave = False
+bloco = False
+fechaChave = False
+possivel_bloco = False 
+erroBloco = False
+contador = -1
 for i in lista:
-    if bloco == True:
-        if i == "{":
-            abreChave = True
-            if abreChave == False:
-                abreChave = True
-            elif abreChave == True:
-                print("erro! esperava }")
-                abreChave = False
-        elif i == "}":
-            if abreChave == True:
-                abreChave = False 
-                print("sucesso")
+    contador += 1
     if i == "const":
-        bloco = True'''
-            
-
+        if lista[contador+1] == "{":
+            possivel_bloco = True
+        else: 
+            print("Erro. Esperava { e recebeu",lista[contador+1])
+    elif i == "variables": 
+        if lista[contador+1] == "{":
+            possivel_bloco = True 
+    elif i == "{":
+        bloco = True 
+    
+    if bloco == True:  #aguardando um fecha chave 
+        if i == "}":
+            fechaChave = True
+        elif i == "variables":
+            if fechaChave == False:
+                print("Erro. Esperava } e recebeu",i) #TODO como fazer printar a linha
+                bloco = False 
+    

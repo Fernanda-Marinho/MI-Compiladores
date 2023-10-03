@@ -1,9 +1,9 @@
-4 PRE, "real"
-4 IDE, "b"
-4 DEL, ";"
-4 DEL, ";"
-9 NRO, "1.2"
-11 IDE, "a"
-11 REL, "="
+4 PRE, real
+4 IDE, b
+4 DEL, ;
+4 DEL, ;
+9 NRO, 1.2
+11 IDE, a
+11 REL, =
 Erros:
-14 CoMF, " comeca aqui cade o fim de comentario? "
+14 CoMF,  comeca aqui cade o fim de comentario? 

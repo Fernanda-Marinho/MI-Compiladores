@@ -1,4 +1,5 @@
 1 PRE, const
+1 PRE, int
 1 DEL, { 
 2 IDE, pi
 2 ART, =
@@ -6,4 +7,7 @@
 2 DEL, ; 
 3 IDE, variables 
 3 DEL, {
+4 PRE, int
+4 IDE, a 
+4 DEL, ; 
 4 DEL, } 
