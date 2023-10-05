@@ -1,10 +1,10 @@
-4<IDE,a>
-4<REL,>>
-4<IDE,b>
-5<PRE,print>
-6<IDE,x>
+4 IDE a
+4 REL >
+4 IDE b
+5 PRE print
+6 IDE x
 Erros:
-3<TMF,@>
-4<TMF,?>
-5<TMF,$>
-6<TMF,_>
+3 TMF @
+4 TMF ?
+5 TMF $
+6 TMF _

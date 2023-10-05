@@ -1,10 +1,10 @@
-3<CAC," ok ">
-7<IDE,outra>
-7<PRE,string>
-11<CAC," diga  ">
-11<IDE,oi>
-11<CAC,"">
+3 CAC " ok "
+7 IDE outra
+7 PRE string
+11 CAC " diga  "
+11 IDE oi
+11 CAC ""
 Erros:
-6<CMF,"cadeia  >
-8<CMF,"  >
-9<CMF," string com simbolo invalido ¶ ">
+6 CMF "cadeia  
+8 CMF "  
+9 CMF " string com simbolo invalido ¶ "
