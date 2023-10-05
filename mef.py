@@ -390,7 +390,7 @@ def write_token(line_number, buffer, class_token, errors_t):
 def makeString(lista):
     string = ''
     for t in lista:
-        string += f'{t.get("linha")} {t.get("classe")}, {t.get("ac")}\n'
+        string += f'{t.get("linha")} {t.get("classe")} {t.get("ac")}\n'
     return string
 
 tokens = []
