@@ -1,8 +1,0 @@
-04 PRE real
-04 IDE b
-04 DEL ;
-09 NRO 1.2
-11 IDE a
-11 REL =
-
-14 CoMF /* comeca aqui cade o fim de comentario? 

@@ -1,0 +1,5 @@
+1 PRE real
+1 IDE b
+1 DEL ;
+2 NRO 1.2
+A análise foi um sucesso =)

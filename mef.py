@@ -7,6 +7,7 @@ def start (n_line, line, token):
     line_len = len(line)
     
     double = False
+    nao_duplo = False 
     for i_curr in range(line_len):
         if double == True:
             double = False
@@ -147,40 +148,48 @@ def start (n_line, line, token):
                         print(f'delimitador {line[i_curr]}')
                         write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)
                         clear_token(token)
+                        nao_duplo = True 
                 else: pass
                 if double == False:
-                    if i_curr < line_len - 1:  
-                        if isSep(line[i_curr+1]):
-                            if isPre(token["ac"]):
-                                write_token(n_line,token["ac"],'PRE',errors_tokens)
-                                clear_token(token)
-                            else:
-                                write_token(n_line,token["ac"],'IDE',errors_tokens)
-                                clear_token(token)
-                            token_class = isNextSymbolDouble(line[i_curr],line[i_curr+1])
-                            if token_class:
-                                token["ac"] = f'{line[i_curr]}{line[i_curr+1]}'
-                                write_token(n_line,token["ac"],token_class,errors_tokens)
-                                clear_token(token)
-                                double = True
-                            else:
-                                if (f'{line[i_curr]}{line[i_curr+1]}' == "//"):
-                                    # estado de comentario de linha pulando 1 iteracao
-                                    double=True
-                                    token['ac'] = ''
-                                    token["state"] = 9
-                                elif (f'{line[i_curr]}{line[i_curr+1]}' == "/*"):
-                                    # estado de comentario de bloco pulando 1 iteracao
-                                    token["ac"] = ''
-                                    token["state"] = 10
+                    if nao_duplo == False:
+                        if i_curr < line_len - 1:  
+                            if isSep(line[i_curr+1]):
+                                if isPre(token["ac"]):
+                                    write_token(n_line,token["ac"],'PRE',errors_tokens)
+                                    clear_token(token)
                                 else:
-                                    # nao é duplo, porem e aritmetico ou relacional, portanto:
-                                    token_class = currentSymbolClass(line[i_curr])
-                                    if token_class: 
-                                        token['ac'] += line[i_curr]
-                                        write_token(n_line,token["ac"],token_class,errors_tokens)
-                                        clear_token(token)
-                    else: continue # caso delimitador simples TODO confirmar dps se é mesmo
+                                    write_token(n_line,token["ac"],'IDE',errors_tokens)
+                                    clear_token(token)
+                                token_class = isNextSymbolDouble(line[i_curr],line[i_curr+1])
+                                if token_class:
+                                    token["ac"] = f'{line[i_curr]}{line[i_curr+1]}'
+                                    write_token(n_line,token["ac"],token_class,errors_tokens)
+                                    clear_token(token)
+                                    double = True
+                                else:
+                                    if (f'{line[i_curr]}{line[i_curr+1]}' == "//"):
+                                        print("entrou primeiro if")
+                                        # estado de comentario de linha pulando 1 iteracao
+                                        double=True
+                                        token['ac'] = ''
+                                        token["state"] = 9
+                                    elif (f'{line[i_curr]}{line[i_curr+1]}' == "/*"):
+                                        print("entrou aq")
+                                        # estado de comentario de bloco pulando 1 iteracao
+                                        token["ac"] = ''
+                                        token["state"] = 10
+                                    else:
+                                        # nao é duplo, porem e aritmetico ou relacional, portanto:
+                                        token_class = currentSymbolClass(line[i_curr])
+                                        if token_class: 
+                                            token['ac'] += line[i_curr]
+                                            write_token(n_line,token["ac"],token_class,errors_tokens)
+                                            clear_token(token)
+                        else: 
+                            print("else")
+                            continue # caso delimitador simples TODO confirmar dps se é mesmo
+                    else:
+                        nao_duplo = False
             elif token['state'] == 3: #recebeu um numero 
                 if isDigit(line[i_curr]):
                     token['ac'] += line[i_curr]
