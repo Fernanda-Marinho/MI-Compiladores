@@ -149,7 +149,6 @@ def start (n_line, line, token):
                             clear_token(token)
                     elif currentSymbolClass(line[i_curr]): # vai pegar ART REL LOG DEL que nao sao possiveis duplos
                         token['ac'] += line[i_curr]
-                        print(f'delimitador {line[i_curr]}')
                         write_token(n_line,token["ac"],currentSymbolClass(line[i_curr]),errors_tokens)
                         clear_token(token)
                         nao_duplo = True 
@@ -172,13 +171,11 @@ def start (n_line, line, token):
                                     double = True
                                 else:
                                     if (f'{line[i_curr]}{line[i_curr+1]}' == "//"):
-                                        print("entrou primeiro if")
                                         # estado de comentario de linha pulando 1 iteracao
                                         double=True
                                         token['ac'] = ''
                                         token["state"] = 9
                                     elif (f'{line[i_curr]}{line[i_curr+1]}' == "/*"):
-                                        print("entrou aq")
                                         # estado de comentario de bloco pulando 1 iteracao
                                         token["ac"] = ''
                                         token["state"] = 10
@@ -190,7 +187,6 @@ def start (n_line, line, token):
                                             write_token(n_line,token["ac"],token_class,errors_tokens)
                                             clear_token(token)
                         else: 
-                            print("else")
                             continue # caso delimitador simples TODO confirmar dps se é mesmo
                     else:
                         nao_duplo = False
@@ -347,11 +343,11 @@ def start (n_line, line, token):
                     continue
                 else: 
                     token['state'] = 0
-            elif token["state"] == 10:  
+            elif token["state"] == 10: 
                 comment_line(n_line, token["ac"])
                 had_comment = 2 
                 if i_curr < line_len - 1:
-                    if line[i_curr+1] == "*" and line[i_curr+2] == "/":
+                    if line[i_curr] == "*" and line[i_curr+1] == "/":
                         right_comment = 2 # significa que o comentario foi certo 
                         double=True
                         clear_token(token)
@@ -422,6 +418,7 @@ t = {
 had_comment = 1 #1 significa que nao teve comentario e 2 significa que teve 
 right_comment = 1 
 
+#current = f'{os.getcwd()}/testes'
 current = f'{os.getcwd()}/codigos teste lexico 2023.2'
 for file_path in (os.listdir(current)):
 
