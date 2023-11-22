@@ -9,7 +9,7 @@ def start (n_line, line, token):
     double = False
     nao_duplo = False 
     for i_curr in range(line_len):
-        print(f"letra - {line[i_curr]}")
+        #print(f"letra - {line[i_curr]}")
         if double == True:
             double = False
             continue
@@ -224,7 +224,7 @@ def start (n_line, line, token):
             elif token['state'] == 4:       # NRO com 1 ponto
                 if isDigit(line[i_curr]):
                     token['ac'] += line[i_curr]
-                elif line[i_curr] == "." or isLetter(line[i_curr]) or not isInRange(line[i_curr]): # segundo ponto ou letra (NMF)
+                elif line[i_curr] == "." or isLetter(line[i_curr]) or not isInRange(line[i_curr]) or isMfr(line[i_curr]): # segundo ponto ou letra (NMF)
                     token['ac'] += line[i_curr]
                     token['state'] = 5
                 elif isEsp(line[i_curr]):   # Separador espaço

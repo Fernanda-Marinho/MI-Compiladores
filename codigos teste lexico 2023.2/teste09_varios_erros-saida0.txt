@@ -1,8 +1,8 @@
 3 PRE real
-3 NRO 33.33
 3 DEL ;
 5 PRE string
 Erros:
+3 NMF 33.#33
 5 IMF menÇagem
 7 NMF 123#.45
 10 CMF "erro na cadeia. falta fecha aspas  
