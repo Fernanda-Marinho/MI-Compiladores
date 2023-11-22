@@ -1,2 +1,6 @@
-real b;
-/* oi */ 1.2
+// teste 05 - token mal formado
+
+@
+a > b ?	
+print $ 
+_x

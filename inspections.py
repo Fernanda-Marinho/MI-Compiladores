@@ -7,6 +7,7 @@ REL = ["!=", "==", "<", "<=", ">", ">=", "="]
 LOG = ["!", "&&", "||"]
 DEL = [";", ",", ".", "(", ")", "[", "]", "{", "}", "->"]
 ESP = [" ", "\t","\n"]
+MFR = ["@","#","%","_"]
 SEP = ART+REL+LOG+DEL+['"']
 POSSIBLE_LOG = ["&", "|"]
 POSSIBLE_REL = ["!", "<", ">", "="]
@@ -24,6 +25,9 @@ def isSep(char):
 
 def isEsp(char):
     return (char in ESP)
+
+def isMfr(char):
+    return (char in MFR)
 
 def isSepNotEsp(char):
     return (char in SEP)

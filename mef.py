@@ -9,6 +9,7 @@ def start (n_line, line, token):
     double = False
     nao_duplo = False 
     for i_curr in range(line_len):
+        print(f"letra - {line[i_curr]}")
         if double == True:
             double = False
             continue
@@ -24,6 +25,9 @@ def start (n_line, line, token):
                     token["ac"]+=line[i_curr]
                     write_token(n_line,token["ac"],'DEL',errors_tokens)
                     clear_token(token)
+                elif isMfr(line[i_curr]):
+                    token["ac"]+=line[i_curr]
+                    token["state"] = 11
                 elif line[i_curr] == "+":
                     if i_curr < line_len - 1:
                         if line[i_curr+1] == "+":
@@ -38,7 +42,7 @@ def start (n_line, line, token):
                     else:
                         token["ac"] += line[i_curr]
                         write_token(n_line,token["ac"],'ART',errors_tokens)
-                        clear_token(token)    
+                        clear_token(token)  
                 elif line[i_curr] == "/":
                     if i_curr < line_len - 1:
                         if line[i_curr+1] == "/":
@@ -353,7 +357,13 @@ def start (n_line, line, token):
                         clear_token(token)
                     else:
                         right_comment = 1
-                        token['ac'] += line[i_curr]     
+                        token['ac'] += line[i_curr] 
+            elif token["state"] == 11:
+                if not isSep(line[i_curr]):
+                    token["ac"] += line[i_curr] 
+                else:
+                    write_token(n_line, token['ac'], "TMF",errors_tokens)
+                    clear_token(token)
 
                 
                 
