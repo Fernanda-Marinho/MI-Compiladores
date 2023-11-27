@@ -418,41 +418,48 @@ t = {
 had_comment = 1 #1 significa que nao teve comentario e 2 significa que teve 
 right_comment = 1 
 
-#current = f'{os.getcwd()}/testes'
-current = f'{os.getcwd()}/codigos teste lexico 2023.2'
-for file_path in (os.listdir(current)):
+def analisar_lexico():
+    global had_comment
+    global right_comment
+    global tokens
+    global errors_tokens
+    global t
 
-    if ((file_path.endswith('-saida.txt') or file_path.endswith('-saida0.txt')) or not file_path.endswith(".txt")): 
-        continue
-    file = open(f'{current}/{file_path}', 'r')
-    newfile = open(f'{current}/{os.path.splitext(os.path.basename(file.name))[0]}-saida0.txt', 'w')
-    for index, line in enumerate(file.readlines(), start=1):
-        if (line[-1] == '\u000a'):  # quebra de linha unicode
-            line = " ".join([line[:-1], line[-1]])
+    # current = f'{os.getcwd()}/testes'
+    current = f'{os.getcwd()}/testes'
+    for file_path in (os.listdir(current)):
+
+        if ((file_path.endswith('-saida.txt') or file_path.endswith('-saida0.txt')) or not file_path.endswith(".txt")): 
+            continue
+        file = open(f'{current}/{file_path}', 'r')
+        newfile = open(f'{current}/{os.path.splitext(os.path.basename(file.name))[0]}-saida0.txt', 'w')
+        for index, line in enumerate(file.readlines(), start=1):
+            if (line[-1] == '\u000a'):  # quebra de linha unicode
+                line = " ".join([line[:-1], line[-1]])
+            else:
+                line = " ".join([line, '\n'])
+            start(index, (line),t)
+        # escrever string em newfile
+        if had_comment == 2:
+            if right_comment == 2: pass
+            else:
+                write_token(line_comment,ac_comment,'CoMF',errors_tokens)
+
+        had_comment = 1 #1 significa que nao teve comentario e 2 significa que teve 
+        right_comment = 1 
+
+        t = {
+            'ac': '',
+            'state': 0
+        }
+
+        tks = makeString(tokens)
+        errs = makeString(errors_tokens)
+        if (len(errs) > 0):
+            newfile.write(f'{tks}\n{errs}')
         else:
-            line = " ".join([line, '\n'])
-        start(index, (line),t)
-    # escrever string em newfile
-    if had_comment == 2:
-        if right_comment == 2: pass
-        else:
-            write_token(line_comment,ac_comment,'CoMF',errors_tokens)
-
-    had_comment = 1 #1 significa que nao teve comentario e 2 significa que teve 
-    right_comment = 1 
-
-    t = {
-        'ac': '',
-        'state': 0
-    }
-
-    tks = makeString(tokens)
-    errs = makeString(errors_tokens)
-    if (len(errs) > 0):
-        newfile.write(f'{tks}Erros:\n{errs}')
-    else:
-        newfile.write(f'{tks}A análise foi um sucesso =)')
-    tokens = []
-    errors_tokens = []
-    file.close()
-    newfile.close()
+            newfile.write(f'{tks}')
+        tokens = []
+        errors_tokens = []
+        file.close()
+        newfile.close()

@@ -1,9 +1,0 @@
-1 PRE const 
-1 DEL { 
-1 PRE int 
-1 IDE a 
-1 DEL ; 
-1 DEL } 
-2 PRE variables 
-2 DEL { 
-2 DEL } 
