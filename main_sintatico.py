@@ -10,6 +10,7 @@ directory = f'{os.getcwd()}/testes'
 ############ função para gerar lista de tokens a partir do arquivo
 def get_token_collection():
     for file_path in (os.listdir(directory)):
+        print(file_path)
         if ((not (file_path.endswith('-saida.txt') or file_path.endswith('-saida0.txt'))) or not file_path.endswith(".txt")): 
             continue
         token_collection = []
@@ -18,7 +19,7 @@ def get_token_collection():
             for line in lines:
                 line = line.strip()
                 line = line.split(' ')
-                if (len(line) < 2): break
+                if (len(line) < 3 or line[2].startswith('//')): continue
                 token = dict(
                     n_line = line[0],
                     token_class = line[1],
@@ -27,7 +28,7 @@ def get_token_collection():
                 token_collection.append(token)
     return token_collection
 
-# print(get_token_collection())
+print(get_token_collection())
 
 # TODO chamada do analisador sintatico
 # sintatico.analisar_sintatico(get_token_collection)
