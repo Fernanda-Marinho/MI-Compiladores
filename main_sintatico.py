@@ -9,6 +9,7 @@ analisar_lexico()
 directory = f'{os.getcwd()}/testes'
 ############ função para gerar lista de tokens a partir do arquivo
 def get_token_collection():
+    list = []
     for file_path in (os.listdir(directory)):
         print(file_path)
         if ((not (file_path.endswith('-saida.txt') or file_path.endswith('-saida0.txt'))) or not file_path.endswith(".txt")): 
@@ -26,6 +27,7 @@ def get_token_collection():
                     token_text = line[2]
                 )
                 token_collection.append(token)
+                list.append(token_collection)
     return token_collection
 
 print(get_token_collection())
