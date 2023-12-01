@@ -8,21 +8,25 @@ class AnaliseSintatica():
         self.errors = []
 
     def start(self):
+        # self.const_block()
         self.variables_block()
+        # self.class_block()
+        print(self.errors)
 
     def next_token(self):
-        try:
-            if self.index < len(self.tokens): self.index+=1
-            else:
-                raise Exception()
-        except Exception as eof:
-            message = f'{eof.args}, {self.current_token_text()} in line {self.current_token_line()}'
-            self.errors.append(message)
-        
+        print(self.current_token())
+        self.index +=1
+        # try:
+        #     if self.index < len(self.tokens): self.index+=1
+        #     else:
+        #         raise Exception()
+        # except Exception as eof:
+        #     message = f'{eof.args}, {self.current_token_text()} in line {self.current_token_line()}'
+        #     self.errors.append(message)
 
     def current_token(self):
-        return self.tokens[self.index] #if self.index < len(self.tokens) else {}
-
+        return self.tokens[self.index] if self.index < len(self.tokens) else dict(n_line = '',token_class = '',token_text = '')
+                                                                                  
     def current_token_line(self):
         return self.current_token()['n_line']
 
@@ -32,11 +36,13 @@ class AnaliseSintatica():
     def current_token_text(self):
         return self.current_token()['token_text']
     
+    def last_token(self):
+        pass
+
     def write_error(self, e: SyntaxError):
-        message = f'{e.args}, {self.current_token_text()} in line {self.current_token_line()}'
+        message = f'{e.msg}, {self.current_token_text()} in line {self.current_token_line()}'
         self.errors.append(message)
-        self.next_token()
-        # sincronizar/tratamento de erros (pular token)
+        # sincronizar/tratamento de erros
 
     # Bloco <TYPE>
     def match_TYPE(self):
@@ -51,7 +57,7 @@ class AnaliseSintatica():
                 self.next_token()
                 if self.current_token_text() == '{':
                     self.next_token()
-                    self.variable() #TODO variables
+                    self.variable()
                     if self.current_token_text() == '}':
                         self.next_token()
                     else:
@@ -60,6 +66,18 @@ class AnaliseSintatica():
                     raise SyntaxError ('Expected "{"')
         except SyntaxError as e:
             self.write_error(e)
+
+    # <VARIABLE>
+    def variable(self):
+        try:
+            if self.match_TYPE():
+                self.next_token()
+                self.dec_variable() #
+                self.multi_variables_line()  #
+            else:
+                raise SyntaxError('Expected <TYPE>')
+        except SyntaxError as e:
+            self.write_error(e=e)
     
     # Bloco <DEC_VAR>   declaracao de variavel
     def dec_variable(self):
@@ -73,6 +91,7 @@ class AnaliseSintatica():
             self.write_error(e)
 
     def dimensions(self):
+        print('rodou dimensions')
         try:
             if self.current_token() == '[':
                 self.next_token()
@@ -82,8 +101,6 @@ class AnaliseSintatica():
                     self.dimensions()   # r a direita
                 else:
                     raise SyntaxError('Expected "]"')
-            else:   # se a declaração não for com dimensões (variavel)
-                return True
         except SyntaxError as e:
             self.write_error(e)
 
@@ -98,9 +115,9 @@ class AnaliseSintatica():
 
     def multi_variables_line(self):
         try:
-            if self.current_token() == ';':
-                return True
-            elif self.current_token() == ',':
+            if self.current_token_text() == ';':
+                self.next_token()
+            elif self.current_token_text() == ',':
                 self.next_token()
                 self.dec_variable()
                 self.multi_variables_line()
@@ -109,20 +126,6 @@ class AnaliseSintatica():
         except SyntaxError as e:
             self.write_error(e=e)
 
-
-    # <VARIABLE>
-    def variable(self):
-        try:
-            if self.match_TYPE():
-                self.next_token()
-                if self.dec_variable():
-                    self.next_token()
-                    self.multi_variables_line()
-            else:
-                raise SyntaxError('Expected <TYPE>')
-        except SyntaxError as e:
-            self.write_error(e=e)
-    
 
     #bloco de objetos 
     def objects_block(self):
