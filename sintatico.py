@@ -487,4 +487,82 @@ class AnaliseSintatica():
                 raise SyntaxError('Expected <DEC_OBJECT_ATTRIBUTE_ACCESS>, <CAC>, or <NRO>')
         except SyntaxError as e:
             self.write_error(e)
+    
+    #atributos e metodos de objetos 
+    def multiple_object_atribute_access(self):
+        try:
+            self.dec_variable()
+            self.end_object_attribute_access()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def end_object_attribute_access(self):
+        try:
+            if self.current_token_text == '.':
+                self.next_token()
+                self.multiple_object_atribute_access()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def object_method_or_object_access(self):
+        try:
+            self.object_method_or_object_access_or_part()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def optional_object_method_access(self):
+        try:
+            self.object_method_access_end()
+        except SyntaxError as e:
+            self.write(e)
+    
+    def ide_or_constructor(self):
+        try:
+            if self.current_token_text == 'constructor' or self.current_token_class == 'IDE':
+                self.next_token()
+            else:
+                raise SyntaxError('Expected "constructor" or <IDE>')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def object_method_access_end(self):
+            try:
+                if self.current_token_text == '->':
+                    self.next_token()
+                    self.ide_or_constructor()
+                    if self.current_token_text == '(':
+                        self.next_token()
+                        self.parameters()
+                        if self.current_token_text == ')':
+                            self.next_token()
+                        else:
+                            raise SyntaxError('Expected ")"')
+                    else:
+                        raise SyntaxError('Expected "("')
+                else:
+                    raise SyntaxError('Expected "->"')
+            except SyntaxError as e:
+                self.write_error(e)
+    
+    #operadores relacionais 
+    def relational_expression(self):
+        try:
+            self.relational_expression_value()
+            if self.current_token_class == 'REL':
+                self.next_token()
+                self.relational_expression_value()
+            else:
+                raise SyntaxError('Expected "<REL>"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def relational_expression_value(self):
+        try:
+            if self.current_token_class == 'NRO' or self.current_token_class == 'CAC':
+                self.next_token()
+            else:
+                self.object_method_or_object_access()
+        except SyntaxError as e:
+            self.write_error(e)
+
 
