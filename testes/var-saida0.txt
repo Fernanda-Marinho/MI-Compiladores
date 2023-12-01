@@ -1,0 +1,5 @@
+1 PRE variables
+1 DEL {
+2 PRE int
+2 IDE a
+2 DEL ;

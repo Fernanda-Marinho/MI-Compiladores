@@ -1,5 +1,6 @@
 import os
 from mef import analisar_lexico
+from sintatico import AnaliseSintatica
 
 # executar analise lexica
 analisar_lexico()
@@ -11,7 +12,6 @@ directory = f'{os.getcwd()}/testes'
 def get_token_collection():
     list = []
     for file_path in (os.listdir(directory)):
-        print(file_path)
         if ((not (file_path.endswith('-saida.txt') or file_path.endswith('-saida0.txt'))) or not file_path.endswith(".txt")): 
             continue
         token_collection = []
@@ -28,9 +28,11 @@ def get_token_collection():
                 )
                 token_collection.append(token)
                 list.append(token_collection)
-    return token_collection
+    return list
 
-print(get_token_collection())
+# print(get_token_collection())
 
 # TODO chamada do analisador sintatico
+sintatico = AnaliseSintatica(get_token_collection()[0])
+sintatico.start()
 # sintatico.analisar_sintatico(get_token_collection)
