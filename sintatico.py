@@ -122,4 +122,115 @@ class AnaliseSintatica():
                 raise SyntaxError('Expected <TYPE>')
         except SyntaxError as e:
             self.write_error(e=e)
-                    
+    
+
+    #bloco de objetos 
+    def objects_block(self):
+        try:
+            if self.current_token_text() == 'objects':
+                self.next_token()
+                if self.current_token_text == '{':
+                    self.next_token()
+                    self.objects()
+                    if self.current_token_text() == '}':
+                        self.next_token()
+                    else:
+                        raise SyntaxError('Expected "}"')
+                else:
+                    raise SyntaxError('Expected "{"')
+        except SyntaxError as e:
+            self.write_error(e)    
+    
+
+    def objects(self): #duvida nesse 
+        try:
+            if self.current_token_class() == 'IDE':
+                self.object()
+                self.multiple_objects()
+            elif self.current_token_text == '}':
+                return 
+            else:
+                raise SyntaxError('Expected <IDE> or "}"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def object(self):
+        try:
+            if self.current_token_class == 'IDE':
+                self.next_token()
+                self.dec_variable()
+                self.multiple_objects()
+            else:
+                raise SyntaxError('Expected <IDE>')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def multiple_objects(self):
+        try:
+            if self.current_token_text() == ';':
+                self.next_token()
+            elif self.current_token_text() == ',':
+                self.next_token()
+                self.dec_variable()
+                self.multiple_objects()
+            else:
+                raise SyntaxError('Expected ";" or ","')
+        except SyntaxError as e:
+            self.write_error(e)
+
+# main
+
+    def main_methods(self):
+        try:
+            if self.current_token_text() == 'methods':
+                self.next_token()
+                if self.current_token_text() == '{':
+                    self.next_token()
+                    self.main_methods_body()
+                    if self.current_token_text() == '}':
+                        self.next_token()
+                    else:
+                        raise SyntaxError('Expected "}"')
+                else:
+                    raise SyntaxError('Expected "{"')
+            else:
+                raise SyntaxError('Expected "methods"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def main_methods_body(self):
+        try:
+            self.main_type()
+            if self.current_token_text() == 'main':
+                self.next_token()
+                if self.current_token_text() == '(':
+                    self.next_token()
+                    if self.current_token_text() == ')':
+                        self.next_token()
+                        if self.current_token_text() == '{':
+                            self.next_token()
+                            self.method_body()
+                            self.methods()  
+                            if self.current_token_text() == '}':
+                                self.next_token()
+                            else:
+                                raise SyntaxError('Expected "}"')
+                        else:
+                            raise SyntaxError('Expected "{"')
+                    else:
+                        raise SyntaxError('Expected ")"')
+                else:
+                    raise SyntaxError('Expected "("')
+            else:
+                raise SyntaxError('Expected "main"')
+        except SyntaxError as e:
+            self.write_error(e)
+
+    def main_type(self):
+        try:
+            if self.current_token_text() == 'void':
+                self.next_token()
+            else:
+                self.type()
+        except SyntaxError as e:
+            self.write_error(e)
