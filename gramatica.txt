@@ -47,9 +47,6 @@ LOG = '&&' | '||'
 <SIZE_DIMENSION> ::= IDE 
                     | <NRO>
         
-! Atualizado em 14/09/2023 às 20:59               
-<DEC_VAR> ::= IDE <DIMENSIONS>
-    
 ! Atualizado em 16/09/2023 às 21:50
 <PARAMETERS> ::= <VALUE> <MULT_PARAMETERS> 
                 |
@@ -87,7 +84,13 @@ LOG = '&&' | '||'
             
 <MULTIPLE_VARIABLES_LINE> ::=  ';' 
                             | ',' <DEC_VAR> <MULTIPLE_VARIABLES_LINE>
-                            
+
+! Atualizado em 14/09/2023 às 20:59               
+<DEC_VAR> ::= IDE <DIMENSIONS>
+
+! Atualizado em 14/09/2023 às 20:52
+<DIMENSIONS> ::= '[' <SIZE_DIMENSION> ']' <DIMENSIONS>
+
 ! -----------------------------------------------------
 ! Bloco de objetos - Atualizado em 14/09/2023 às 20:59
 <OBJECTS_BLOCK> ::= 'objects' '{' <OBJECTS>
