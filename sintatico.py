@@ -237,3 +237,335 @@ class AnaliseSintatica():
                 self.type()
         except SyntaxError as e:
             self.write_error(e)
+    
+    #bloco classe
+
+    def class_block(self):
+        try:
+            if self.current_token_text == 'class':
+                self.next_token()
+                self.ide_class 
+            else:
+                raise SyntaxError('Expected "class"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def ide_class(self):
+        try:
+            if self.current_token_class() == 'IDE':
+                self.next_token()
+                self.extends()
+            else:
+                raise SyntaxError('Expected <IDE>')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def extends(self):
+        try:
+            if self.current_token_text == 'extends':
+                self.next_token()
+                if self.current_token_class == 'IDE':
+                    self.next_token()
+                    self.start_class_block()
+                else:
+                    raise SyntaxError('Expected IDE')
+            else:
+                self.start_class_block()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+
+    def start_class_block(self):
+        try:
+            if self.current_token_text == '{':
+                self.next_token()
+                self.init_class()
+            else:
+                raise SyntaxError('Expected "{')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def init_class(self):
+        try:
+            self.body_blocks()
+            self.methods_block()
+            self.constructor()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+
+    def constructor(self):
+        try:
+            if self.current_token_text == 'constructor':
+                self.next_token()
+                if self.current_token_text == '(':
+                    self.next_token()
+                    self.dec_parameters_constructor()
+                    if self.current_token_text == ')':
+                        self.next_token()
+                        if self.current_token_text == '{':
+                            self.next_token()
+                            self.variables_block()
+                            self.objects_block()
+                            self.commands()
+                            if self.current_token_text == '}':
+                                self.next_token()
+                                self.end_class()
+                            else:
+                                raise SyntaxError('Expected "}"')
+                        else:
+                            raise SyntaxError('Expected "{"')
+                    else:
+                        raise SyntaxError('Expected ")"')
+                else:
+                    raise SyntaxError('Expected "("')
+            else:
+                self.end_class()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def end_class(self):
+        try:
+            if self.current_token_text == '}':
+                self.next_token()
+                self.class_block()
+            else:
+                raise SyntaxError('Expected "}"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def main(self):
+        try:
+            if self.current_token_text == 'main':
+                self.next_token()
+                if self.current_token_text == '{':
+                    self.next_token()
+                    self.init_main()
+                else:
+                    raise SyntaxError('Expected "{"')
+            else:
+                raise SyntaxError('Expected "main"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+
+    def init_main(self):
+        try:
+            self.body_blocks()
+            self.main_methods()
+            if self.current_token_text == '}':
+                self.next_token()
+            else:
+                raise SyntaxError('Expected "}"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def body_blocks(self):
+        try:
+            self.variables_block()
+            self.objects_block()
+        except SyntaxError as e:
+            self.write_error(e)
+
+
+    # bloco if-else
+    def IF(self):
+        try:
+            if self.current_token_text == 'if':
+                self.next_token()
+                if self.current_token_text ==  '(':
+                    self.next_token()
+                    self.condition()
+                    if self.current_token_text == ')':
+                        self.next_token()
+                        if self.current_token_text == 'then':
+                            self.next_token()
+                            if self.current_token_text == '{':
+                                self.next_token()
+                                self.commands()
+                                if self.current_token_text == '}':
+                                    self.next_token()
+                                    self.if_else()
+                                else:
+                                    raise SyntaxError('Expected "}"')
+                            else:
+                                raise SyntaxError('Expected "{"')
+                        else:
+                            raise SyntaxError('Expected "then"')
+                    else:
+                        raise SyntaxError('Expected ")"')
+                else:
+                    raise SyntaxError('Expected "("')
+            else:
+                raise SyntaxError('Expected "if"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def if_else(self):
+        try:
+            if self.current_token_text == 'else':
+                self.next_token()
+                if self.current_token_text == '{':
+                    self.next_token()
+                    self.commands()
+                    if self.current_token_text == '}':
+                        self.next_token()
+                    else:
+                        raise SyntaxError('Expected "}"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def condition(self):
+        try:
+            self.logical_expression()
+        except SyntaxError as e:
+            self.write_error(e)
+            
+    #print + read
+
+    def print_begin(self):
+        try:
+            if self.current_token_text == 'print':
+                self.next_token()
+                if self.current_token_text == '(':
+                    self.next_token()
+                    self.print_end()
+                else:
+                    raise SyntaxError('Expected "("')
+            else:
+                raise SyntaxError('Expected "print"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def print_end(self):
+        try:
+            self.print_parameter()
+            if self.current_token_text == ')':
+                self.next_token()
+                if self.current_token_text == ';':
+                    self.next_token()
+                else:
+                    raise SyntaxError('Expected ";"')
+            else:
+                raise SyntaxError('Expected ")"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def read_begin(self):
+        try:
+            if self.current_token_text == 'read':
+                self.next_token()
+                if self.current_token_text == '(':
+                    self.next_token()
+                    self.read_end()
+                else:
+                    raise SyntaxError('Expected "("')
+            else:
+                raise SyntaxError('Expected "read"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def read_end(self):
+        try:
+            self.dec_object_atribute_access()
+            if self.current_token_text == ')':
+                self.next_token()
+                if self.current_token_text == ';':
+                    self.next_token()
+                else:
+                    raise SyntaxError('Expected ";"')
+            else:
+                raise SyntaxError('Expected ")"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+
+    def print_parameter(self):
+        try:
+            if self.current_token_class == 'IDE':
+                self.dec_object_atribute_access()
+            elif self.current_token_class == 'CAC' or self.current_token_class == 'NRO':
+                self.next_token()
+            else:
+                raise SyntaxError('Expected <DEC_OBJECT_ATTRIBUTE_ACCESS>, <CAC>, or <NRO>')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    #atributos e metodos de objetos 
+    def multiple_object_atribute_access(self):
+        try:
+            self.dec_variable()
+            self.end_object_attribute_access()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def end_object_attribute_access(self):
+        try:
+            if self.current_token_text == '.':
+                self.next_token()
+                self.multiple_object_atribute_access()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def object_method_or_object_access(self):
+        try:
+            self.object_method_or_object_access_or_part()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def optional_object_method_access(self):
+        try:
+            self.object_method_access_end()
+        except SyntaxError as e:
+            self.write(e)
+    
+    def ide_or_constructor(self):
+        try:
+            if self.current_token_text == 'constructor' or self.current_token_class == 'IDE':
+                self.next_token()
+            else:
+                raise SyntaxError('Expected "constructor" or <IDE>')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def object_method_access_end(self):
+            try:
+                if self.current_token_text == '->':
+                    self.next_token()
+                    self.ide_or_constructor()
+                    if self.current_token_text == '(':
+                        self.next_token()
+                        self.parameters()
+                        if self.current_token_text == ')':
+                            self.next_token()
+                        else:
+                            raise SyntaxError('Expected ")"')
+                    else:
+                        raise SyntaxError('Expected "("')
+                else:
+                    raise SyntaxError('Expected "->"')
+            except SyntaxError as e:
+                self.write_error(e)
+    
+    #operadores relacionais 
+    def relational_expression(self):
+        try:
+            self.relational_expression_value()
+            if self.current_token_class == 'REL':
+                self.next_token()
+                self.relational_expression_value()
+            else:
+                raise SyntaxError('Expected "<REL>"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def relational_expression_value(self):
+        try:
+            if self.current_token_class == 'NRO' or self.current_token_class == 'CAC':
+                self.next_token()
+            else:
+                self.object_method_or_object_access()
+        except SyntaxError as e:
+            self.write_error(e)
+
+
