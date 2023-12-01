@@ -147,7 +147,7 @@ class AnaliseSintatica():
             if self.current_token_class() == 'IDE':
                 self.object()
                 self.multiple_objects()
-            elif self.current_token_text == '}':
+            elif self.current_token_text() == '}':
                 return 
             else:
                 raise SyntaxError('Expected <IDE> or "}"')
@@ -156,7 +156,7 @@ class AnaliseSintatica():
     
     def object(self):
         try:
-            if self.current_token_class == 'IDE':
+            if self.current_token_class() == 'IDE':
                 self.next_token()
                 self.dec_variable()
                 self.multiple_objects()
@@ -239,7 +239,7 @@ class AnaliseSintatica():
 
     def class_block(self):
         try:
-            if self.current_token_text == 'class':
+            if self.current_token_text() == 'class':
                 self.next_token()
                 self.ide_class 
             else:
@@ -259,9 +259,9 @@ class AnaliseSintatica():
     
     def extends(self):
         try:
-            if self.current_token_text == 'extends':
+            if self.current_token_text() == 'extends':
                 self.next_token()
-                if self.current_token_class == 'IDE':
+                if self.current_token_class() == 'IDE':
                     self.next_token()
                     self.start_class_block()
                 else:
@@ -274,7 +274,7 @@ class AnaliseSintatica():
 
     def start_class_block(self):
         try:
-            if self.current_token_text == '{':
+            if self.current_token_text() == '{':
                 self.next_token()
                 self.init_class()
             else:
@@ -293,19 +293,19 @@ class AnaliseSintatica():
 
     def constructor(self):
         try:
-            if self.current_token_text == 'constructor':
+            if self.current_token_text() == 'constructor':
                 self.next_token()
-                if self.current_token_text == '(':
+                if self.current_token_text() == '(':
                     self.next_token()
                     self.dec_parameters_constructor()
-                    if self.current_token_text == ')':
+                    if self.current_token_text() == ')':
                         self.next_token()
-                        if self.current_token_text == '{':
+                        if self.current_token_text() == '{':
                             self.next_token()
                             self.variables_block()
                             self.objects_block()
                             self.commands()
-                            if self.current_token_text == '}':
+                            if self.current_token_text() == '}':
                                 self.next_token()
                                 self.end_class()
                             else:
@@ -323,7 +323,7 @@ class AnaliseSintatica():
     
     def end_class(self):
         try:
-            if self.current_token_text == '}':
+            if self.current_token_text() == '}':
                 self.next_token()
                 self.class_block()
             else:
@@ -333,9 +333,9 @@ class AnaliseSintatica():
     
     def main(self):
         try:
-            if self.current_token_text == 'main':
+            if self.current_token_text() == 'main':
                 self.next_token()
-                if self.current_token_text == '{':
+                if self.current_token_text() == '{':
                     self.next_token()
                     self.init_main()
                 else:
@@ -350,7 +350,7 @@ class AnaliseSintatica():
         try:
             self.body_blocks()
             self.main_methods()
-            if self.current_token_text == '}':
+            if self.current_token_text() == '}':
                 self.next_token()
             else:
                 raise SyntaxError('Expected "}"')
@@ -368,19 +368,19 @@ class AnaliseSintatica():
     # bloco if-else
     def IF(self):
         try:
-            if self.current_token_text == 'if':
+            if self.current_token_text() == 'if':
                 self.next_token()
-                if self.current_token_text ==  '(':
+                if self.current_token_text() ==  '(':
                     self.next_token()
                     self.condition()
-                    if self.current_token_text == ')':
+                    if self.current_token_text() == ')':
                         self.next_token()
-                        if self.current_token_text == 'then':
+                        if self.current_token_text() == 'then':
                             self.next_token()
-                            if self.current_token_text == '{':
+                            if self.current_token_text() == '{':
                                 self.next_token()
                                 self.commands()
-                                if self.current_token_text == '}':
+                                if self.current_token_text() == '}':
                                     self.next_token()
                                     self.if_else()
                                 else:
@@ -400,12 +400,12 @@ class AnaliseSintatica():
     
     def if_else(self):
         try:
-            if self.current_token_text == 'else':
+            if self.current_token_text() == 'else':
                 self.next_token()
-                if self.current_token_text == '{':
+                if self.current_token_text() == '{':
                     self.next_token()
                     self.commands()
-                    if self.current_token_text == '}':
+                    if self.current_token_text() == '}':
                         self.next_token()
                     else:
                         raise SyntaxError('Expected "}"')
@@ -422,9 +422,9 @@ class AnaliseSintatica():
 
     def print_begin(self):
         try:
-            if self.current_token_text == 'print':
+            if self.current_token_text() == 'print':
                 self.next_token()
-                if self.current_token_text == '(':
+                if self.current_token_text() == '(':
                     self.next_token()
                     self.print_end()
                 else:
@@ -437,9 +437,9 @@ class AnaliseSintatica():
     def print_end(self):
         try:
             self.print_parameter()
-            if self.current_token_text == ')':
+            if self.current_token_text() == ')':
                 self.next_token()
-                if self.current_token_text == ';':
+                if self.current_token_text() == ';':
                     self.next_token()
                 else:
                     raise SyntaxError('Expected ";"')
@@ -450,9 +450,9 @@ class AnaliseSintatica():
     
     def read_begin(self):
         try:
-            if self.current_token_text == 'read':
+            if self.current_token_text() == 'read':
                 self.next_token()
-                if self.current_token_text == '(':
+                if self.current_token_text() == '(':
                     self.next_token()
                     self.read_end()
                 else:
@@ -465,9 +465,9 @@ class AnaliseSintatica():
     def read_end(self):
         try:
             self.dec_object_atribute_access()
-            if self.current_token_text == ')':
+            if self.current_token_text() == ')':
                 self.next_token()
-                if self.current_token_text == ';':
+                if self.current_token_text() == ';':
                     self.next_token()
                 else:
                     raise SyntaxError('Expected ";"')
@@ -479,9 +479,9 @@ class AnaliseSintatica():
 
     def print_parameter(self):
         try:
-            if self.current_token_class == 'IDE':
+            if self.current_token_class() == 'IDE':
                 self.dec_object_atribute_access()
-            elif self.current_token_class == 'CAC' or self.current_token_class == 'NRO':
+            elif self.current_token_class() == 'CAC' or self.current_token_class() == 'NRO':
                 self.next_token()
             else:
                 raise SyntaxError('Expected <DEC_OBJECT_ATTRIBUTE_ACCESS>, <CAC>, or <NRO>')
@@ -498,7 +498,7 @@ class AnaliseSintatica():
     
     def end_object_attribute_access(self):
         try:
-            if self.current_token_text == '.':
+            if self.current_token_text() == '.':
                 self.next_token()
                 self.multiple_object_atribute_access()
         except SyntaxError as e:
@@ -518,7 +518,7 @@ class AnaliseSintatica():
     
     def ide_or_constructor(self):
         try:
-            if self.current_token_text == 'constructor' or self.current_token_class == 'IDE':
+            if self.current_token_text() == 'constructor' or self.current_token_class() == 'IDE':
                 self.next_token()
             else:
                 raise SyntaxError('Expected "constructor" or <IDE>')
@@ -527,13 +527,13 @@ class AnaliseSintatica():
     
     def object_method_access_end(self):
             try:
-                if self.current_token_text == '->':
+                if self.current_token_text() == '->':
                     self.next_token()
                     self.ide_or_constructor()
-                    if self.current_token_text == '(':
+                    if self.current_token_text() == '(':
                         self.next_token()
                         self.parameters()
-                        if self.current_token_text == ')':
+                        if self.current_token_text() == ')':
                             self.next_token()
                         else:
                             raise SyntaxError('Expected ")"')
@@ -548,7 +548,7 @@ class AnaliseSintatica():
     def relational_expression(self):
         try:
             self.relational_expression_value()
-            if self.current_token_class == 'REL':
+            if self.current_token_class() == 'REL':
                 self.next_token()
                 self.relational_expression_value()
             else:
@@ -558,11 +558,149 @@ class AnaliseSintatica():
     
     def relational_expression_value(self):
         try:
-            if self.current_token_class == 'NRO' or self.current_token_class == 'CAC':
+            if self.current_token_class() == 'NRO' or self.current_token_class() == 'CAC':
                 self.next_token()
             else:
                 self.object_method_or_object_access()
         except SyntaxError as e:
             self.write_error(e)
+    
+    #operadores logicos
+    def logical_expression(self):
+        try:
+            self.logical_expression_begin()
+            self.logical_expression_end()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def logical_expression_begin(self):
+        try:
+            if self.current_token_text() == '!':
+                self.next_token()
+                self.logical_expression_begin()
+            elif self.current_token_text() == '(':
+                self.next_token()
+                self.logical_expression()
+                if self.current_token_text() == ')':
+                    self.next_token()
+                else:
+                    raise SyntaxError('Expected ")"')
+            else:
+                self.logical_expression_value()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def logical_expression_end(self):
+        try:
+            if self.current_token_class() == 'LOG':
+                self.next_token()
+                self.logical_expression_begin()
+                self.logical_expression_end()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def log_rel_optional(self):
+        try:
+            if self.current_token_text() == 'REL':
+                self.next_token()
+                self.relational_expression_value()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def logical_expression_value(self):
+        try:
+            if self.current_token_text() in ['true','false']:
+                self.next_token()
+            else:
+                self.object_method_or_object_access()
+                self.log_rel_optional()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    #bloco for
+    def for_block(self):
+        try:
+            self.begin_for()
+            self.for_increment()
+            self.end_for()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def assignment(self):
+        try:
+            if self.current_token_text() == '=':
+                self.next_token()
+                self.value()
+            elif self.current_token_text() in ['--','++']:
+                self.next_token()
+            else:
+                raise SyntaxError('Expected "=" or "ART_DOUBLE"')
+        except SyntaxError as e:
+            self.write_error(e)
+
+    def for_increment(self):
+        try:
+            self.dec_object_atribute_access()
+            self.assignment()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def begin_for(self):
+        try:
+            if self.current_token_text() == 'for':
+                self.next_token()
+                if self.current_token_text() == '(':
+                    self.next_token()
+                    self.object_access_or_assingment()
+                    if self.current_token_text() == ';':
+                        self.next_token()
+                        self.conditional_expression()
+                        if self.current_token_text() == ';':
+                            self.next_token()
+                        else:
+                            raise SyntaxError('Expected ";"')
+                    else:
+                        raise SyntaxError('Expected ";"')
+                else:
+                    raise SyntaxError('Expected "("')
+            else:
+                raise SyntaxError('Expected "for"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def end_for(self):
+        try:
+            if self.current_token_text() == ')':
+                self.next_token()
+                if self.current_token_text() == '{':
+                    self.next_token()
+                    self.commands()
+                    if self.current_token_text() == '}':
+                        self.next_token()
+                    else:
+                        raise SyntaxError('Expected "}"')
+                else:
+                    raise SyntaxError('Expected "{"')
+            else:
+                raise SyntaxError('Expected ")"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def conditional_expression(self):
+        try:
+            if self.current_token_text() == '(':
+                self.next_token()
+                self.relational_expression()
+                if self.current_token_text() == ')':
+                    self.next_token()
+                else:
+                    raise SyntaxError('Expected ")"')
+            else:
+                self.relational_expression()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    
+
 
 
