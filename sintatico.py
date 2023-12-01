@@ -234,3 +234,189 @@ class AnaliseSintatica():
                 self.type()
         except SyntaxError as e:
             self.write_error(e)
+    
+    #bloco classe
+
+    def class_block(self):
+        try:
+            if self.current_token_text == 'class':
+                self.next_token()
+                self.ide_class 
+            else:
+                raise SyntaxError('Expected "class"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def ide_class(self):
+        try:
+            if self.current_token_class() == 'IDE':
+                self.next_token()
+                self.extends()
+            else:
+                raise SyntaxError('Expected <IDE>')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def extends(self):
+        try:
+            if self.current_token_text == 'extends':
+                self.next_token()
+                if self.current_token_class == 'IDE':
+                    self.next_token()
+                    self.start_class_block()
+                else:
+                    raise SyntaxError('Expected IDE')
+            else:
+                self.start_class_block()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+
+    def start_class_block(self):
+        try:
+            if self.current_token_text == '{':
+                self.next_token()
+                self.init_class()
+            else:
+                raise SyntaxError('Expected "{')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def init_class(self):
+        try:
+            self.body_blocks()
+            self.methods_block()
+            self.constructor()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+
+    def constructor(self):
+        try:
+            if self.current_token_text == 'constructor':
+                self.next_token()
+                if self.current_token_text == '(':
+                    self.next_token()
+                    self.dec_parameters_constructor()
+                    if self.current_token_text == ')':
+                        self.next_token()
+                        if self.current_token_text == '{':
+                            self.next_token()
+                            self.variables_block()
+                            self.objects_block()
+                            self.commands()
+                            if self.current_token_text == '}':
+                                self.next_token()
+                                self.end_class()
+                            else:
+                                raise SyntaxError('Expected "}"')
+                        else:
+                            raise SyntaxError('Expected "{"')
+                    else:
+                        raise SyntaxError('Expected ")"')
+                else:
+                    raise SyntaxError('Expected "("')
+            else:
+                self.end_class()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def end_class(self):
+        try:
+            if self.current_token_text == '}':
+                self.next_token()
+                self.class_block()
+            else:
+                raise SyntaxError('Expected "}"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def main(self):
+        try:
+            if self.current_token_text == 'main':
+                self.next_token()
+                if self.current_token_text == '{':
+                    self.next_token()
+                    self.init_main()
+                else:
+                    raise SyntaxError('Expected "{"')
+            else:
+                raise SyntaxError('Expected "main"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+
+    def init_main(self):
+        try:
+            self.body_blocks()
+            self.main_methods()
+            if self.current_token_text == '}':
+                self.next_token()
+            else:
+                raise SyntaxError('Expected "}"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def body_blocks(self):
+        try:
+            self.variables_block()
+            self.objects_block()
+        except SyntaxError as e:
+            self.write_error(e)
+
+
+    # bloco if-else
+    def IF(self):
+        try:
+            if self.current_token_text == 'if':
+                self.next_token()
+                if self.current_token_text ==  '(':
+                    self.next_token()
+                    self.condition()
+                    if self.current_token_text == ')':
+                        self.next_token()
+                        if self.current_token_text == 'then':
+                            self.next_token()
+                            if self.current_token_text == '{':
+                                self.next_token()
+                                self.commands()
+                                if self.current_token_text == '}':
+                                    self.next_token()
+                                    self.if_else()
+                                else:
+                                    raise SyntaxError('Expected "}"')
+                            else:
+                                raise SyntaxError('Expected "{"')
+                        else:
+                            raise SyntaxError('Expected "then"')
+                    else:
+                        raise SyntaxError('Expected ")"')
+                else:
+                    raise SyntaxError('Expected "("')
+            else:
+                raise SyntaxError('Expected "if"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def if_else(self):
+        try:
+            if self.current_token_text == 'else':
+                self.next_token()
+                if self.current_token_text == '{':
+                    self.next_token()
+                    self.commands()
+                    if self.current_token_text == '}':
+                        self.next_token()
+                    else:
+                        raise SyntaxError('Expected "}"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def condition(self):
+        try:
+            self.logical_expression()
+        except SyntaxError as e:
+            self.write_error(e)
+            
+
+
