@@ -418,5 +418,73 @@ class AnaliseSintatica():
         except SyntaxError as e:
             self.write_error(e)
             
+    #print + read
 
+    def print_begin(self):
+        try:
+            if self.current_token_text == 'print':
+                self.next_token()
+                if self.current_token_text == '(':
+                    self.next_token()
+                    self.print_end()
+                else:
+                    raise SyntaxError('Expected "("')
+            else:
+                raise SyntaxError('Expected "print"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def print_end(self):
+        try:
+            self.print_parameter()
+            if self.current_token_text == ')':
+                self.next_token()
+                if self.current_token_text == ';':
+                    self.next_token()
+                else:
+                    raise SyntaxError('Expected ";"')
+            else:
+                raise SyntaxError('Expected ")"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def read_begin(self):
+        try:
+            if self.current_token_text == 'read':
+                self.next_token()
+                if self.current_token_text == '(':
+                    self.next_token()
+                    self.read_end()
+                else:
+                    raise SyntaxError('Expected "("')
+            else:
+                raise SyntaxError('Expected "read"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def read_end(self):
+        try:
+            self.dec_object_atribute_access()
+            if self.current_token_text == ')':
+                self.next_token()
+                if self.current_token_text == ';':
+                    self.next_token()
+                else:
+                    raise SyntaxError('Expected ";"')
+            else:
+                raise SyntaxError('Expected ")"')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+
+    def print_parameter(self):
+        try:
+            if self.current_token_class == 'IDE':
+                self.dec_object_atribute_access()
+            elif self.current_token_class == 'CAC' or self.current_token_class == 'NRO':
+                self.next_token()
+            else:
+                raise SyntaxError('Expected <DEC_OBJECT_ATTRIBUTE_ACCESS>, <CAC>, or <NRO>')
+        except SyntaxError as e:
+            self.write_error(e)
 
