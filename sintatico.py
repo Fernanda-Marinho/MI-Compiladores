@@ -228,6 +228,30 @@ class AnaliseSintatica():
                 raise SyntaxError('Expected "main"')
         except SyntaxError as e:
             self.write_error(e)
+    
+    def method_body(self):
+        pass        #TODO
+    def methods(self):
+        pass #TODO
+    def type(self):
+        pass    # TODO
+    def methods_block(self):
+        pass    #TODO
+    def dec_parameters_constructor(self):
+        pass    #   TODO
+    def commands(self):
+        pass    #TODO
+    def dec_object_atribute_access(self):
+        pass    #TODO
+    def object_method_or_object_access_or_part(self):
+        pass #      TODO
+    def parameters(self):
+        pass        # TODO 
+    def object_access_or_assignment(self):
+        pass # TODO
+    def value(self):
+        pass        #   TODO
+
 
     def main_type(self):
         try:
@@ -517,7 +541,7 @@ class AnaliseSintatica():
         try:
             self.object_method_access_end()
         except SyntaxError as e:
-            self.write(e)
+            self.write_error(e)
     
     def ide_or_constructor(self):
         try:
@@ -654,7 +678,7 @@ class AnaliseSintatica():
                 self.next_token()
                 if self.current_token_text() == '(':
                     self.next_token()
-                    self.object_access_or_assingment()
+                    self.object_access_or_assignment()
                     if self.current_token_text() == ';':
                         self.next_token()
                         self.conditional_expression()
