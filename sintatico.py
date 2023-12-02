@@ -9,9 +9,9 @@ class AnaliseSintatica():
         self.errors_string = ''
 
     def start(self):
-        self.consts_block()
+        # self.consts_block()
         # self.variables_block()
-        # self.class_block()
+        self.class_block()
         print(self.errors_string)
 
     ###############         Funções auxiliares para análise          ###############
@@ -45,9 +45,6 @@ class AnaliseSintatica():
     def error(self, text):
         raise SyntaxError (text)
 
-    def format_print_errors(self):
-        pass    # TODO formatar print do array de erros no terminal
-
     ###############         Produções da gramática          ###############
 
     # Terminais <TYPE>
@@ -78,6 +75,7 @@ class AnaliseSintatica():
         except SyntaxError as e:
             self.write_error(e)
 
+    #   CONSTS (recursao para gerar varias)
     def consts(self):
         try:
             if self.current_token_text() == "}":
@@ -157,6 +155,8 @@ class AnaliseSintatica():
                 self.next_token()
                 self.dec_variable() #
                 self.multi_variables_line()  #
+            elif self.current_token_text() == '}':
+                pass
             else:
                 raise SyntaxError('Expected <TYPE>')
         except SyntaxError as e:
@@ -211,6 +211,8 @@ class AnaliseSintatica():
         except SyntaxError as e:
             self.write_error(e=e)
 
+    #   Bloco <CLASS_BLOCK>
+
     ###############         Produções da gramática          ###############
 
     #bloco de objetos 
@@ -218,7 +220,7 @@ class AnaliseSintatica():
         try:
             if self.current_token_text() == 'objects':
                 self.next_token()
-                if self.current_token_text == '{':
+                if self.current_token_text() == '{':
                     self.next_token()
                     self.objects()
                     if self.current_token_text() == '}':
@@ -316,13 +318,128 @@ class AnaliseSintatica():
             self.write_error(e)
     
     def method_body(self):
-        pass        #TODO
-    def methods(self):
-        pass #TODO
-    def type(self):
-        pass    # TODO
+        self.variables_block()
+        self.objects_block()
+        self.commands_method_body() # TODO
+
+    def commands_method_body(self):     # TODO
+        try:
+            self.commands()
+            if self.current_token_text() == 'return':
+                self.next_token()
+                self.return_block()     # return_block equivalente a <RETURN>
+                if self.current_token_text() == ';':
+                    self.next_token()
+                    if self.current_token_text() == '}':
+                        self.next_token()
+                    else:
+                        self.error('Expected "}')
+                else:
+                    self.error('Expected ";"')
+            else:
+                self.error('Expected "return"')
+        except SyntaxError as e:
+            self.write_error(e=e)
+    
+    def return_block(self):
+        pass        # TODO
+
+    def value(self):
+        pass        #   TODO
+
+    def method(self):
+        try:
+            if self.current_token_text() == 'void' or self.current_token_class() == 'IDE' or self.match_TYPE():
+                self.next_token()
+                if self.current_token_class() == 'IDE':
+                    self.next_token()
+                    if self.current_token_text() == '(':
+                        self.next_token()
+                        self.dec_parameters()
+                    else: self.error('Expected "("')
+                else: self.error('Expected <IDE>')
+            else: self.error('Expected "void" or <IDE> or <TYPE>')
+        except SyntaxError as e:
+            self.write_error(e=e)
+    
+    def dec_parameters(self):
+        try:
+            if self.current_token_text() == ')':
+                self.next_token()
+                if self.current_token_text() == '{':
+                    self.next_token()
+                    self.method_body()
+                else:
+                    self.error('Expected "{"')
+            elif self.match_TYPE():
+                self.next_token()
+                if self.current_token_class() == 'IDE': # fim de var param
+                    self.next_token()
+                    self.mult_dec_parameters()
+                else:
+                    self.error('Expected <IDE>')
+            elif self.current_token_class() == 'IDE':
+                self.next_token()
+                if self.current_token_class() == 'IDE':
+                    self.next_token()
+                    self.mult_dec_parameters()
+                else: self.error('Expected <IDE>')
+            else:
+                self.error('Expected " ) { " or <TYPE> or <IDE>')
+        except SyntaxError as e:
+            self.write_error(e)
+
+    def mult_dec_parameters(self):
+        try:
+            if self.current_token_text() == ')':
+                self.next_token()
+                if self.current_token_text() == '{':
+                    self.next_token()
+                    self.method_body()
+                else:
+                    self.error('Expected "{"')
+            elif self.current_token_text() == ',':
+                self.next_token()
+                if self.match_TYPE() or self.current_token_class() == 'IDE':
+                    self.next_token()
+                    if self.current_token_class() == 'IDE':
+                        self.next_token()
+                        self.mult_dec_parameters()
+                    else:
+                        self.error('Expected <IDE>')
+                else:
+                    self.error('Expected <TYPE> or <IDE>')
+            else:
+                self.error('Expected ")" or ","')
+        except SyntaxError as e:
+            self.write_error(e)
+
+    def methods (self):
+        try:
+            if self.match_TYPE():
+                self.method()
+                self.methods()
+            else:
+                pass
+        except SyntaxError as e:
+            pass
+
     def methods_block(self):
-        pass    #TODO
+        try:
+            if self.current_token_text() == 'methods':
+                self.next_token()
+                if self.current_token_text() == '{':
+                    self.next_token()
+                    self.methods()
+                    if self.current_token_text() == '}':
+                        self.next_token()
+                    else:
+                        self.error('Expected "}"')
+                else:
+                    self.error('Expected "{"')
+        except SyntaxError as e:
+            self.write_error(e)
+
     def dec_parameters_constructor(self):
         pass    #   TODO
     def commands(self):
@@ -335,8 +452,6 @@ class AnaliseSintatica():
         pass        # TODO 
     def object_access_or_assignment(self):
         pass # TODO
-    def value(self):
-        pass        #   TODO
 
 
     def main_type(self):
@@ -354,7 +469,7 @@ class AnaliseSintatica():
         try:
             if self.current_token_text() == 'class':
                 self.next_token()
-                self.ide_class 
+                self.ide_class()
             else:
                 raise SyntaxError('Expected "class"')
         except SyntaxError as e:
@@ -365,8 +480,10 @@ class AnaliseSintatica():
             if self.current_token_class() == 'IDE':
                 self.next_token()
                 self.extends()
+            elif self.current_token_text() == 'main':
+                self.main()
             else:
-                raise SyntaxError('Expected <IDE>')
+                raise SyntaxError('Expected <IDE> or "main"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -379,11 +496,12 @@ class AnaliseSintatica():
                     self.start_class_block()
                 else:
                     raise SyntaxError('Expected IDE')
-            else:
+            elif self.current_token_text() == '{':
                 self.start_class_block()
+            else:
+                self.error('Expected "extends" or "{"')
         except SyntaxError as e:
             self.write_error(e)
-    
 
     def start_class_block(self):
         try:
@@ -391,7 +509,7 @@ class AnaliseSintatica():
                 self.next_token()
                 self.init_class()
             else:
-                raise SyntaxError('Expected "{')
+                raise SyntaxError('Expected "{"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -402,7 +520,6 @@ class AnaliseSintatica():
             self.constructor()
         except SyntaxError as e:
             self.write_error(e)
-    
 
     def constructor(self):
         try:
