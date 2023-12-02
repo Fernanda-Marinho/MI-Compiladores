@@ -1,2 +1,3 @@
-variables {
-    int a;
+const {
+    int sete = 4, oito = 25;
+}

@@ -1,4 +1,4 @@
-from ast import Try
+from os import error
 import re
 
 class AnaliseSintatica():
@@ -6,12 +6,15 @@ class AnaliseSintatica():
         self.tokens = token_collection
         self.index = 0
         self.errors = []
+        self.errors_string = ''
 
     def start(self):
-        # self.const_block()
-        self.variables_block()
+        self.consts_block()
+        # self.variables_block()
         # self.class_block()
-        print(self.errors)
+        print(self.errors_string)
+
+    ###############         Funções auxiliares para análise          ###############
 
     def next_token(self):
         print(self.current_token())
@@ -36,14 +39,100 @@ class AnaliseSintatica():
     def write_error(self, e: SyntaxError):
         message = f'{e.msg}, {self.current_token_text()} in line {self.tokens[self.index-1]["n_line"]}'
         self.errors.append(message)
+        self.errors_string = f'{self.errors_string} \n {message}'
         # sincronizar/tratamento de erros
 
-    # Bloco <TYPE>
+    def error(self, text):
+        raise SyntaxError (text)
+
+    def format_print_errors(self):
+        pass    # TODO formatar print do array de erros no terminal
+
+    ###############         Produções da gramática          ###############
+
+    # Terminais <TYPE>
     def match_TYPE(self):
         v = self.current_token_text()
         type_pattern = re.compile(r'^(int|string|real|boolean)')
         return bool(type_pattern.match(v))
     
+    # Terminais <ATTRIBUTION>
+    def match_ATTRIBUTION(self):
+        v = self.current_token_text()
+        return isinstance(v, (int, float, complex, str, bool))
+
+    # Bloco <CONSTS_BLOCK>
+    def consts_block(self):
+        try: 
+            if self.current_token_text() == 'const':
+                self.next_token()
+                if self.current_token_text() == '{':
+                    self.next_token()
+                    self.consts()
+                    if self.current_token_text() == '}':
+                        self.next_token()
+                    else:
+                        self.error('Expected "}"')
+                else:
+                    self.error('Expected "{"')
+        except SyntaxError as e:
+            self.write_error(e)
+
+    def consts(self):
+        try:
+            if self.current_token_text() == "}":
+                pass
+            else:
+                self.const()
+                self.consts()
+        except SyntaxError as e:
+            pass    # o erro já foi escrito na função invocada antes
+
+    #   <CONST>
+    def const(self):
+        try: 
+            if self.match_TYPE():
+                self.next_token()
+                self.const_attribution()
+                self.multiple_consts()
+                # não precisa de next aqui, o multiple_consts já consumiu
+            else:
+                self.error('Expected <TYPE>')
+        except SyntaxError as e:
+            self.write_error(e=e)
+
+    #   <CONST_ATTRIBUTION>
+    def const_attribution(self):
+        try:
+            if self.current_token_class() == 'IDE':
+                self.next_token()
+                if self.current_token_text() == '=':
+                    self.next_token()
+                    if self.match_ATTRIBUTION():
+                        self.next_token()
+                    else:
+                        self.error('Expected "<NRO> or Bool or <CAC>"')
+                else:
+                    self.error('Expected "="')
+            else:
+                self.error('Expected <IDE>')
+        except SyntaxError as e:
+            self.write_error(e=e)
+
+    #   Bloco <MULTIPLE_CONSTS>
+    def multiple_consts(self):
+        try:
+            if self.current_token_text() == ',':
+                self.next_token()
+                self.const_attribution()
+                self.multiple_consts()
+            elif self.current_token_text() == ';':
+                self.next_token()
+            else:
+                self.error('Expected "," or ";" ')
+        except SyntaxError as e:
+            self.write_error(e)
+
     # Bloco <VARIABLES_BLOCK>
     def variables_block (self):
         try:
@@ -61,7 +150,7 @@ class AnaliseSintatica():
         except SyntaxError as e:
             self.write_error(e)
 
-    # <VARIABLE>
+    #   Bloco <VARIABLE>
     def variable(self):
         try:
             if self.match_TYPE():
@@ -84,6 +173,7 @@ class AnaliseSintatica():
         except SyntaxError as e:
             self.write_error(e)
 
+    #   Bloco <DIMENSIONS>
     def dimensions(self):
         try:
             if self.current_token() == '[':
@@ -97,6 +187,7 @@ class AnaliseSintatica():
         except SyntaxError as e:
             self.write_error(e)
 
+    #   <SIZE_DIMENSION>
     def size_dimension(self):
         try:
             if self.current_token_class() == 'IDE' or self.current_token_class() == 'NRO':
@@ -106,6 +197,7 @@ class AnaliseSintatica():
         except SyntaxError as e:
             self.write_error(e=e)
 
+    #   <MULTI_VARIABLES_LINE>
     def multi_variables_line(self):
         try:
             if self.current_token_text() == ';':
@@ -119,6 +211,7 @@ class AnaliseSintatica():
         except SyntaxError as e:
             self.write_error(e=e)
 
+    ###############         Produções da gramática          ###############
 
     #bloco de objetos 
     def objects_block(self):
