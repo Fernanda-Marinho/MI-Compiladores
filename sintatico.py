@@ -16,13 +16,10 @@ class AnaliseSintatica():
     def next_token(self):
         print(self.current_token())
         self.index +=1
-        # try:
-        #     if self.index < len(self.tokens): self.index+=1
-        #     else:
-        #         raise Exception()
-        # except Exception as eof:
-        #     message = f'{eof.args}, {self.current_token_text()} in line {self.current_token_line()}'
-        #     self.errors.append(message)
+
+    #   refere-se ao token anterior com relação ao ponteiro
+    def last_token(self):
+        return self.tokens[self.index-1] if self.index > 0 else self.current_token()
 
     def current_token(self):
         return self.tokens[self.index] if self.index < len(self.tokens) else dict(n_line = '',token_class = '',token_text = '')
@@ -36,11 +33,8 @@ class AnaliseSintatica():
     def current_token_text(self):
         return self.current_token()['token_text']
     
-    def last_token(self):
-        pass
-
     def write_error(self, e: SyntaxError):
-        message = f'{e.msg}, {self.current_token_text()} in line {self.current_token_line()}'
+        message = f'{e.msg}, {self.current_token_text()} in line {self.tokens[self.index-1]["n_line"]}'
         self.errors.append(message)
         # sincronizar/tratamento de erros
 
@@ -91,7 +85,6 @@ class AnaliseSintatica():
             self.write_error(e)
 
     def dimensions(self):
-        print('rodou dimensions')
         try:
             if self.current_token() == '[':
                 self.next_token()
