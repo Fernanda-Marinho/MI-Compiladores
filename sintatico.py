@@ -57,6 +57,13 @@ class AnaliseSintatica():
     def match_ATTRIBUTION(self):
         v = self.current_token_text()
         return isinstance(v, (int, float, complex, str, bool))
+    
+    #  Terminais ART_DOUBLE (classificacao)
+    def match_ART_DOUBLE(self):
+        return (self.current_token_text() == '++' or self.current_token_text() == '--')
+
+    def match_Bool(self):
+        return (self.current_token_text() == 'true' or self.current_token_text() == 'false')
 
     # Bloco <CONSTS_BLOCK>
     def consts_block(self):
@@ -158,7 +165,7 @@ class AnaliseSintatica():
             elif self.current_token_text() == '}':
                 pass
             else:
-                raise SyntaxError('Expected <TYPE>')
+                self.error('Expected <TYPE>')
         except SyntaxError as e:
             self.write_error(e=e)
     
@@ -169,7 +176,7 @@ class AnaliseSintatica():
                 self.next_token()
                 self.dimensions()
             else:
-                raise SyntaxError('Expected <IDE>')
+                self.error('Expected <IDE>')
         except SyntaxError as e:
             self.write_error(e)
 
@@ -183,7 +190,7 @@ class AnaliseSintatica():
                     self.next_token()
                     self.dimensions()   # r a direita
                 else:
-                    raise SyntaxError('Expected "]"')
+                    self.error('Expected "]"')
         except SyntaxError as e:
             self.write_error(e)
 
@@ -193,7 +200,7 @@ class AnaliseSintatica():
             if self.current_token_class() == 'IDE' or self.current_token_class() == 'NRO':
                 self.next_token()
             else:
-                raise SyntaxError("Expected <NRO> or <IDE>")
+                self.error("Expected <NRO> or <IDE>")
         except SyntaxError as e:
             self.write_error(e=e)
 
@@ -207,7 +214,7 @@ class AnaliseSintatica():
                 self.dec_variable()
                 self.multi_variables_line()
             else:
-                raise SyntaxError('Expected ";" or ","')
+                self.error('Expected ";" or ","')
         except SyntaxError as e:
             self.write_error(e=e)
 
@@ -226,9 +233,9 @@ class AnaliseSintatica():
                     if self.current_token_text() == '}':
                         self.next_token()
                     else:
-                        raise SyntaxError('Expected "}"')
+                        self.error('Expected "}"')
                 else:
-                    raise SyntaxError('Expected "{"')
+                    self.error('Expected "{"')
         except SyntaxError as e:
             self.write_error(e)    
     
@@ -241,7 +248,7 @@ class AnaliseSintatica():
             elif self.current_token_text() == '}':
                 return 
             else:
-                raise SyntaxError('Expected <IDE> or "}"')
+                self.error('Expected <IDE> or "}"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -252,7 +259,7 @@ class AnaliseSintatica():
                 self.dec_variable()
                 self.multiple_objects()
             else:
-                raise SyntaxError('Expected <IDE>')
+                self.error('Expected <IDE>')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -265,7 +272,7 @@ class AnaliseSintatica():
                 self.dec_variable()
                 self.multiple_objects()
             else:
-                raise SyntaxError('Expected ";" or ","')
+                self.error('Expected ";" or ","')
         except SyntaxError as e:
             self.write_error(e)
 
@@ -281,11 +288,11 @@ class AnaliseSintatica():
                     if self.current_token_text() == '}':
                         self.next_token()
                     else:
-                        raise SyntaxError('Expected "}"')
+                        self.error('Expected "}"')
                 else:
-                    raise SyntaxError('Expected "{"')
+                    self.error('Expected "{"')
             else:
-                raise SyntaxError('Expected "methods"')
+                self.error('Expected "methods"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -305,24 +312,25 @@ class AnaliseSintatica():
                             if self.current_token_text() == '}':
                                 self.next_token()
                             else:
-                                raise SyntaxError('Expected "}"')
+                                self.error('Expected "}"')
                         else:
-                            raise SyntaxError('Expected "{"')
+                            self.error('Expected "{"')
                     else:
-                        raise SyntaxError('Expected ")"')
+                        self.error('Expected ")"')
                 else:
-                    raise SyntaxError('Expected "("')
+                    self.error('Expected "("')
             else:
-                raise SyntaxError('Expected "main"')
+                self.error('Expected "main"')
         except SyntaxError as e:
             self.write_error(e)
     
+    #   <METHOD_BODY>
     def method_body(self):
         self.variables_block()
         self.objects_block()
-        self.commands_method_body() # TODO
+        self.commands_method_body() # faltam blocos dependentes desse
 
-    def commands_method_body(self):     # TODO
+    def commands_method_body(self):
         try:
             self.commands()
             if self.current_token_text() == 'return':
@@ -345,7 +353,78 @@ class AnaliseSintatica():
         pass        # TODO
 
     def value(self):
-        pass        #   TODO
+        try:
+            if self.current_token_class() == 'NRO':
+                self.simple_or_double_arithmetic_expression_optional()
+            elif self.match_Bool():
+                self.next_token()
+            elif self.current_token_class == 'CAC':
+                self.next_token()
+            elif self.current_token_class == 'IDE':
+                self.next_token()
+            elif self.current_token_text() == '[':
+                self.next_token()
+            elif self.current_token_text == '!':
+                self.logical_expression_begin()
+                self.logical_expression_end()
+            elif self.current_token_text() == '(':
+                self.arithmethic_or_logical_expression_with_parentheses()
+            else:
+                self.error('Expected any of the following: \n\t\t "[" , "!" , "(" , <BOOL> , <NRO> , <CAC> , <IDE>')
+        except SyntaxError as e:
+            self.write_error(e)
+
+    def arithmethic_or_logical_expression_with_parentheses(self):
+        try:
+            if self.current_token_text() == '(':
+                self.next_token()
+                self.expressions()
+                if self.current_token_text() == ')':
+                    self.next_token()
+                    self.expressions_without_parentheses_end()
+                else:
+                    self.error('Expected ")"')
+            else:
+                self.error('Expected "("')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def expressions(self):
+        pass    #   TODO
+    def expressions_without_parentheses_end(self):
+        pass    # TODO
+ 
+    # bloco <SIMPLE_OR_DOUBLE_ARITHIMETIC_EXPRESSION_OPTIONAL>
+    def simple_or_double_arithmetic_expression_optional(self):
+        try:
+            self.simple_or_double_arithmethic_expression()
+        except:
+            pass
+        else:
+            pass
+
+    def simple_or_double_arithmethic_expression(self):
+        try:
+            if self.match_ART_DOUBLE():
+                self.next_token()
+            elif self.current_token_class() == 'ART':
+                self.end_expression()
+            else:
+                self.error('Expected "++" , "--" or <ART>')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def end_expression(self):
+        try:
+            if self.current_token_class() == 'ART':
+                self.part_loop()
+            else:
+                self.error("Expected '+' , '-' , '*' or '/'")
+        except SyntaxError as e:
+            self.write_error(e)
+
+    def part_loop(self):
+        pass    #   TODO    
 
     def method(self):
         try:
@@ -440,10 +519,42 @@ class AnaliseSintatica():
         except SyntaxError as e:
             self.write_error(e)
 
+    #   <COMMANDS> (recursao de <COMMAND>)
+    def commands(self):
+        primeiro_command = ['print', 'read', 'if', 'for']
+        try:
+            if (self.current_token_text() in primeiro_command) or (self.current_token_class == 'IDE'):
+                self.command()
+                self.commands()
+            else:
+                pass
+        except SyntaxError as e:
+            pass
+
+    # Bloco <COMMAND>
+    def command(self):
+        try:
+            if self.current_token_text() == 'print':
+                self.print_begin()
+            elif self.current_token_text() == 'read':
+                self.read_begin()
+            elif self.current_token_class() == 'IDE':
+                self.object_access_or_assignment()
+                if self.current_token_text() == ';':
+                    self.next_token()
+                else:
+                    self.error('Expected ";"')
+            elif self.current_token_text() == 'if':
+                self.IF()
+            elif self.current_token_text() == 'for':
+                self.for_block()
+            else:
+                self.error('Expected "print" or "read" or "if" or "for" or <IDE>')
+        except SyntaxError as e:
+            self.write_error(e)
+
     def dec_parameters_constructor(self):
         pass    #   TODO
-    def commands(self):
-        pass    #TODO
     def dec_object_atribute_access(self):
         pass    #TODO
     def object_method_or_object_access_or_part(self):
@@ -453,13 +564,14 @@ class AnaliseSintatica():
     def object_access_or_assignment(self):
         pass # TODO
 
-
     def main_type(self):
         try:
-            if self.current_token_text() == 'void':
+            if self.match_TYPE():
+                self.next_token()
+            elif self.current_token_text() == 'void':
                 self.next_token()
             else:
-                self.type()
+                self.error('Expected "void" or <TYPE>')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -471,7 +583,7 @@ class AnaliseSintatica():
                 self.next_token()
                 self.ide_class()
             else:
-                raise SyntaxError('Expected "class"')
+                self.error('Expected "class"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -483,7 +595,7 @@ class AnaliseSintatica():
             elif self.current_token_text() == 'main':
                 self.main()
             else:
-                raise SyntaxError('Expected <IDE> or "main"')
+                self.error('Expected <IDE> or "main"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -495,7 +607,7 @@ class AnaliseSintatica():
                     self.next_token()
                     self.start_class_block()
                 else:
-                    raise SyntaxError('Expected IDE')
+                    self.error('Expected IDE')
             elif self.current_token_text() == '{':
                 self.start_class_block()
             else:
@@ -509,7 +621,7 @@ class AnaliseSintatica():
                 self.next_token()
                 self.init_class()
             else:
-                raise SyntaxError('Expected "{"')
+                self.error('Expected "{"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -539,13 +651,13 @@ class AnaliseSintatica():
                                 self.next_token()
                                 self.end_class()
                             else:
-                                raise SyntaxError('Expected "}"')
+                                self.error('Expected "}"')
                         else:
-                            raise SyntaxError('Expected "{"')
+                            self.error('Expected "{"')
                     else:
-                        raise SyntaxError('Expected ")"')
+                        self.error('Expected ")"')
                 else:
-                    raise SyntaxError('Expected "("')
+                    self.error('Expected "("')
             else:
                 self.end_class()
         except SyntaxError as e:
@@ -557,7 +669,7 @@ class AnaliseSintatica():
                 self.next_token()
                 self.class_block()
             else:
-                raise SyntaxError('Expected "}"')
+                self.error('Expected "}"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -569,9 +681,9 @@ class AnaliseSintatica():
                     self.next_token()
                     self.init_main()
                 else:
-                    raise SyntaxError('Expected "{"')
+                    self.error('Expected "{"')
             else:
-                raise SyntaxError('Expected "main"')
+                self.error('Expected "main"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -583,7 +695,7 @@ class AnaliseSintatica():
             if self.current_token_text() == '}':
                 self.next_token()
             else:
-                raise SyntaxError('Expected "}"')
+                self.error('Expected "}"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -614,17 +726,17 @@ class AnaliseSintatica():
                                     self.next_token()
                                     self.if_else()
                                 else:
-                                    raise SyntaxError('Expected "}"')
+                                    self.error('Expected "}"')
                             else:
-                                raise SyntaxError('Expected "{"')
+                                self.error('Expected "{"')
                         else:
-                            raise SyntaxError('Expected "then"')
+                            self.error('Expected "then"')
                     else:
-                        raise SyntaxError('Expected ")"')
+                        self.error('Expected ")"')
                 else:
-                    raise SyntaxError('Expected "("')
+                    self.error('Expected "("')
             else:
-                raise SyntaxError('Expected "if"')
+                self.error('Expected "if"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -638,7 +750,7 @@ class AnaliseSintatica():
                     if self.current_token_text() == '}':
                         self.next_token()
                     else:
-                        raise SyntaxError('Expected "}"')
+                        self.error('Expected "}"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -658,9 +770,9 @@ class AnaliseSintatica():
                     self.next_token()
                     self.print_end()
                 else:
-                    raise SyntaxError('Expected "("')
+                    self.error('Expected "("')
             else:
-                raise SyntaxError('Expected "print"')
+                self.error('Expected "print"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -672,9 +784,9 @@ class AnaliseSintatica():
                 if self.current_token_text() == ';':
                     self.next_token()
                 else:
-                    raise SyntaxError('Expected ";"')
+                    self.error('Expected ";"')
             else:
-                raise SyntaxError('Expected ")"')
+                self.error('Expected ")"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -686,9 +798,9 @@ class AnaliseSintatica():
                     self.next_token()
                     self.read_end()
                 else:
-                    raise SyntaxError('Expected "("')
+                    self.error('Expected "("')
             else:
-                raise SyntaxError('Expected "read"')
+                self.error('Expected "read"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -700,9 +812,9 @@ class AnaliseSintatica():
                 if self.current_token_text() == ';':
                     self.next_token()
                 else:
-                    raise SyntaxError('Expected ";"')
+                    self.error('Expected ";"')
             else:
-                raise SyntaxError('Expected ")"')
+                self.error('Expected ")"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -714,7 +826,7 @@ class AnaliseSintatica():
             elif self.current_token_class() == 'CAC' or self.current_token_class() == 'NRO':
                 self.next_token()
             else:
-                raise SyntaxError('Expected <DEC_OBJECT_ATTRIBUTE_ACCESS>, <CAC>, or <NRO>')
+                self.error('Expected <DEC_OBJECT_ATTRIBUTE_ACCESS>, <CAC>, or <NRO>')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -751,7 +863,7 @@ class AnaliseSintatica():
             if self.current_token_text() == 'constructor' or self.current_token_class() == 'IDE':
                 self.next_token()
             else:
-                raise SyntaxError('Expected "constructor" or <IDE>')
+                self.error('Expected "constructor" or <IDE>')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -766,11 +878,11 @@ class AnaliseSintatica():
                         if self.current_token_text() == ')':
                             self.next_token()
                         else:
-                            raise SyntaxError('Expected ")"')
+                            self.error('Expected ")"')
                     else:
-                        raise SyntaxError('Expected "("')
+                        self.error('Expected "("')
                 else:
-                    raise SyntaxError('Expected "->"')
+                    self.error('Expected "->"')
             except SyntaxError as e:
                 self.write_error(e)
     
@@ -782,7 +894,7 @@ class AnaliseSintatica():
                 self.next_token()
                 self.relational_expression_value()
             else:
-                raise SyntaxError('Expected "<REL>"')
+                self.error('Expected "<REL>"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -814,7 +926,7 @@ class AnaliseSintatica():
                 if self.current_token_text() == ')':
                     self.next_token()
                 else:
-                    raise SyntaxError('Expected ")"')
+                    self.error('Expected ")"')
             else:
                 self.logical_expression_value()
         except SyntaxError as e:
@@ -864,7 +976,7 @@ class AnaliseSintatica():
             elif self.current_token_text() in ['--','++']:
                 self.next_token()
             else:
-                raise SyntaxError('Expected "=" or "ART_DOUBLE"')
+                self.error('Expected "=" or "ART_DOUBLE"')
         except SyntaxError as e:
             self.write_error(e)
 
@@ -888,13 +1000,13 @@ class AnaliseSintatica():
                         if self.current_token_text() == ';':
                             self.next_token()
                         else:
-                            raise SyntaxError('Expected ";"')
+                            self.error('Expected ";"')
                     else:
-                        raise SyntaxError('Expected ";"')
+                        self.error('Expected ";"')
                 else:
-                    raise SyntaxError('Expected "("')
+                    self.error('Expected "("')
             else:
-                raise SyntaxError('Expected "for"')
+                self.error('Expected "for"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -908,11 +1020,11 @@ class AnaliseSintatica():
                     if self.current_token_text() == '}':
                         self.next_token()
                     else:
-                        raise SyntaxError('Expected "}"')
+                        self.error('Expected "}"')
                 else:
-                    raise SyntaxError('Expected "{"')
+                    self.error('Expected "{"')
             else:
-                raise SyntaxError('Expected ")"')
+                self.error('Expected ")"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -924,7 +1036,7 @@ class AnaliseSintatica():
                 if self.current_token_text() == ')':
                     self.next_token()
                 else:
-                    raise SyntaxError('Expected ")"')
+                    self.error('Expected ")"')
             else:
                 self.relational_expression()
         except SyntaxError as e:
