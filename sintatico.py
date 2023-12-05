@@ -350,7 +350,10 @@ class AnaliseSintatica():
             self.write_error(e=e)
     
     def return_block(self):
-        pass        # TODO
+        try:
+            self.value()
+        except:
+            pass
 
     def value(self):
         try:
@@ -390,10 +393,102 @@ class AnaliseSintatica():
             self.write_error(e)
     
     def expressions(self):
-        pass    #   TODO
+        try:
+            if self.current_token_text() == '(':
+                self.parentheses_begin()
+            elif self.current_token_class() == 'NRO':
+                self.simple_expression_without_parentheses()
+            elif self.match_Bool():
+                self.logical_expression_without_parentheses()
+            elif self.current_token_class() == 'IDE':
+                self.simple_or_logical_ide_begin()
+            else:
+                self.error('Expected "(" or <NRO> or "true","false" or <IDE>')
+                # TODO verificar qual erro é escrito no final - ou se tds sao escritos
+        except SyntaxError as e:
+            self.write_error(e)
+
+    def simple_or_logical_ide_begin(self):
+        try:
+            if self.current_token_class() == 'IDE':
+                self.dec_object_attribute_access()
+                self.simple_or_logical_ide_end()
+            else:
+                self.error('Expected <IDE>')
+        except SyntaxError as e:
+            self.write_error(e)
+
+    def simple_or_logical_ide_end(self):
+        try:
+            if self.current_token_class() == 'ART':
+                self.end_expression()
+            elif self.current_token_text() == '->':
+                self.optional_object_method_access()
+                self.log_rel_optional()
+                self.logical_expression_end()
+            else:
+                self.error('Expected <ART> or "->"')
+        except SyntaxError as e:
+            self.write_error(e)
+
+    def logical_expression_without_parentheses(self):
+        try:
+            if self.match_Bool():
+                self.next_token()
+                self.logical_expression_end()
+            elif self.current_token_text() == '!':
+                self.next_token()
+                self.logical_expression_begin()
+                self.logical_expression_end()
+            else:
+                self.error('Expected "true", "false" or "!"')
+        except SyntaxError as e:
+            self.write_error(e=e)
+
+    def simple_expression_without_parentheses(self):
+        try:
+            if self.current_token_class() == 'NRO':
+                self.next_token()
+                self.end_expression()
+            else:
+                self.error('Expected <NRO>')
+        except SyntaxError as e:
+            self.write_error(e)
+
+    def parentheses_begin(self):
+        try:
+            if self.current_token_text() == '(':
+                self.next_token()
+                self.expressions()
+                self.parentheses_end()
+            else:
+                self.error('Expected "("')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def parentheses_end(self):
+        try:
+            if self.current_token_text() == ')':
+                self.next_token()
+                self.expressions_without_parentheses_end()
+            else:
+                self.error('Expected ")"')
+        except SyntaxError as e:
+            self.write_error(e)
+
     def expressions_without_parentheses_end(self):
-        pass    # TODO
- 
+        try:
+            if self.current_token_class() == 'ART':
+                self.end_expression()
+            elif self.current_token_class == 'LOG':
+                self.next_token()
+                self.logical_expression_begin()
+                self.logical_expression_end()
+            else:
+                pass
+        except:
+            pass
+
     # bloco <SIMPLE_OR_DOUBLE_ARITHIMETIC_EXPRESSION_OPTIONAL>
     def simple_or_double_arithmetic_expression_optional(self):
         try:
@@ -423,8 +518,82 @@ class AnaliseSintatica():
         except SyntaxError as e:
             self.write_error(e)
 
+    def end_expression_optional(self):
+        try:
+            if self.current_token_class() == 'ART':
+                self.end_expression()
+            else:
+                pass
+        except:
+            pass
+    
+    def simple_expression(self):
+        try:
+            if self.current_token_class() == 'NRO':
+                self.part()
+                self.end_expression()
+            elif self.current_token_text() == '(':
+                self.parenthesis_expression()
+            else:
+                self.error('Expected "(" or <NRO>')
+        except SyntaxError as e:
+            self.write_error(e)
+
+    def parenthesis_expression(self):
+        try:
+            if self.current_token_text() == '(':
+                self.next_token()
+                self.simple_expression()
+                if self.current_token_text() == ')':
+                    self.next_token()
+                    self.end_expression_optional()
+                else:
+                    self.error('Expected ")"')
+            else:
+                self.error('Expected "("')
+        except SyntaxError as e:
+            self.write_error(e)
+
     def part_loop(self):
-        pass    #   TODO    
+        try:
+            if self.current_token_class() == 'NRO':
+                self.part()
+                self.end_expression_optional()
+            elif self.current_token_text() == '(':
+                self.parenthesis_expression()
+            else:
+                self.error('Expected <NRO> or "("')
+        except SyntaxError as e:
+            self.write_error(e)
+
+    def part(self):
+        try: 
+            if self.current_token_class() == 'NRO':
+                self.next_token()
+            elif self.current_token_class() == 'IDE':
+                self.object_method_or_object_access_or_part()
+            else:
+                self.error('Expected <NRO> or <IDE>')
+        except:
+            pass
+
+    def object_method_or_object_access_or_part(self):
+        try:
+            self.dec_object_attribute_access()
+            self.optional_object_method_access()
+        except:
+            pass
+
+    def dec_object_attribute_access(self):
+        try:
+            if self.current_token_class() == 'IDE':
+                self.next_token()
+                self.dimensions()
+                self.end_object_attribute_access()
+            else:
+                self.error('Expected <IDE>')
+        except SyntaxError as e:
+            self.write_error(e)
 
     def method(self):
         try:
@@ -554,11 +723,8 @@ class AnaliseSintatica():
             self.write_error(e)
 
     def dec_parameters_constructor(self):
+        
         pass    #   TODO
-    def dec_object_atribute_access(self):
-        pass    #TODO
-    def object_method_or_object_access_or_part(self):
-        pass #      TODO
     def parameters(self):
         pass        # TODO 
     def object_access_or_assignment(self):
@@ -806,7 +972,7 @@ class AnaliseSintatica():
     
     def read_end(self):
         try:
-            self.dec_object_atribute_access()
+            self.dec_object_attribute_access()
             if self.current_token_text() == ')':
                 self.next_token()
                 if self.current_token_text() == ';':
@@ -822,7 +988,7 @@ class AnaliseSintatica():
     def print_parameter(self):
         try:
             if self.current_token_class() == 'IDE':
-                self.dec_object_atribute_access()
+                self.dec_object_attribute_access()
             elif self.current_token_class() == 'CAC' or self.current_token_class() == 'NRO':
                 self.next_token()
             else:
@@ -982,7 +1148,7 @@ class AnaliseSintatica():
 
     def for_increment(self):
         try:
-            self.dec_object_atribute_access()
+            self.dec_object_attribute_access()
             self.assignment()
         except SyntaxError as e:
             self.write_error(e)
