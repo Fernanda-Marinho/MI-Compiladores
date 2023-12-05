@@ -230,10 +230,6 @@ class AnaliseSintatica():
                 if self.current_token_text() == '{':
                     self.next_token()
                     self.objects()
-                    if self.current_token_text() == '}':
-                        self.next_token()
-                    else:
-                        self.error('Expected "}"')
                 else:
                     self.error('Expected "{"')
         except SyntaxError as e:
@@ -345,6 +341,7 @@ class AnaliseSintatica():
                 else:
                     self.error('Expected ";"')
             else:
+                print(f"-> {self.current_token_class()} aqui")
                 self.error('Expected "return"')
         except SyntaxError as e:
             self.write_error(e=e)
@@ -834,8 +831,8 @@ class AnaliseSintatica():
                 self.ide_class()
             else:
                 self.error('Expected "class"')
-        except SyntaxError as e:
-            self.write_error(e)
+        except:
+            pass
     
     def ide_class(self):
         try:
