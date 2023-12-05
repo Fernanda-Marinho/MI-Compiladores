@@ -723,10 +723,78 @@ class AnaliseSintatica():
             self.write_error(e)
 
     def dec_parameters_constructor(self):
-        
-        pass    #   TODO
+        try:
+            self.mult_param_constructor()
+            self.mult_dec_parameters_constructor()
+        except:
+            pass    # prod. vazia
+    
+    def mult_dec_parameters_constructor(self):
+        try:
+            if self.current_token_text() == ',':
+                self.next_token()
+                self.mult_param_constructor()
+                self.mult_dec_parameters_constructor()
+            else:
+                pass    # prod. vazia
+        except:
+            pass
+
+    def mult_param_constructor(self):
+        try:
+            if self.match_TYPE():
+                self.variable_param()
+            elif self.current_token_class() == 'IDE':
+                self.object_param()
+            else:
+                self.error('Expected <IDE> or <TYPE>')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def variable_param(self):
+        try:
+            if self.match_TYPE():
+                self.next_token()
+                if self.current_token_class() == 'IDE':
+                    self.next_token()
+                else: 
+                    self.error('Expected <IDE>')
+            else:
+                self.error('Expected <TYPE>')
+        except SyntaxError as e:
+            self.write_error(e)
+
+    def object_param(self):
+        try:
+            if self.current_token_class() == 'IDE':
+                self.next_token()
+                if self.current_token_class() == 'IDE':
+                    self.next_token()
+                else:
+                    self.error('Expected <IDE>')
+            else:
+                self.error('Expected <IDE>')
+        except SyntaxError as e:
+            self.write_error(e)
+
+    def mult_parameters(self):
+        try:
+            if self.current_token_text() == ',':
+                self.next_token()
+                self.value()
+                self.mult_parameters()
+            else:
+                pass    # prod. vazia
+        except:
+            pass
+
     def parameters(self):
-        pass        # TODO 
+        try:
+            self.value()
+            self.mult_parameters()
+        except:
+            pass    # prod.vazia
+
     def object_access_or_assignment(self):
         pass # TODO
 
