@@ -17,7 +17,7 @@ class AnaliseSintatica():
     ###############         Funções auxiliares para análise          ###############
 
     def next_token(self):
-        print(self.current_token())
+        #print(self.current_token())
         self.index +=1
 
     #   refere-se ao token anterior com relação ao ponteiro
@@ -796,7 +796,23 @@ class AnaliseSintatica():
             pass    # prod.vazia
 
     def object_access_or_assignment(self):
-        pass # TODO
+        try:
+            self.dec_object_attribute_access()
+            self.object_access_or_assignment_end()
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def object_access_or_assignment_end(self):
+        try:
+            if self.current_token_text() == '=':
+                self.next_token()
+                self.value()
+            elif self.current_token_text() in ['--','++']:
+                self.next_token()
+            else:
+                self.object_method_access_end()
+        except SyntaxError as e:
+            self.write_error(e)
 
     def main_type(self):
         try:
