@@ -30,7 +30,7 @@ def get_token_collection():
                 list.append(token_collection)
     return list
 
-# print(get_token_collection())
+# print(*get_token_collection()[0], sep='\n')
 
 # TODO chamada do analisador sintatico
 sintatico = AnaliseSintatica(get_token_collection()[0])
