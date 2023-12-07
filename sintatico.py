@@ -169,8 +169,6 @@ class AnaliseSintatica():
                 self.next_token()
                 self.dec_var() #
                 self.multiple_variables_line()  #
-            elif self.current_token_text() == '}':
-                pass
             else:
                 self.error('Expected <TYPE>')
         except SyntaxError as e:
@@ -200,8 +198,8 @@ class AnaliseSintatica():
                     self.dimensions()   # r a direita
                 else:
                     self.error('Expected "]"')
-            # else:
-            #     pass
+            else:
+                pass
         except SyntaxError as e:
             self.write_error(e)
 
@@ -368,19 +366,19 @@ class AnaliseSintatica():
         except:
             pass
 
-    def value(self):
+    def value(self): #TODO parei de verificar blocos nessa função
         try:
             if self.current_token_class() == 'NRO':
                 self.simple_or_double_arithmetic_expression_optional()
             elif self.match_Bool():
                 self.next_token()
-            elif self.current_token_class == 'CAC':
+            elif self.current_token_class() == 'CAC':
                 self.next_token()
-            elif self.current_token_class == 'IDE':
+            elif self.current_token_class() == 'IDE':
                 self.next_token()
             elif self.current_token_text() == '[':
                 self.next_token()
-            elif self.current_token_text == '!':
+            elif self.current_token_text() == '!':
                 self.logical_expression_begin()
                 self.logical_expression_end()
             elif self.current_token_text() == '(':
@@ -493,7 +491,7 @@ class AnaliseSintatica():
         try:
             if self.current_token_class() == 'ART':
                 self.end_expression()
-            elif self.current_token_class == 'LOG':
+            elif self.current_token_class() == 'LOG':
                 self.next_token()
                 self.logical_expression_begin()
                 self.logical_expression_end()
@@ -705,7 +703,7 @@ class AnaliseSintatica():
     def commands(self):
         primeiro_command = ['print', 'read', 'if', 'for']
         try:
-            if (self.current_token_text() in primeiro_command) or (self.current_token_class == 'IDE'):
+            if (self.current_token_text() in primeiro_command) or (self.current_token_class() == 'IDE'):
                 self.command()
                 self.commands()
             else:
@@ -871,10 +869,8 @@ class AnaliseSintatica():
                     self.start_class_block()
                 else:
                     self.error('Expected IDE')
-            elif self.current_token_text() == '{':
-                self.start_class_block()
             else:
-                self.error('Expected "extends" or "{"')
+                self.start_class_block()
         except SyntaxError as e:
             self.write_error(e)
 
@@ -1014,6 +1010,8 @@ class AnaliseSintatica():
                         self.next_token()
                     else:
                         self.error('Expected "}"')
+            else:
+                pass #prod vazia
         except SyntaxError as e:
             self.write_error(e)
     

@@ -24,7 +24,7 @@ class a{
             objects {}
 
             this->metodo3();
-            this->metodo4(a, 3, b, 5, 6);
+            this->metodo4();
             return a;
         }
         void metodo2(){
@@ -33,7 +33,7 @@ class a{
         
 
             this->metodo3();
-            this->metodo4(a, 3, b, 5, 6);
+            this->metodo4();
             if (REL) then {
                 this->metodo3();
 
@@ -225,7 +225,7 @@ class main{
             objects {}
 
             this->metodo3();
-            this->metodo4(a, 3, b, 5, 6);
+            this->metodo4();
             return a;
         }
     }
