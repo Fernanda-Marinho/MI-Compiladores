@@ -50,7 +50,7 @@ class AnaliseSintatica():
     # Terminais <TYPE>
     def match_TYPE(self):
         v = self.current_token_text()
-        type_pattern = re.compile(r'^(int|string|real|boolean)')
+        type_pattern = re.compile(r'^(int|string|real|boolean|void)')
         return bool(type_pattern.match(v))
     
     # Terminais <ATTRIBUTION>
@@ -336,15 +336,16 @@ class AnaliseSintatica():
             self.commands()
             if self.current_token_text() == 'return':
                 self.next_token()
-                self.return_block()     # return_block equivalente a <RETURN>
+                self.return_block() 
+                #print(self.current_token_text())    # return_block equivalente a <RETURN>
                 if self.current_token_text() == ';':
                     self.next_token()
                     if self.current_token_text() == '}':
                         self.next_token()
-                    else:
-                        self.error('Expected "}')
-                else:
-                    self.error('Expected ";"')
+                #     else:
+                #         self.error('Expected "}')
+                # else:
+                #     self.error('Expected ";"')
             else:
                 print(f'-------- {self.last_token()}')
                 print(f'-------- {self.current_token()}')
@@ -360,7 +361,8 @@ class AnaliseSintatica():
     def return_block(self):
         try:
             if self.match_value_firsts():
-                self.value()
+                self.next_token()
+                #self.value()
             else:
                 pass
         except:
@@ -384,7 +386,8 @@ class AnaliseSintatica():
             elif self.current_token_text() == '(':
                 self.arithmethic_or_logical_expression_with_parentheses()
             else:
-                self.error('Expected any of the following: \n\t\t "[" , "!" , "(" , <BOOL> , <NRO> , <CAC> , <IDE>')
+                pass
+                #self.error('Expected any of the following: \n\t\t "[" , "!" , "(" , <BOOL> , <NRO> , <CAC> , <IDE>')
         except SyntaxError as e:
             self.write_error(e)
 
@@ -434,6 +437,7 @@ class AnaliseSintatica():
             if self.current_token_class() == 'ART':
                 self.end_expression()
             elif self.current_token_text() == '->':
+                print("22",self.current_token_text())
                 self.optional_object_method_access()
                 self.log_rel_optional()
                 self.logical_expression_end()
@@ -591,6 +595,7 @@ class AnaliseSintatica():
     def object_method_or_object_access_or_part(self):
         try:
             self.dec_object_attribute_access()
+            print("11",self.current_token_text())
             self.optional_object_method_access()
         except:
             pass
@@ -679,6 +684,7 @@ class AnaliseSintatica():
                 self.method()
                 self.methods()
             else:
+
                 pass
         except SyntaxError as e:
             pass
@@ -718,16 +724,17 @@ class AnaliseSintatica():
                 self.print_begin()
             elif self.current_token_text() == 'read':
                 self.read_begin()
+            elif self.current_token_text() == 'if':
+                self.IF()
+            elif self.current_token_text() == 'for':
+                self.for_block()
             elif self.current_token_class() == 'IDE':
+                self.log_rel_optional(self)
                 self.object_access_or_assignment()
                 if self.current_token_text() == ';':
                     self.next_token()
                 else:
                     self.error('Expected ";"')
-            elif self.current_token_text() == 'if':
-                self.IF()
-            elif self.current_token_text() == 'for':
-                self.for_block()
             else:
                 self.error('Expected "print" or "read" or "if" or "for" or <IDE>')
         except SyntaxError as e:
@@ -758,7 +765,8 @@ class AnaliseSintatica():
             elif self.current_token_class() == 'IDE':
                 self.object_param()
             else:
-                self.error('Expected <IDE> or <TYPE>')
+                pass
+                #self.error('Expected <IDE> or <TYPE>')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -1117,6 +1125,7 @@ class AnaliseSintatica():
     
     def optional_object_method_access(self):
         try:
+            print("op1",self.current_token_text())
             self.object_method_access_end()
         except SyntaxError as e:
             self.write_error(e)
@@ -1184,6 +1193,7 @@ class AnaliseSintatica():
                 self.next_token()
                 self.logical_expression_begin()
             elif self.current_token_text() == '(':
+                print("aq")
                 self.next_token()
                 self.logical_expression()
                 if self.current_token_text() == ')':
@@ -1206,7 +1216,7 @@ class AnaliseSintatica():
     
     def log_rel_optional(self):
         try:
-            if self.current_token_text() == 'REL':
+            if self.current_token_class() == 'REL':
                 self.next_token()
                 self.relational_expression_value()
         except SyntaxError as e:
@@ -1217,8 +1227,11 @@ class AnaliseSintatica():
             if self.current_token_text() in ['true','false']:
                 self.next_token()
             else:
-                self.object_method_or_object_access()
-                self.log_rel_optional()
+                if self.current_token_text() == 'this':
+                    self.object_method_or_object_access()
+                else:
+                    self.next_token()
+                    self.log_rel_optional()
         except SyntaxError as e:
             self.write_error(e)
     
