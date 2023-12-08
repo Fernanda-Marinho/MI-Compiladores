@@ -88,9 +88,6 @@ LOG = '&&' | '||'
 ! Atualizado em 14/09/2023 às 20:59               
 <DEC_VAR> ::= IDE <DIMENSIONS>
 
-! Atualizado em 14/09/2023 às 20:52
-<DIMENSIONS> ::= '[' <SIZE_DIMENSION> ']' <DIMENSIONS>
-
 ! -----------------------------------------------------
 ! Bloco de objetos - Atualizado em 14/09/2023 às 20:59
 <OBJECTS_BLOCK> ::= 'objects' '{' <OBJECTS>

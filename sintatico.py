@@ -1,4 +1,3 @@
-from os import error
 import re
 
 class AnaliseSintatica():
@@ -37,7 +36,7 @@ class AnaliseSintatica():
         return self.current_token()['token_text']
     
     def write_error(self, e: SyntaxError):
-        message = f'{e.msg}, {self.current_token_text()} in line {self.tokens[self.index-1]["n_line"]}'
+        message = f'{e.msg}, {self.current_token_text()} in line {self.tokens[self.index]["n_line"]}'
         self.errors.append(message)
         self.errors_string = f'{self.errors_string} \n {message}'
         # sincronizar/tratamento de erros
@@ -49,9 +48,8 @@ class AnaliseSintatica():
 
     # Terminais <TYPE>
     def match_TYPE(self):
-        v = self.current_token_text()
-        type_pattern = re.compile(r'^(int|string|real|boolean)')
-        return bool(type_pattern.match(v))
+        type = ['int','real','boolean','string']
+        return self.current_token_text() in type
     
     # Terminais <ATTRIBUTION>
     def match_ATTRIBUTION(self):
@@ -152,11 +150,11 @@ class AnaliseSintatica():
     #   <VARIABLES>
     def variables(self):
         try:
-            if self.match_TYPE():
+            if self.current_token_text() == '}':
+                self.next_token()
+            elif self.match_TYPE():
                 self.variable()
                 self.variables()
-            elif self.current_token_text() == '}':
-                self.next_token()
             else:
                 self.error('Expected "}" or <TYPE>')
         except SyntaxError as e:
@@ -346,21 +344,22 @@ class AnaliseSintatica():
                 else:
                     self.error('Expected ";"')
             else:
-                print(f'-------- {self.last_token()}')
-                print(f'-------- {self.current_token()}')
+                # print(f'-------- {self.last_token()}')
+                # print(f'-------- {self.current_token()}')
                 
-                print(f"-> {self.current_token_class()} aqui")
+                # print(f"-> {self.current_token_class()} aqui")
                 self.error('Expected "return"')
         except SyntaxError as e:
             self.write_error(e=e)
     
     def match_value_firsts(self):
-        return bool(self.current_token_text() in ["[" , "!" , "("] or self.current_token_class() in [ 'NRO' , 'CAC' , 'IDE'] or self.match_Bool())
+        return bool((self.current_token_text() in ["[" , "!" , "("]) or (self.current_token_class() in [ 'NRO' , 'CAC' , 'IDE']) or self.match_Bool())
 
     def return_block(self):
         try:
             if self.match_value_firsts():
                 self.value()
+                print('aqui----------------------------')
             else:
                 pass
         except:
@@ -368,7 +367,14 @@ class AnaliseSintatica():
 
     def value(self): #TODO parei de verificar blocos nessa função
         try:
-            if self.current_token_class() == 'NRO':
+            if self.current_token_text() == '[':
+                self.vector_assign_block()
+            elif self.current_token_text() == '!':
+                self.logical_expression_begin()
+                self.logical_expression_end()
+            elif self.current_token_text() == '(':
+                self.arithmethic_or_logical_expression_with_parentheses()
+            elif self.current_token_class() == 'NRO':
                 self.simple_or_double_arithmetic_expression_optional()
             elif self.match_Bool():
                 self.next_token()
@@ -376,17 +382,71 @@ class AnaliseSintatica():
                 self.next_token()
             elif self.current_token_class() == 'IDE':
                 self.next_token()
-            elif self.current_token_text() == '[':
-                self.next_token()
-            elif self.current_token_text() == '!':
-                self.logical_expression_begin()
-                self.logical_expression_end()
-            elif self.current_token_text() == '(':
-                self.arithmethic_or_logical_expression_with_parentheses()
             else:
                 self.error('Expected any of the following: \n\t\t "[" , "!" , "(" , <BOOL> , <NRO> , <CAC> , <IDE>')
         except SyntaxError as e:
             self.write_error(e)
+
+    def vector_assign_block(self):
+        try:
+            if self.current_token_text() == '[':
+                self.next_token()
+                self.elements_assign()
+                if self.current_token_text() == ']':
+                    self.next_token()
+                else:
+                    self.error('Expected "]"')
+            else:
+                self.error('Expected "["')  # provavelmente inatingivel (value gera vazio)
+        except SyntaxError as e:
+            self.write_error(e)
+
+    def elements_assign(self):
+        try:
+            self.element_assign()
+            self.multiple_elements_assign()
+        except SyntaxError as e:
+            pass    # erros escritos nas funções descendentes
+
+    def multiple_elements_assign(self):
+        try:
+            if self.current_token_text() == ',':
+                self.element_assign()
+                self.multiple_elements_assign()
+            else:
+                pass
+        except SyntaxError as e:
+            pass    # erros escritos nas funções descendentes
+    
+    def element_assign(self):
+        try:
+            if self.current_token_class() == 'IDE':
+                self.next_token()
+            elif self.current_token_class() == 'CAC':   #StringLiteral
+                self.next_token()
+            elif self.current_token_class() == 'NRO':
+                self.next_token()
+            elif self.current_token_text() == '[':
+                self.n_dimensions_assign()
+            else:
+                self.error('Expected <IDE> , <CAC> , <NRO> or "["')
+        except SyntaxError as e:
+            self.write_error(e)
+    
+    def n_dimensions_assign(self):
+        try:
+            if self.current_token_text() == '[':
+                self.next_token()
+                self.elements_assign()
+                if self.current_token_text() == ']':
+                    self.next_token()
+                else:
+                    self.error('Expected "]"')
+            else:
+                pass    #prod. vazia
+        except SyntaxError as e:
+            self.write_error(e)
+
 
     def arithmethic_or_logical_expression_with_parentheses(self):
         try:
@@ -797,14 +857,16 @@ class AnaliseSintatica():
             else:
                 pass    # prod. vazia
         except:
-            pass
+            pass    # erros foram escritos nas funções descendentes
 
     def parameters(self):
         try:
-            self.value()
-            self.mult_parameters()
+            if self.match_value_firsts():
+                self.value()
+                self.mult_parameters()
+            else: pass
         except:
-            pass    # prod.vazia
+            pass    # erros foram escritos nas funções descendentes
 
     def object_access_or_assignment(self):
         try:
@@ -818,10 +880,12 @@ class AnaliseSintatica():
             if self.current_token_text() == '=':
                 self.next_token()
                 self.value()
-            elif self.current_token_text() in ['--','++']:
+            elif self.match_ART_DOUBLE():
                 self.next_token()
-            else:
+            elif self.current_token_text() == '->':
                 self.object_method_access_end()
+            else:
+                self.error('Expected "=" , "++" , "--" or "->"')
         except SyntaxError as e:
             self.write_error(e)
 
