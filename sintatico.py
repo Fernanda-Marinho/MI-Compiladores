@@ -36,7 +36,7 @@ class AnaliseSintatica():
         return self.current_token()['token_text']
     
     def write_error(self, e: SyntaxError):
-        message = f'{e.msg}, {self.current_token_text()} in line {self.tokens[self.index]["n_line"]}'
+        message = f'{e.msg}, received: {self.current_token_text()} in line {self.tokens[self.index]["n_line"]}'
         self.errors.append(message)
         self.errors_string = f'{self.errors_string} \n {message}'
         # sincronizar/tratamento de erros
@@ -49,7 +49,7 @@ class AnaliseSintatica():
     # Terminais <TYPE>
     def match_TYPE(self):
         type = ['int','real','boolean','string']
-        return self.current_token_text() in type
+        return bool(self.current_token_text() in type)
     
     # Terminais <ATTRIBUTION>
     def match_ATTRIBUTION(self):
@@ -58,10 +58,10 @@ class AnaliseSintatica():
     
     #  Terminais ART_DOUBLE (classificacao)
     def match_ART_DOUBLE(self):
-        return (self.current_token_text() == '++' or self.current_token_text() == '--')
+        return bool(self.current_token_text() == '++' or self.current_token_text() == '--')
 
     def match_Bool(self):
-        return (self.current_token_text() == 'true' or self.current_token_text() == 'false')
+        return bool(self.current_token_text() == 'true' or self.current_token_text() == 'false')
 
     # Bloco <CONSTS_BLOCK>
     def consts_block(self):
@@ -344,10 +344,6 @@ class AnaliseSintatica():
                 else:
                     self.error('Expected ";"')
             else:
-                # print(f'-------- {self.last_token()}')
-                # print(f'-------- {self.current_token()}')
-                
-                # print(f"-> {self.current_token_class()} aqui")
                 self.error('Expected "return"')
         except SyntaxError as e:
             self.write_error(e=e)
@@ -359,7 +355,6 @@ class AnaliseSintatica():
         try:
             if self.match_value_firsts():
                 self.value()
-                print('aqui----------------------------')
             else:
                 pass
         except:
@@ -375,6 +370,7 @@ class AnaliseSintatica():
             elif self.current_token_text() == '(':
                 self.arithmethic_or_logical_expression_with_parentheses()
             elif self.current_token_class() == 'NRO':
+                self.next_token()
                 self.simple_or_double_arithmetic_expression_optional()
             elif self.match_Bool():
                 self.next_token()
@@ -402,21 +398,16 @@ class AnaliseSintatica():
             self.write_error(e)
 
     def elements_assign(self):
-        try:
-            self.element_assign()
-            self.multiple_elements_assign()
-        except SyntaxError as e:
-            pass    # erros escritos nas funções descendentes
+        self.element_assign()
+        self.multiple_elements_assign()
 
     def multiple_elements_assign(self):
-        try:
-            if self.current_token_text() == ',':
-                self.element_assign()
-                self.multiple_elements_assign()
-            else:
-                pass
-        except SyntaxError as e:
-            pass    # erros escritos nas funções descendentes
+        if self.current_token_text() == ',':
+            self.next_token()
+            self.element_assign()
+            self.multiple_elements_assign()
+        else:
+            pass
     
     def element_assign(self):
         try:
@@ -562,13 +553,11 @@ class AnaliseSintatica():
 
     # bloco <SIMPLE_OR_DOUBLE_ARITHIMETIC_EXPRESSION_OPTIONAL>
     def simple_or_double_arithmetic_expression_optional(self):
-        try:
+        if self.match_ART_DOUBLE() or self.current_token_class() == 'ART':
             self.simple_or_double_arithmethic_expression()
-        except:
-            pass
-        else:
-            pass
+        else: pass
 
+    # <SIMPLE_OR_DOUBLE_ARITHIMETIC_EXPRESSION>
     def simple_or_double_arithmethic_expression(self):
         try:
             if self.match_ART_DOUBLE():
@@ -648,12 +637,11 @@ class AnaliseSintatica():
         except:
             pass
 
+    # <OBJECT_METHOD_OR_OBJECT_ACCESS> ::= <OBJECT_METHOD_OR_OBJECT_ACCESS_OR_PART> 
+    # remoção de ambiguidade
     def object_method_or_object_access_or_part(self):
-        try:
-            self.dec_object_attribute_access()
-            self.optional_object_method_access()
-        except:
-            pass
+        self.dec_object_attribute_access()
+        self.optional_object_method_access()
 
     def dec_object_attribute_access(self):
         try:
@@ -668,7 +656,7 @@ class AnaliseSintatica():
 
     def method(self):
         try:
-            if self.current_token_text() == 'void' or self.current_token_class() == 'IDE' or self.match_TYPE():
+            if self.current_token_text() == 'void' or self.match_TYPE_VARIABLES():
                 self.next_token()
                 if self.current_token_class() == 'IDE':
                     self.next_token()
@@ -683,6 +671,7 @@ class AnaliseSintatica():
     
     def dec_parameters(self):
         try:
+            # <END_DEC_PARAMETERS>
             if self.current_token_text() == ')':
                 self.next_token()
                 if self.current_token_text() == '{':
@@ -690,6 +679,7 @@ class AnaliseSintatica():
                     self.method_body()
                 else:
                     self.error('Expected "{"')
+            # <VARIABLE_PARAM>
             elif self.match_TYPE():
                 self.next_token()
                 if self.current_token_class() == 'IDE': # fim de var param
@@ -697,6 +687,7 @@ class AnaliseSintatica():
                     self.mult_dec_parameters()
                 else:
                     self.error('Expected <IDE>')
+            # <OBJECT_PARAM>
             elif self.current_token_class() == 'IDE':
                 self.next_token()
                 if self.current_token_class() == 'IDE':
@@ -708,8 +699,10 @@ class AnaliseSintatica():
         except SyntaxError as e:
             self.write_error(e)
 
+    # <MULT_DEC_PARAMETERS>
     def mult_dec_parameters(self):
         try:
+            #   <END_DEC_PARAMETERS>
             if self.current_token_text() == ')':
                 self.next_token()
                 if self.current_token_text() == '{':
@@ -719,7 +712,7 @@ class AnaliseSintatica():
                     self.error('Expected "{"')
             elif self.current_token_text() == ',':
                 self.next_token()
-                if self.match_TYPE() or self.current_token_class() == 'IDE':
+                if self.match_TYPE_VARIABLES():
                     self.next_token()
                     if self.current_token_class() == 'IDE':
                         self.next_token()
@@ -733,14 +726,17 @@ class AnaliseSintatica():
         except SyntaxError as e:
             self.write_error(e)
 
+    # <TYPE_VARIABLES>
+    def match_TYPE_VARIABLES(self):
+        return self.current_token_class() == 'IDE' or self.match_TYPE()
+    
+    # <METHODS>
     def methods (self):
-        try:
-            if self.match_TYPE():
-                self.method()
-                self.methods()
-            else:
-                pass
-        except SyntaxError as e:
+        #   <TYPES> (primeiro de method)
+        if self.current_token_text() == 'void' or self.match_TYPE_VARIABLES():
+            self.method()
+            self.methods()
+        else:
             pass
 
     def methods_block(self):
@@ -756,6 +752,8 @@ class AnaliseSintatica():
                         self.error('Expected "}"')
                 else:
                     self.error('Expected "{"')
+            else: 
+                self.error('Expected "methods"')
         except SyntaxError as e:
             self.write_error(e)
 
@@ -795,22 +793,18 @@ class AnaliseSintatica():
             self.write_error(e)
 
     def dec_parameters_constructor(self):
-        try:
+        if self.current_token_class() == 'IDE' or self.match_TYPE():
             self.mult_param_constructor()
             self.mult_dec_parameters_constructor()
-        except:
-            pass    # prod. vazia
+        else: pass
     
     def mult_dec_parameters_constructor(self):
-        try:
-            if self.current_token_text() == ',':
-                self.next_token()
-                self.mult_param_constructor()
-                self.mult_dec_parameters_constructor()
-            else:
-                pass    # prod. vazia
-        except:
-            pass
+        if self.current_token_text() == ',':
+            self.next_token()
+            self.mult_param_constructor()
+            self.mult_dec_parameters_constructor()
+        else:
+            pass    # prod. vazia
 
     def mult_param_constructor(self):
         try:
@@ -850,31 +844,22 @@ class AnaliseSintatica():
             self.write_error(e)
 
     def mult_parameters(self):
-        try:
-            if self.current_token_text() == ',':
-                self.next_token()
-                self.value()
-                self.mult_parameters()
-            else:
-                pass    # prod. vazia
-        except:
-            pass    # erros foram escritos nas funções descendentes
+        if self.current_token_text() == ',':
+            self.next_token()
+            self.value()
+            self.mult_parameters()
+        else:
+            pass    # prod. vazia
 
     def parameters(self):
-        try:
-            if self.match_value_firsts():
-                self.value()
-                self.mult_parameters()
-            else: pass
-        except:
-            pass    # erros foram escritos nas funções descendentes
+        if self.match_value_firsts():
+            self.value()
+            self.mult_parameters()
+        else: pass
 
     def object_access_or_assignment(self):
-        try:
-            self.dec_object_attribute_access()
-            self.object_access_or_assignment_end()
-        except SyntaxError as e:
-            pass
+        self.dec_object_attribute_access()
+        self.object_access_or_assignment_end()
     
     def object_access_or_assignment_end(self):
         try:
@@ -1038,7 +1023,7 @@ class AnaliseSintatica():
                 self.next_token()
                 if self.current_token_text() ==  '(':
                     self.next_token()
-                    self.condition()
+                    self.logical_expression() # <condition> ::= <LOGICAL_EXPRESSION>
                     if self.current_token_text() == ')':
                         self.next_token()
                         if self.current_token_text() == 'then':
@@ -1056,6 +1041,8 @@ class AnaliseSintatica():
                         else:
                             self.error('Expected "then"')
                     else:
+                        print((self.last_token()))
+                        print(self.current_token())
                         self.error('Expected ")"')
                 else:
                     self.error('Expected "("')
@@ -1080,12 +1067,6 @@ class AnaliseSintatica():
         except SyntaxError as e:
             self.write_error(e)
     
-    def condition(self):
-        try:
-            self.logical_expression()
-        except SyntaxError as e:
-            self.write_error(e)
-            
     #print + read
 
     def print_begin(self):
@@ -1174,17 +1155,11 @@ class AnaliseSintatica():
         except SyntaxError as e:
             self.write_error(e)
     
-    def object_method_or_object_access(self):
-        try:
-            self.object_method_or_object_access_or_part()
-        except SyntaxError as e:
-            self.write_error(e)
-    
     def optional_object_method_access(self):
-        try:
+        if self.current_token_text() == '->':
             self.object_method_access_end()
-        except SyntaxError as e:
-            self.write_error(e)
+        else:
+            pass
     
     def ide_or_constructor(self):
         try:
@@ -1196,23 +1171,23 @@ class AnaliseSintatica():
             self.write_error(e)
     
     def object_method_access_end(self):
-            try:
-                if self.current_token_text() == '->':
+        try:
+            if self.current_token_text() == '->':
+                self.next_token()
+                self.ide_or_constructor()
+                if self.current_token_text() == '(':
                     self.next_token()
-                    self.ide_or_constructor()
-                    if self.current_token_text() == '(':
+                    self.parameters()
+                    if self.current_token_text() == ')':
                         self.next_token()
-                        self.parameters()
-                        if self.current_token_text() == ')':
-                            self.next_token()
-                        else:
-                            self.error('Expected ")"')
                     else:
-                        self.error('Expected "("')
+                        self.error('Expected ")"')
                 else:
-                    self.error('Expected "->"')
-            except SyntaxError as e:
-                self.write_error(e)
+                    self.error('Expected "("')
+            else:
+                self.error('Expected "->"')
+        except SyntaxError as e:
+            self.write_error(e)
     
     #operadores relacionais 
     def relational_expression(self):
@@ -1230,18 +1205,17 @@ class AnaliseSintatica():
         try:
             if self.current_token_class() == 'NRO' or self.current_token_class() == 'CAC':
                 self.next_token()
+            elif self.current_token_class() == 'IDE':
+                self.object_method_or_object_access_or_part()
             else:
-                self.object_method_or_object_access()
+                self.error('Expected <NRO> , <CAC> or <IDE>')
         except SyntaxError as e:
             self.write_error(e)
     
     #operadores logicos
     def logical_expression(self):
-        try:
-            self.logical_expression_begin()
-            self.logical_expression_end()
-        except SyntaxError as e:
-            self.write_error(e)
+        self.logical_expression_begin()
+        self.logical_expression_end()
     
     def logical_expression_begin(self):
         try:
@@ -1255,35 +1229,35 @@ class AnaliseSintatica():
                     self.next_token()
                 else:
                     self.error('Expected ")"')
-            else:
+            elif self.match_Bool() or self.current_token_class() == 'IDE':
                 self.logical_expression_value()
+            else:
+                self.error('Expected "!" , "(" , <BOOL> or <IDE>')
         except SyntaxError as e:
             self.write_error(e)
     
     def logical_expression_end(self):
-        try:
-            if self.current_token_class() == 'LOG':
-                self.next_token()
-                self.logical_expression_begin()
-                self.logical_expression_end()
-        except SyntaxError as e:
-            self.write_error(e)
+        if self.current_token_class() == 'LOG':
+            self.next_token()
+            self.logical_expression_begin()
+            self.logical_expression_end()
+        else: pass
     
     def log_rel_optional(self):
-        try:
-            if self.current_token_text() == 'REL':
-                self.next_token()
-                self.relational_expression_value()
-        except SyntaxError as e:
-            self.write_error(e)
-    
+        if self.current_token_text() == 'REL':
+            self.next_token()
+            self.relational_expression_value()
+        else: pass
+
     def logical_expression_value(self):
         try:
-            if self.current_token_text() in ['true','false']:
+            if self.match_Bool():
                 self.next_token()
-            else:
-                self.object_method_or_object_access()
+            elif self.current_token_class() == 'IDE':
+                self.object_method_or_object_access_or_part()
                 self.log_rel_optional()
+            else:
+                self.error('Expected <BOOL> or <IDE>')
         except SyntaxError as e:
             self.write_error(e)
     
