@@ -1,5 +1,3 @@
-import re
-
 class AnaliseSintatica():
     def __init__(self, token_collection):
         self.tokens = token_collection
@@ -11,12 +9,11 @@ class AnaliseSintatica():
         self.consts_block()
         self.variables_block()
         self.class_block()
-        print(self.errors_string)
+        return self.errors_string
 
     ###############         Funções auxiliares para análise          ###############
 
     def next_token(self):
-        #print(self.current_token())
         self.index +=1
 
     #   refere-se ao token anterior com relação ao ponteiro
@@ -480,7 +477,6 @@ class AnaliseSintatica():
                 self.simple_or_logical_ide_begin()
             else:
                 self.error('Expected "(" or <NRO> or "true","false" or <IDE>')
-                # TODO verificar qual erro é escrito no final - ou se tds sao escritos
         except SyntaxError as e:
             self.write_error(e)
 
@@ -631,7 +627,7 @@ class AnaliseSintatica():
 
     def part_loop(self):
         try:
-            if self.current_token_class() == 'NRO':
+            if self.current_token_class() == 'NRO' or self.current_token_class() == 'IDE':
                 self.part()
                 self.end_expression_optional()
             elif self.current_token_text() == '(':
@@ -796,8 +792,6 @@ class AnaliseSintatica():
                 if self.current_token_text() == ';':
                     self.next_token()
                 else:
-                    print(self.last_token())
-                    print(self.current_token())
                     self.error('Expected ";"')
             elif self.current_token_text() == 'if':
                 self.IF()

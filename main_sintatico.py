@@ -6,9 +6,7 @@ from sintatico import AnaliseSintatica
 analisar_lexico()
 
 # gerar coleção de tokens [lista de dicionarios]
-
-directory = f'{os.getcwd()}/testes'
-############ função para gerar lista de tokens a partir do arquivo
+directory = f'{os.getcwd()}/files'
 def get_token_collection():
     list = []
     for file_path in (os.listdir(directory)):
@@ -32,7 +30,13 @@ def get_token_collection():
 
 # print(*get_token_collection()[0], sep='\n')
 
-# TODO chamada do analisador sintatico
-sintatico = AnaliseSintatica(get_token_collection()[0])
-sintatico.start()
-# sintatico.analisar_sintatico(get_token_collection)
+def generate_analysis_output():
+    sintatico = AnaliseSintatica(get_token_collection()[0])
+    result = sintatico.start()
+    success = ('A análise sintática foi concluída com sucesso =)')
+    newfile = open('project_analysis_output.txt', 'w')
+    if result == '': newfile.write(success)
+    else: newfile.write(result)
+    print(result)
+
+generate_analysis_output()

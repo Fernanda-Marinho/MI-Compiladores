@@ -441,13 +441,13 @@ def analisar_lexico():
     global t
 
     # current = f'{os.getcwd()}/testes'
-    current = f'{os.getcwd()}/testes'
+    current = f'{os.getcwd()}/files'
     for file_path in (os.listdir(current)):
 
-        if ((file_path.endswith('-saida.txt') or file_path.endswith('-saida0.txt')) or not file_path.endswith(".txt")): 
+        if (file_path.endswith('-saida.txt') or not file_path.endswith(".txt")): 
             continue
         file = open(f'{current}/{file_path}', 'r')
-        newfile = open(f'{current}/{os.path.splitext(os.path.basename(file.name))[0]}-saida0.txt', 'w')
+        newfile = open(f'{current}/{os.path.splitext(os.path.basename(file.name))[0]}-saida.txt', 'w')
         for index, line in enumerate(file.readlines(), start=1):
             if (line[-1] == '\u000a'):  # quebra de linha unicode
                 line = " ".join([line[:-1], line[-1]])

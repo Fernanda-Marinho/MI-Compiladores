@@ -129,13 +129,13 @@
 24 PRE objects
 24 DEL {
 24 DEL }
-26 PRE this
+26 IDE this
 26 DEL ->
 26 IDE metodo3
 26 DEL (
 26 DEL )
 26 DEL ;
-27 PRE this
+27 IDE this
 27 DEL ->
 27 IDE metodo4
 27 DEL (
@@ -174,13 +174,13 @@
 32 IDE person
 32 DEL ;
 32 DEL }
-35 PRE this
+35 IDE this
 35 DEL ->
 35 IDE metodo3
 35 DEL (
 35 DEL )
 35 DEL ;
-36 PRE this
+36 IDE this
 36 DEL ->
 36 IDE metodo4
 36 DEL (
@@ -201,7 +201,7 @@
 37 DEL )
 37 PRE then
 37 DEL {
-38 PRE this
+38 IDE this
 38 DEL ->
 38 IDE metodo3
 38 DEL (
@@ -407,6 +407,7 @@
 91 DEL [
 91 IDE j
 91 DEL ]
+91 ART /
 91 NRO 2
 91 DEL ;
 92 PRE if
@@ -447,6 +448,7 @@
 97 DEL [
 97 IDE i
 97 DEL ]
+97 ART /
 97 NRO 2
 97 DEL ;
 98 PRE if
@@ -879,6 +881,7 @@
 167 ART +
 167 NRO 2
 167 DEL )
+167 ART /
 167 DEL (
 167 NRO 2
 167 ART *
@@ -889,18 +892,21 @@
 168 REL =
 168 DEL (
 168 NRO 4
+168 ART *
 168 DEL (
 168 NRO 5
 168 ART +
 168 NRO 1
 168 DEL )
 168 DEL )
+168 ART /
 168 DEL (
 168 DEL (
 168 NRO 2
 168 ART +
 168 NRO 3
 168 DEL )
+168 ART *
 168 DEL (
 168 NRO 8
 168 ART -
@@ -916,7 +922,7 @@
 169 DEL )
 169 PRE then
 169 DEL {
-170 PRE this
+170 IDE this
 170 DEL ->
 170 IDE metodo3
 170 DEL (
@@ -938,7 +944,7 @@
 173 DEL )
 173 PRE then
 173 DEL {
-174 PRE this
+174 IDE this
 174 DEL ->
 174 IDE metodo3
 174 DEL (
@@ -947,7 +953,7 @@
 176 DEL }
 177 PRE if
 177 DEL (
-177 PRE this
+177 IDE this
 177 DEL .
 177 IDE mat
 177 DEL ->
@@ -962,7 +968,7 @@
 177 DEL )
 177 PRE then
 177 DEL {
-178 PRE this
+178 IDE this
 178 DEL ->
 178 IDE metodo3
 178 DEL (
@@ -971,7 +977,7 @@
 180 DEL }
 181 PRE if
 181 DEL (
-181 PRE this
+181 IDE this
 181 DEL ->
 181 IDE calc
 181 DEL (
@@ -984,7 +990,7 @@
 181 DEL )
 181 PRE then
 181 DEL {
-182 PRE this
+182 IDE this
 182 DEL ->
 182 IDE metodo3
 182 DEL (
@@ -998,7 +1004,7 @@
 185 DEL )
 185 PRE then
 185 DEL {
-186 PRE this
+186 IDE this
 186 DEL ->
 186 IDE metodo3
 186 DEL (
@@ -1013,7 +1019,7 @@
 189 DEL )
 189 PRE then
 189 DEL {
-190 PRE this
+190 IDE this
 190 DEL ->
 190 IDE metodo3
 190 DEL (
@@ -1028,7 +1034,7 @@
 193 DEL )
 193 PRE then
 193 DEL {
-194 PRE this
+194 IDE this
 194 DEL ->
 194 IDE metodo3
 194 DEL (
@@ -1047,7 +1053,7 @@
 197 DEL )
 197 PRE then
 197 DEL {
-198 PRE this
+198 IDE this
 198 DEL ->
 198 IDE metodo3
 198 DEL (
@@ -1070,7 +1076,7 @@
 200 DEL )
 200 PRE then
 200 DEL {
-201 PRE this
+201 IDE this
 201 DEL ->
 201 IDE metodo3
 201 DEL (
@@ -1108,7 +1114,7 @@
 207 ART ++
 207 DEL )
 207 DEL {
-208 PRE this
+208 IDE this
 208 DEL ->
 208 IDE metodo3
 208 DEL (
@@ -1129,7 +1135,7 @@
 210 ART --
 210 DEL )
 210 DEL {
-211 PRE this
+211 IDE this
 211 DEL ->
 211 IDE metodo3
 211 DEL (
@@ -1153,7 +1159,7 @@
 213 NRO 1
 213 DEL )
 213 DEL {
-214 PRE this
+214 IDE this
 214 DEL ->
 214 IDE metodo3
 214 DEL (
@@ -1177,7 +1183,7 @@
 216 NRO 1
 216 DEL )
 216 DEL {
-217 PRE this
+217 IDE this
 217 DEL ->
 217 IDE metodo3
 217 DEL (
@@ -1212,13 +1218,13 @@
 225 PRE objects
 225 DEL {
 225 DEL }
-227 PRE this
+227 IDE this
 227 DEL ->
 227 IDE metodo3
 227 DEL (
 227 DEL )
 227 DEL ;
-228 PRE this
+228 IDE this
 228 DEL ->
 228 IDE metodo4
 228 DEL (
@@ -1239,6 +1245,3 @@
 230 DEL }
 231 DEL }
 232 DEL }
-
-168 TMF *
-168 TMF *

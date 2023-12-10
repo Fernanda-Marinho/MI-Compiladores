@@ -1,9 +1,0 @@
-04 IDE a
-04 REL >
-04 IDE b
-05 PRE print
-
-03 TMF @
-04 TMF ?
-05 TMF $
-06 TMF _x
