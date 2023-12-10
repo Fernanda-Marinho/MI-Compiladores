@@ -1041,8 +1041,6 @@ class AnaliseSintatica():
                         else:
                             self.error('Expected "then"')
                     else:
-                        print((self.last_token()))
-                        print(self.current_token())
                         self.error('Expected ")"')
                 else:
                     self.error('Expected "("')
@@ -1146,15 +1144,12 @@ class AnaliseSintatica():
             self.write_error(e)
     
     def end_object_attribute_access(self):
-        try:
-            if self.current_token_text() == '.':
-                self.next_token()
-                self.multiple_object_atribute_access()
-            else:
-                pass
-        except SyntaxError as e:
-            self.write_error(e)
-    
+        if self.current_token_text() == '.':
+            self.next_token()
+            self.multiple_object_atribute_access()
+        else:
+            pass
+            
     def optional_object_method_access(self):
         if self.current_token_text() == '->':
             self.object_method_access_end()
@@ -1244,7 +1239,7 @@ class AnaliseSintatica():
         else: pass
     
     def log_rel_optional(self):
-        if self.current_token_text() == 'REL':
+        if self.current_token_class() == 'REL':
             self.next_token()
             self.relational_expression_value()
         else: pass
