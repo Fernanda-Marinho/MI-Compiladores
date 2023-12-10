@@ -51,6 +51,15 @@ def start (n_line, line, token):
                         elif line[i_curr+1] == "*":
                             double = True 
                             token["state"] = 10
+                        else:
+                            #TODO mandar para estado que salva ART /
+                            token["ac"] += line[i_curr]
+                            write_token(n_line,token["ac"],'ART',errors_tokens)
+                            clear_token(token)
+                    else:
+                        token["ac"] += line[i_curr]
+                        write_token(n_line,token["ac"],'ART',errors_tokens)
+                        clear_token(token)
                 elif line[i_curr] == "-":
                     if i_curr < line_len - 1:
                         if line[i_curr+1] == "-":

@@ -796,6 +796,8 @@ class AnaliseSintatica():
                 if self.current_token_text() == ';':
                     self.next_token()
                 else:
+                    print(self.last_token())
+                    print(self.current_token())
                     self.error('Expected ";"')
             elif self.current_token_text() == 'if':
                 self.IF()
