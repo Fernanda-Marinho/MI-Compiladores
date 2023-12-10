@@ -60,6 +60,12 @@ def start (n_line, line, token):
                         token["ac"] += line[i_curr]
                         write_token(n_line,token["ac"],'ART',errors_tokens)
                         clear_token(token)
+                elif line[i_curr] == '*':
+                    token["ac"] += line[i_curr]
+                    write_token(n_line,token["ac"],'ART',errors_tokens)
+                    clear_token(token)
+                elif isEsp(line[i_curr]):   #####
+                    clear_token(t)
                 elif line[i_curr] == "-":
                     if i_curr < line_len - 1:
                         if line[i_curr+1] == "-":
