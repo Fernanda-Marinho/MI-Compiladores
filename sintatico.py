@@ -360,10 +360,26 @@ class AnaliseSintatica():
         except:
             pass
 
+    def init_expression(self):
+        self.dec_object_attribute_access()
+        self.arithmetic_or_logical_expression()
+    
+    def arithmetic_or_logical_expression(self):
+        if self.current_token_class() == 'ART':
+            self.simple_or_double_arithmethic_expression()
+        # elif self.current_token_text() == '->' or self.current_token_class() == 'LOG' or self.current_token_class() == 'REL':
+        else:
+            self.optional_object_method_access()
+            self.log_rel_optional()
+            self.logical_expression_end()
+
+
     def value(self): #TODO parei de verificar blocos nessa função
         try:
             if self.current_token_text() == '[':
                 self.vector_assign_block()
+            elif self.current_token_class() == 'IDE':
+                self.init_expression()
             elif self.current_token_text() == '!':
                 self.logical_expression_begin()
                 self.logical_expression_end()
@@ -375,8 +391,6 @@ class AnaliseSintatica():
             elif self.match_Bool():
                 self.next_token()
             elif self.current_token_class() == 'CAC':
-                self.next_token()
-            elif self.current_token_class() == 'IDE':
                 self.next_token()
             else:
                 self.error('Expected any of the following: \n\t\t "[" , "!" , "(" , <BOOL> , <NRO> , <CAC> , <IDE>')
@@ -572,6 +586,7 @@ class AnaliseSintatica():
     def end_expression(self):
         try:
             if self.current_token_class() == 'ART':
+                self.next_token()
                 self.part_loop()
             else:
                 self.error("Expected '+' , '-' , '*' or '/'")
@@ -777,7 +792,6 @@ class AnaliseSintatica():
             elif self.current_token_text() == 'read':
                 self.read_begin()
             elif self.current_token_class() == 'IDE':
-                # self.log_rel_optional()
                 self.object_access_or_assignment()
                 if self.current_token_text() == ';':
                     self.next_token()
