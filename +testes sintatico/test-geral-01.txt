@@ -1,11 +1,11 @@
 ﻿const{
     real PI = 3.14, E = 2.71;
     real RAIZ_2 = 1.41; 
-int UM = 1, ZERO = 0;
-int DOIS = 2;
-string HELLO = "hello", WORLD = "world!" ;
-string HELLO_WORLD = "hello world!";
-boolean IS_TRUE = true, IS_FALSE = false;
+    int UM = 1, ZERO = 0;
+    int DOIS = 2;
+    string HELLO = "hello", WORLD = "world!" ;
+    string HELLO_WORLD = "hello world!";
+    boolean IS_TRUE = true, IS_FALSE = false;
 }
 
 variables{

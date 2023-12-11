@@ -1,1 +1,4 @@
-A análise sintática foi concluída com sucesso =)
+ 
+ Expected <IDE>, received: main in line 11 
+ Expected "}", received: main in line 11 
+ Expected "constructor", received: main in line 11

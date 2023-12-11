@@ -31,6 +31,7 @@ def get_token_collection():
 # print(*get_token_collection()[0], sep='\n')
 
 def generate_analysis_output():
+    global sintatico;
     sintatico = AnaliseSintatica(get_token_collection()[0])
     result = sintatico.start()
     success = ('A análise sintática foi concluída com sucesso =)')

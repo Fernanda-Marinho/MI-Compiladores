@@ -9,6 +9,7 @@ class AnaliseSintatica():
         self.consts_block()
         self.variables_block()
         self.class_block()
+        # print(self.errors_string)
         return self.errors_string
 
     ###############         Funções auxiliares para análise          ###############
@@ -70,6 +71,8 @@ class AnaliseSintatica():
                     self.consts()
                 else:
                     self.error('Expected "{"')
+            else:
+                self.error('Expected "const"')
         except SyntaxError as e:
             self.write_error(e)
 
@@ -141,6 +144,7 @@ class AnaliseSintatica():
                     self.variables()
                 else:
                     raise SyntaxError ('Expected "{"')
+            else: self.error('Expected "variables"')
         except SyntaxError as e:
             self.write_error(e)
     
@@ -929,8 +933,9 @@ class AnaliseSintatica():
                     self.start_class_block()
                 else:
                     self.error('Expected IDE')
-            else:
+            elif self.current_token_text() == '{':
                 self.start_class_block()
+            else: self.error('Expected "extends" or "{"')
         except SyntaxError as e:
             self.write_error(e)
 
@@ -978,7 +983,7 @@ class AnaliseSintatica():
                 else:
                     self.error('Expected "("')
             else:
-                self.end_class()
+                self.error('Expected "constructor"')
         except SyntaxError as e:
             self.write_error(e)
     
