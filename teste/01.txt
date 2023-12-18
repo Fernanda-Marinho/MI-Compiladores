@@ -1,0 +1,21 @@
+const {
+    int IDADE = 13; 
+}
+variables {
+}
+class main{
+    variables {
+    }
+    objects {
+    }
+    methods{ 
+        int main(){
+            variables {
+                int idade; 
+            }
+            objects {
+            }
+            return;
+        } 
+    }
+}

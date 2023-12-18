@@ -441,7 +441,7 @@ def analisar_lexico():
     global t
 
     # current = f'{os.getcwd()}/testes'
-    current = f'{os.getcwd()}/files'
+    current = f'{os.getcwd()}/teste'
     for file_path in (os.listdir(current)):
 
         if (file_path.endswith('-saida.txt') or not file_path.endswith(".txt")): 
