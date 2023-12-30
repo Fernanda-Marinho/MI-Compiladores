@@ -1,6 +1,6 @@
 class TabelaSimbolos():
     def __init__(self):
-        self.scopes = [{}]
+        self.scopes = []
     
     def push_scope(self): #empilhar
         self.scopes.append({})
@@ -42,7 +42,13 @@ class TabelaSimbolos():
                         float(value)
                     except:
                         print(f"{l} tipo incompatível {variavel} {tipo}")
-
+    
+    def exist_symbol(self,symbol,l):
+        current_scope = self.scopes[-1]
+        if symbol in current_scope:
+            pass
+        else:
+            print(f"{l} {symbol} não declarado!") 
     
     def show_table(self):
         print("Symbol Table:")
@@ -79,6 +85,8 @@ class AnaliseSintatica():
         self.consts_block()
         self.variables_block()
         self.class_block()
+        while (self.current_token_text() == 'class'):
+            self.class_block()
         # print(self.errors_string)
         return self.errors_string
 
@@ -1024,9 +1032,15 @@ class AnaliseSintatica():
     def ide_class(self):
         try:
             if self.current_token_class() == 'IDE':
+                if self.symbol_table.scopes == []:
+                    self.symbol_table.push_scope()
+                self.symbol_table.add_symbol(self.current_token_text(),None,self.current_token_line(),'class')
                 self.next_token()
                 self.extends()
             elif self.current_token_text() == 'main':
+                if self.symbol_table.scopes == []:
+                    self.symbol_table.push_scope()
+                self.symbol_table.add_symbol(self.current_token_text(),None,self.current_token_line(),'class')
                 self.main()
             else:
                 self.error('Expected <IDE> or "main"')
@@ -1037,7 +1051,8 @@ class AnaliseSintatica():
         try:
             if self.current_token_text() == 'extends':
                 self.next_token()
-                if self.current_token_class() == 'IDE':
+                if self.current_token_class() == 'IDE' or self.current_token_text() == 'main':
+                    self.symbol_table.exist_symbol(self.current_token_text(), self.current_token_line())
                     self.next_token()
                     self.start_class_block()
                 else:
@@ -1052,7 +1067,6 @@ class AnaliseSintatica():
     def start_class_block(self):
         try:
             if self.current_token_text() == '{':
-                self.symbol_table.push_scope()
                 self.next_token()
                 self.init_class()
             else:

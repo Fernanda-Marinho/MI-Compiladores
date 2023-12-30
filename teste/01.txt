@@ -23,3 +23,64 @@ class main{
         } 
     }
 }
+
+class main2 extends main5{
+    variables {
+    }
+    objects {
+    }
+    methods{ 
+        int metod(){
+            variables {
+            }
+            objects {
+            }
+            return;
+        } 
+    }
+    constructor () {
+        variables{}
+        objects{}
+    }
+
+}
+
+class aaa{
+    variables {
+    }
+    objects {
+    }
+    methods{ 
+        int metod(){
+            variables { 
+            }
+            objects {
+            }
+            return;
+        } 
+    }
+    constructor () {
+        variables{}
+        objects{}
+    }
+}
+
+class ffd extends aaa{
+    variables {
+    }
+    objects {
+    }
+    methods{ 
+        int metod(){
+            variables { 
+            }
+            objects {
+            }
+            return;
+        } 
+    }
+    constructor () {
+        variables{}
+        objects{}
+    }
+}
