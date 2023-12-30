@@ -1,5 +1,6 @@
 const {
-    int IDADE = 13; 
+    int IDADE = 13;
+    real SALARIO = 500.6;
 }
 variables {
 }
@@ -11,7 +12,10 @@ class main{
     methods{ 
         int main(){
             variables {
-                int idade; 
+                int i; 
+                int a, b; 
+                real c, d;
+                string st; 
             }
             objects {
             }

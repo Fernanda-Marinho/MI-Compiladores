@@ -8,11 +8,41 @@ class TabelaSimbolos():
     def pop_scope(self): #desempilhar 
         self.scopes.pop()
 
-    def add_symbol(self, name, type, value=None):
+    def add_symbol(self, name, type, l, category, value=None):
         current_scope = self.scopes[-1]
         if name in current_scope:
-            raise Exception(f"Symbol {name} already defined in the current scope")
-        current_scope[name] = {'type': type, 'value': value}
+            print(f"{l} {name} duplicado!")
+        current_scope[name] = {'type': type, 'category': category, 'value': value}
+        #self.show_table()
+    
+    def add_attribution(self, variavel, value, l):
+        current_scope = self.scopes[-1]
+        if variavel in current_scope:
+            tipo = current_scope[variavel]['type']
+            if tipo == 'int':
+                if value.isdigit():
+                    pass
+                else: 
+                    print(f"{l} tipo incompatível {variavel} {tipo}")
+            elif tipo == 'boolean':
+                if value == 'true' or value =='false':
+                    pass
+                else:
+                    print(f"{l} tipo incompatível {variavel} {tipo}")
+            elif tipo == 'string':
+                if value[0] == '"':
+                    pass
+                else:
+                    print(f"{l} tipo incompatível {variavel} {tipo}")
+            else: #real
+                if value.isdigit():
+                    print(f"{l} tipo incompatível {variavel} {tipo}")
+                else:
+                    try:
+                        float(value)
+                    except:
+                        print(f"{l} tipo incompatível {variavel} {tipo}")
+
     
     def show_table(self):
         print("Symbol Table:")
@@ -20,6 +50,18 @@ class TabelaSimbolos():
             print(f"Scope {i}:")
             for symbol, info in scope.items():
                 print(f"  {symbol}: {info}")
+    
+    def get_type_in_scope(self): 
+        last_scope = self.scopes[-1]
+        #print(last_scope)
+        if last_scope:
+            for symbol_name, symbol_info in last_scope.items():
+                symbol_type = symbol_info.get('type')
+                if symbol_type is not None:
+                    return symbol_type
+    
+  
+
 
 
 
@@ -145,9 +187,16 @@ class AnaliseSintatica():
     def const_attribution(self):
         try:
             if self.current_token_class() == 'IDE':
+                if self.last_token_text() == ',':
+                    type_in_scope = self.symbol_table.get_type_in_scope() #mais de uma declaração na mesma linha
+                    self.symbol_table.add_symbol(self.current_token_text(),type_in_scope, self.current_token_line(), 'const')
+                else: 
+                    self.symbol_table.add_symbol(self.current_token_text(),self.last_token_text(), self.current_token_line(), 'const')
                 self.next_token()
                 if self.current_token_text() == '=':
+                    v = self.last_token_text() #IDE
                     self.next_token()
+                    self.symbol_table.add_attribution(v, self.current_token_text(), self.current_token_line())
                     if self.match_ATTRIBUTION():
                         self.next_token()
                     else:
@@ -218,6 +267,11 @@ class AnaliseSintatica():
     def dec_var(self):
         try:
             if (self.current_token_class() == "IDE"):
+                if self.last_token_text() == ',':
+                    type_in_scope = self.symbol_table.get_type_in_scope() #mais de uma declaração na mesma linha
+                    self.symbol_table.add_symbol(self.current_token_text(),type_in_scope,self.current_token_line(), 'variable')
+                else: 
+                    self.symbol_table.add_symbol(self.current_token_text(),self.last_token_text(),self.current_token_line(), 'variable')
                 if (self.last_token_class() == 'PRE'):
                     type = self.last_token_text()
                 else:
