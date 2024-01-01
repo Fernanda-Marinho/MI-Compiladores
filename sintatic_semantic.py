@@ -42,6 +42,8 @@ class TabelaSimbolos():
                         float(value)
                     except:
                         print(f"{l} tipo incompatível {variavel} {tipo}")
+        else:
+            print(f"{l} {variavel} não declarado!")
     
     def exist_symbol(self,symbol,l):
         current_scope = self.scopes[-1]
@@ -249,7 +251,7 @@ class AnaliseSintatica():
     def variables(self):
         try:
             if self.current_token_text() == '}':
-                self.symbol_table.pop_scope()
+                #self.symbol_table.pop_scope()
                 self.next_token()
             elif self.match_TYPE():
                 self.variable()
@@ -446,6 +448,7 @@ class AnaliseSintatica():
         try:
             self.commands()
             if self.current_token_text() == 'return':
+                self.symbol_table.pop_scope()
                 self.next_token()
                 self.return_block()     # return_block equivalente a <RETURN>
                 if self.current_token_text() == ';':
@@ -468,7 +471,7 @@ class AnaliseSintatica():
     def return_block(self):
         try:
             if self.match_value_firsts():
-                self.value()
+                self.value(None)
             else:
                 pass
         except:
@@ -488,7 +491,7 @@ class AnaliseSintatica():
             self.logical_expression_end()
 
 
-    def value(self): #TODO parei de verificar blocos nessa função
+    def value(self, ultimo): #TODO parei de verificar blocos nessa função
         try:
             if self.current_token_text() == '[':
                 self.vector_assign_block()
@@ -500,11 +503,13 @@ class AnaliseSintatica():
             elif self.current_token_text() == '(':
                 self.arithmethic_or_logical_expression_with_parentheses()
             elif self.current_token_class() == 'NRO':
+                self.symbol_table.add_attribution(ultimo, self.current_token_text(), self.current_token_line())
                 self.next_token()
                 self.simple_or_double_arithmetic_expression_optional()
             elif self.match_Bool():
                 self.next_token()
             elif self.current_token_class() == 'CAC':
+                self.symbol_table.add_attribution(ultimo, self.current_token_text(), self.current_token_line())
                 self.next_token()
             else:
                 self.error('Expected any of the following: \n\t\t "[" , "!" , "(" , <BOOL> , <NRO> , <CAC> , <IDE>')
@@ -909,6 +914,7 @@ class AnaliseSintatica():
             elif self.current_token_text() == 'read':
                 self.read_begin()
             elif self.current_token_class() == 'IDE':
+                self.symbol_table.exist_symbol(self.current_token_text(),self.current_token_line())
                 self.object_access_or_assignment()
                 if self.current_token_text() == ';':
                     self.next_token()
@@ -977,14 +983,14 @@ class AnaliseSintatica():
     def mult_parameters(self):
         if self.current_token_text() == ',':
             self.next_token()
-            self.value()
+            self.value(None)
             self.mult_parameters()
         else:
             pass    # prod. vazia
 
     def parameters(self):
         if self.match_value_firsts():
-            self.value()
+            self.value(None)
             self.mult_parameters()
         else: pass
 
@@ -995,8 +1001,9 @@ class AnaliseSintatica():
     def object_access_or_assignment_end(self):
         try:
             if self.current_token_text() == '=':
+                ultimo_token = self.last_token_text()
                 self.next_token()
-                self.value()
+                self.value(ultimo_token)
             elif self.match_ART_DOUBLE():
                 self.next_token()
             elif self.current_token_text() == '->':
@@ -1022,6 +1029,7 @@ class AnaliseSintatica():
     def class_block(self):
         try:
             if self.current_token_text() == 'class':
+                self.symbol_table.pop_scope()
                 self.next_token()
                 self.ide_class()
             else:
@@ -1336,10 +1344,10 @@ class AnaliseSintatica():
     #operadores relacionais 
     def relational_expression(self):
         try:
-            self.relational_expression_value()
+            self.relational_expression_value(None)
             if self.current_token_class() == 'REL':
                 self.next_token()
-                self.relational_expression_value()
+                self.relational_expression_value(None)
             else:
                 self.error('Expected "<REL>"')
         except SyntaxError as e:
@@ -1418,7 +1426,7 @@ class AnaliseSintatica():
         try:
             if self.current_token_text() == '=':
                 self.next_token()
-                self.value()
+                self.value(None)
             elif self.current_token_text() in ['--','++']:
                 self.next_token()
             else:

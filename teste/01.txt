@@ -3,6 +3,10 @@ const {
     real SALARIO = 500.6;
 }
 variables {
+    int i; 
+    int a, b; 
+    real c, d;
+    string st;
 }
 class main{
     variables {
@@ -15,7 +19,7 @@ class main{
                 int i; 
                 int a, b; 
                 real c, d;
-                string st; 
+                string st;
             }
             objects {
             }
@@ -32,27 +36,33 @@ class main2 extends main5{
     methods{ 
         int metod(){
             variables {
+                int i; 
             }
             objects {
             }
+            i = 2.2;
             return;
         } 
     }
     constructor () {
-        variables{}
+        variables{
+            int a;
+            int b;
+            int i;
+        }
         objects{}
     }
-
 }
 
-class aaa{
+class aaa extends main{
     variables {
     }
     objects {
     }
     methods{ 
         int metod(){
-            variables { 
+            variables {
+                int i; 
             }
             objects {
             }
@@ -72,7 +82,7 @@ class ffd extends aaa{
     }
     methods{ 
         int metod(){
-            variables { 
+            variables {
             }
             objects {
             }
