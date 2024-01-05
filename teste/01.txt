@@ -1,6 +1,7 @@
 const {
     int IDADE = 13;
     real SALARIO = 500.6;
+    int i = 2;
 }
 variables {
     int i; 
@@ -20,6 +21,7 @@ class main{
                 int a, b; 
                 real c, d;
                 string st;
+                int h;
             }
             objects {
             }
@@ -34,15 +36,25 @@ class main2 extends main5{
     objects {
     }
     methods{ 
-        int metod(){
+        int metod1(){
             variables {
                 int i; 
             }
             objects {
             }
-            i = 2.2;
+            i = 2; 
+            return;
+        }
+        int metod10(){
+            variables {
+                int i; 
+            }
+            objects {
+            }
+            h = 2; 
             return;
         } 
+
     }
     constructor () {
         variables{
@@ -60,7 +72,7 @@ class aaa extends main{
     objects {
     }
     methods{ 
-        int metod(){
+        int metod2(){
             variables {
                 int i; 
             }
@@ -81,7 +93,7 @@ class ffd extends aaa{
     objects {
     }
     methods{ 
-        int metod(){
+        int metod3(){
             variables {
             }
             objects {

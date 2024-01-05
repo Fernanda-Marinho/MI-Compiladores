@@ -1,6 +1,10 @@
+g = 0
+m = 'global'
 class TabelaSimbolos():
+    global g 
+    global m
     def __init__(self):
-        self.scopes = []
+        self.scopes = [{}]
     
     def push_scope(self): #empilhar
         self.scopes.append({})
@@ -8,11 +12,15 @@ class TabelaSimbolos():
     def pop_scope(self): #desempilhar 
         self.scopes.pop()
 
-    def add_symbol(self, name, type, l, category, value=None):
-        current_scope = self.scopes[-1]
-        if name in current_scope:
-            print(f"{l} {name} duplicado!")
-        current_scope[name] = {'type': type, 'category': category, 'value': value}
+    def add_symbol(self, name, type, l, category, met, value=None):
+        #current_scope = self.scopes[-1]
+        #print(met)
+        for scope in self.scopes:
+            if name in scope:
+                if scope[name]['category'] == 'const' or scope[name]['category'] == 'variable':
+                    if g == 1:
+                        print(f"{l} {name} duplicado!")
+        self.scopes[-1][name] = {'type': type, 'category': category, 'metodo': met,'value': value}
         #self.show_table()
     
     def add_attribution(self, variavel, value, l):
@@ -45,19 +53,25 @@ class TabelaSimbolos():
         else:
             print(f"{l} {variavel} não declarado!")
     
-    def exist_symbol(self,symbol,l):
+    def exist_symbol(self,symbol,l,met):
         current_scope = self.scopes[-1]
         if symbol in current_scope:
             pass
         else:
             print(f"{l} {symbol} não declarado!") 
+        for i in current_scope:
+            if i == symbol:
+                if current_scope[i]['metodo'] == met:
+                    pass
+                else:
+                    print(f"{l} {symbol} não declarado!")
+        # if symbol in current_scope:
+        #     pass
+        # else:
+        #     print(f"{l} {symbol} não declarado!") 
     
     def show_table(self):
-        print("Symbol Table:")
-        for i, scope in enumerate(self.scopes):
-            print(f"Scope {i}:")
-            for symbol, info in scope.items():
-                print(f"  {symbol}: {info}")
+        print(self.scopes)
     
     def get_type_in_scope(self): 
         last_scope = self.scopes[-1]
@@ -84,8 +98,11 @@ class AnaliseSintatica():
         self.symbol_table = TabelaSimbolos()
                 
     def start(self):
+        global g
+        g = 1
         self.consts_block()
         self.variables_block()
+        g = 0
         self.class_block()
         while (self.current_token_text() == 'class'):
             self.class_block()
@@ -156,7 +173,6 @@ class AnaliseSintatica():
             if self.current_token_text() == 'const':
                 self.next_token()
                 if self.current_token_text() == '{':
-                    self.symbol_table.push_scope()
                     self.next_token()
                     self.consts()
                 else:
@@ -170,7 +186,6 @@ class AnaliseSintatica():
     def consts(self):
         try:
             if self.current_token_text() == "}":
-                self.symbol_table.pop_scope()
                 self.next_token()
             elif self.match_TYPE():
                 self.const()
@@ -199,9 +214,9 @@ class AnaliseSintatica():
             if self.current_token_class() == 'IDE':
                 if self.last_token_text() == ',':
                     type_in_scope = self.symbol_table.get_type_in_scope() #mais de uma declaração na mesma linha
-                    self.symbol_table.add_symbol(self.current_token_text(),type_in_scope, self.current_token_line(), 'const')
+                    self.symbol_table.add_symbol(self.current_token_text(),type_in_scope, self.current_token_line(), 'const',m)
                 else: 
-                    self.symbol_table.add_symbol(self.current_token_text(),self.last_token_text(), self.current_token_line(), 'const')
+                    self.symbol_table.add_symbol(self.current_token_text(),self.last_token_text(), self.current_token_line(), 'const',m)
                 self.next_token()
                 if self.current_token_text() == '=':
                     v = self.last_token_text() #IDE
@@ -238,7 +253,6 @@ class AnaliseSintatica():
             if self.current_token_text() == 'variables':
                 self.next_token()
                 if self.current_token_text() == '{':
-                    self.symbol_table.push_scope()
                     self.next_token()
                     self.variables()
                 else:
@@ -251,7 +265,6 @@ class AnaliseSintatica():
     def variables(self):
         try:
             if self.current_token_text() == '}':
-                #self.symbol_table.pop_scope()
                 self.next_token()
             elif self.match_TYPE():
                 self.variable()
@@ -279,9 +292,9 @@ class AnaliseSintatica():
             if (self.current_token_class() == "IDE"):
                 if self.last_token_text() == ',':
                     type_in_scope = self.symbol_table.get_type_in_scope() #mais de uma declaração na mesma linha
-                    self.symbol_table.add_symbol(self.current_token_text(),type_in_scope,self.current_token_line(), 'variable')
+                    self.symbol_table.add_symbol(self.current_token_text(),type_in_scope,self.current_token_line(), 'variable',m)
                 else: 
-                    self.symbol_table.add_symbol(self.current_token_text(),self.last_token_text(),self.current_token_line(), 'variable')
+                    self.symbol_table.add_symbol(self.current_token_text(),self.last_token_text(),self.current_token_line(), 'variable',m)
                 if (self.last_token_class() == 'PRE'):
                     type = self.last_token_text()
                 else:
@@ -345,7 +358,6 @@ class AnaliseSintatica():
             if self.current_token_text() == 'objects':
                 self.next_token()
                 if self.current_token_text() == '{':
-                    self.symbol_table.push_scope()
                     self.next_token()
                     self.objects()
                 else:
@@ -360,7 +372,6 @@ class AnaliseSintatica():
                 self.object()
                 self.objects()
             elif self.current_token_text() == '}':
-                self.symbol_table.pop_scope()
                 self.next_token() 
             else:
                 self.error('Expected <IDE> or "}"')
@@ -394,15 +405,15 @@ class AnaliseSintatica():
 # main
 
     def main_methods(self):
+        global m
         try:
             if self.current_token_text() == 'methods':
                 self.next_token()
                 if self.current_token_text() == '{':
-                    self.symbol_table.push_scope()
                     self.next_token()
                     self.main_methods_body()
                     if self.current_token_text() == '}':
-                        self.symbol_table.pop_scope()
+                        m = 'global'
                         self.next_token()
                     else:
                         self.error('Expected "}"')
@@ -414,16 +425,17 @@ class AnaliseSintatica():
             self.write_error(e)
     
     def main_methods_body(self):
+        global m
         try:
             self.main_type()
             if self.current_token_text() == 'main':
+                m = self.current_token_text()
                 self.next_token()
                 if self.current_token_text() == '(':
                     self.next_token()
                     if self.current_token_text() == ')':
                         self.next_token()
                         if self.current_token_text() == '{':
-                            self.symbol_table.push_scope()
                             self.next_token()
                             self.method_body()
                             self.methods()  
@@ -448,13 +460,11 @@ class AnaliseSintatica():
         try:
             self.commands()
             if self.current_token_text() == 'return':
-                self.symbol_table.pop_scope()
                 self.next_token()
                 self.return_block()     # return_block equivalente a <RETURN>
                 if self.current_token_text() == ';':
                     self.next_token()
                     if self.current_token_text() == '}':
-                        self.symbol_table.pop_scope()
                         self.next_token()
                     else:
                         self.error('Expected "}')
@@ -788,10 +798,12 @@ class AnaliseSintatica():
             self.write_error(e)
 
     def method(self):
+        global m
         try:
             if self.current_token_text() == 'void' or self.match_TYPE_VARIABLES():
                 self.next_token()
                 if self.current_token_class() == 'IDE':
+                    m = self.current_token_text()
                     self.next_token()
                     if self.current_token_text() == '(':
                         self.next_token()
@@ -808,7 +820,6 @@ class AnaliseSintatica():
             if self.current_token_text() == ')':
                 self.next_token()
                 if self.current_token_text() == '{':
-                    self.symbol_table.push_scope()
                     self.next_token()
                     self.method_body()
                 else:
@@ -840,7 +851,6 @@ class AnaliseSintatica():
             if self.current_token_text() == ')':
                 self.next_token()
                 if self.current_token_text() == '{':
-                    self.symbol_table.push_scope()
                     self.next_token()
                     self.method_body()
                 else:
@@ -875,15 +885,15 @@ class AnaliseSintatica():
             pass
 
     def methods_block(self):
+        global m
         try:
             if self.current_token_text() == 'methods':
                 self.next_token()
                 if self.current_token_text() == '{':
-                    self.symbol_table.push_scope()
                     self.next_token()
                     self.methods()
                     if self.current_token_text() == '}':
-                        self.symbol_table.pop_scope()
+                        m = 'global'
                         self.next_token()
                     else:
                         self.error('Expected "}"')
@@ -914,7 +924,7 @@ class AnaliseSintatica():
             elif self.current_token_text() == 'read':
                 self.read_begin()
             elif self.current_token_class() == 'IDE':
-                self.symbol_table.exist_symbol(self.current_token_text(),self.current_token_line())
+                self.symbol_table.exist_symbol(self.current_token_text(),self.current_token_line(),m)
                 self.object_access_or_assignment()
                 if self.current_token_text() == ';':
                     self.next_token()
@@ -1029,7 +1039,6 @@ class AnaliseSintatica():
     def class_block(self):
         try:
             if self.current_token_text() == 'class':
-                self.symbol_table.pop_scope()
                 self.next_token()
                 self.ide_class()
             else:
@@ -1040,15 +1049,11 @@ class AnaliseSintatica():
     def ide_class(self):
         try:
             if self.current_token_class() == 'IDE':
-                if self.symbol_table.scopes == []:
-                    self.symbol_table.push_scope()
-                self.symbol_table.add_symbol(self.current_token_text(),None,self.current_token_line(),'class')
+                self.symbol_table.add_symbol(self.current_token_text(),None,self.current_token_line(),'class',m)
                 self.next_token()
                 self.extends()
             elif self.current_token_text() == 'main':
-                if self.symbol_table.scopes == []:
-                    self.symbol_table.push_scope()
-                self.symbol_table.add_symbol(self.current_token_text(),None,self.current_token_line(),'class')
+                self.symbol_table.add_symbol(self.current_token_text(),None,self.current_token_line(),'class',m)
                 self.main()
             else:
                 self.error('Expected <IDE> or "main"')
@@ -1060,13 +1065,12 @@ class AnaliseSintatica():
             if self.current_token_text() == 'extends':
                 self.next_token()
                 if self.current_token_class() == 'IDE' or self.current_token_text() == 'main':
-                    self.symbol_table.exist_symbol(self.current_token_text(), self.current_token_line())
+                    self.symbol_table.exist_symbol(self.current_token_text(), self.current_token_line(),m)
                     self.next_token()
                     self.start_class_block()
                 else:
                     self.error('Expected IDE')
             elif self.current_token_text() == '{':
-                self.symbol_table.push_scope()
                 self.start_class_block()
             else: self.error('Expected "extends" or "{"')
         except SyntaxError as e:
@@ -1100,13 +1104,11 @@ class AnaliseSintatica():
                     if self.current_token_text() == ')':
                         self.next_token()
                         if self.current_token_text() == '{':
-                            self.symbol_table.push_scope()
                             self.next_token()
                             self.variables_block()
                             self.objects_block()
                             self.commands()
                             if self.current_token_text() == '}':
-                                self.symbol_table.pop_scope()
                                 self.next_token()
                                 self.end_class()
                             else:
@@ -1125,7 +1127,6 @@ class AnaliseSintatica():
     def end_class(self):
         try:
             if self.current_token_text() == '}':
-                self.symbol_table.pop_scope()
                 self.next_token()
                 self.class_block()
             else:
@@ -1138,7 +1139,6 @@ class AnaliseSintatica():
             if self.current_token_text() == 'main':
                 self.next_token()
                 if self.current_token_text() == '{':
-                    self.symbol_table.push_scope()
                     self.next_token()
                     self.init_main()
                 else:
@@ -1154,7 +1154,6 @@ class AnaliseSintatica():
             self.body_blocks()
             self.main_methods()
             if self.current_token_text() == '}':
-                self.symbol_table.pop_scope()
                 self.next_token()
             else:
                 self.error('Expected "}"')
@@ -1182,11 +1181,9 @@ class AnaliseSintatica():
                         if self.current_token_text() == 'then':
                             self.next_token()
                             if self.current_token_text() == '{':
-                                self.symbol_table.push_scope()
                                 self.next_token()
                                 self.commands()
                                 if self.current_token_text() == '}':
-                                    self.symbol_table.pop_scope()
                                     self.next_token()
                                     self.if_else()
                                 else:
@@ -1209,11 +1206,9 @@ class AnaliseSintatica():
             if self.current_token_text() == 'else':
                 self.next_token()
                 if self.current_token_text() == '{':
-                    self.symbol_table.push_scope()
                     self.next_token()
                     self.commands()
                     if self.current_token_text() == '}':
-                        self.symbol_table.pop_scope()
                         self.next_token()
                     else:
                         self.error('Expected "}"')
@@ -1469,11 +1464,9 @@ class AnaliseSintatica():
             if self.current_token_text() == ')':
                 self.next_token()
                 if self.current_token_text() == '{':
-                    self.symbol_table.push_scope()
                     self.next_token()
                     self.commands()
                     if self.current_token_text() == '}':
-                        self.symbol_table.pop_scope()
                         self.next_token()
                     else:
                         self.error('Expected "}"')
