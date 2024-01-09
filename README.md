@@ -11,10 +11,18 @@ python3 main_sintatico.py
 # Analisador léxico
 
 ## Como executar:
-python3 mef.py
+bash
+`python3 mef.py`
 
 #### O resultado da análise léxica será um arquivo do tipo _arquivo_n-saída.txt_
 
 ## Configurações testadas:
 - Python 3.10.12
 - Ubuntu 22.04
+
+# Analisador sintático + semântico 
+
+## Como executar:
+bash
+`python3 main_sintatico_semantic.py`
+
