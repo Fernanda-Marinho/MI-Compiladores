@@ -11,7 +11,6 @@ python3 main_sintatico.py
 # Analisador léxico
 
 ## Como executar:
-bash
 `python3 mef.py`
 
 #### O resultado da análise léxica será um arquivo do tipo _arquivo_n-saída.txt_
@@ -23,6 +22,5 @@ bash
 # Analisador sintático + semântico 
 
 ## Como executar:
-bash
 `python3 main_sintatico_semantic.py`
 
