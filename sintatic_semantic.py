@@ -4,13 +4,55 @@ class TabelaSimbolos():
     global g 
     global m
     def __init__(self):
-        self.scopes = [{}]
+        self.scopes = {}
+        self.classes = []
     
     def push_scope(self): #empilhar
         self.scopes.append({})
     
     def pop_scope(self): #desempilhar 
         self.scopes.pop()
+    
+    def add_class(self, name, linha):
+        if name in self.classes:
+            print(f"<{linha}> <{name}> duplicado!")
+        else:
+            self.classes.append(name)
+        self.scopes[name] = None
+    
+    def verif_class(self, name, linha):
+        if name in self.classes:
+            pass
+        else:
+            print(f"<{linha}> <{name}> não declarado!")
+    
+    def add(self, nome, tipo, valor, metodo, linha, classe):
+        cond = True
+        if classe in self.scopes:   
+            for i in self.scopes[classe]:
+                if i['nome'] == nome and i['metodo'] == metodo:
+                    print(f"<{linha}> <{nome}> duplicado!") 
+                    cond = False
+                    break 
+            if cond:
+                self.scopes[classe].append({
+                        'nome':nome,
+                        'tipo':tipo,
+                        'valor':valor,
+                        'metodo':metodo,
+                        'linha':linha
+                })
+        else:
+            self.scopes[classe] = [{
+            'nome': nome,
+            'tipo': tipo,
+            'valor': valor,
+            'metodo': metodo,
+            'linha': linha
+            }]
+
+
+
 
     def add_symbol(self, name, type, l, category, met, value=None):
         #current_scope = self.scopes[-1]
@@ -71,16 +113,56 @@ class TabelaSimbolos():
         #     print(f"{l} {symbol} não declarado!") 
     
     def show_table(self):
+        print()
+        print("Lista de classes: ")
+        print(self.classes)
+        print("Tabela de simbolos: ")
         print(self.scopes)
-    
-    def get_type_in_scope(self): 
-        last_scope = self.scopes[-1]
+
+    def get_type_in_scope(self, classe): 
+        scope = self.scopes[classe][-1]
         #print(last_scope)
-        if last_scope:
-            for symbol_name, symbol_info in last_scope.items():
-                symbol_type = symbol_info.get('type')
-                if symbol_type is not None:
-                    return symbol_type
+        if scope:
+            return scope['tipo']
+    
+    def attribution(self, classe, linha, identificador, valor):
+        scope = self.scopes[classe]
+        tipo = None
+        i = None
+        for i in scope:
+            if i['nome'] == identificador:
+                tipo = i['tipo']
+
+        if tipo == 'int':
+            if valor.isdigit():
+                i['tipo'] = tipo
+                i['valor'] = valor
+            else: 
+                print(f"<{linha}> tipo incompatível <{identificador}> <{tipo}>")
+        elif tipo == 'boolean':
+            if valor == 'true' or valor =='false':
+                i['tipo'] = tipo
+                i['valor'] = valor
+            else:
+                print(f"<{linha}> tipo incompatível <{identificador}> <{tipo}>")
+        elif tipo == 'string':
+            if valor[0] == '"':
+                i['tipo'] = tipo
+                i['valor'] = valor
+            else:
+                print(f"<{linha}> tipo incompatível <{identificador}> <{tipo}>")
+        else: #real
+            if valor.isdigit():
+                print(f"<{linha}> tipo incompatível <{identificador}> <{tipo}>")
+            else:
+                try:
+                    float(valor)
+                    i['tipo'] = tipo
+                    i['valor'] = valor
+                except:
+                    print(f"<{linha}> tipo incompatível <{identificador}> <{tipo}>")
+        
+        
     
   
 
@@ -213,15 +295,16 @@ class AnaliseSintatica():
         try:
             if self.current_token_class() == 'IDE':
                 if self.last_token_text() == ',':
-                    type_in_scope = self.symbol_table.get_type_in_scope() #mais de uma declaração na mesma linha
-                    self.symbol_table.add_symbol(self.current_token_text(),type_in_scope, self.current_token_line(), 'const',m)
+                    type_in_scope = self.symbol_table.get_type_in_scope('void') #mais de uma declaração na mesma linha
+                    self.symbol_table.add(self.current_token_text(),type_in_scope, None, None, self.current_token_line(), 'void')
                 else: 
-                    self.symbol_table.add_symbol(self.current_token_text(),self.last_token_text(), self.current_token_line(), 'const',m)
+                    self.symbol_table.add(self.current_token_text(),self.last_token_text(), None, None, self.current_token_line(), 'void')
                 self.next_token()
                 if self.current_token_text() == '=':
                     v = self.last_token_text() #IDE
                     self.next_token()
-                    self.symbol_table.add_attribution(v, self.current_token_text(), self.current_token_line())
+                    self.symbol_table.attribution('void', self.current_token_line(), v, self.current_token_text())
+                    #self.symbol_table.show_table()
                     if self.match_ATTRIBUTION():
                         self.next_token()
                     else:
@@ -288,13 +371,20 @@ class AnaliseSintatica():
     
     # Bloco <DEC_VAR>   declaracao de variavel
     def dec_var(self):
+        global g
         try:
             if (self.current_token_class() == "IDE"):
                 if self.last_token_text() == ',':
-                    type_in_scope = self.symbol_table.get_type_in_scope() #mais de uma declaração na mesma linha
-                    self.symbol_table.add_symbol(self.current_token_text(),type_in_scope,self.current_token_line(), 'variable',m)
+                    if g == 1:
+                        type_in_scope = self.symbol_table.get_type_in_scope('void') #mais de uma declaração na mesma linha
+                        self.symbol_table.add(self.current_token_text(),type_in_scope, None, None, self.current_token_line(), 'void')
+                    else:
+                        pass 
                 else: 
-                    self.symbol_table.add_symbol(self.current_token_text(),self.last_token_text(),self.current_token_line(), 'variable',m)
+                    if g == 1:
+                        self.symbol_table.add(self.current_token_text(),self.last_token_text(), None, None, self.current_token_line(), 'void')
+                    else:
+                        pass 
                 if (self.last_token_class() == 'PRE'):
                     type = self.last_token_text()
                 else:
@@ -1013,6 +1103,7 @@ class AnaliseSintatica():
             if self.current_token_text() == '=':
                 ultimo_token = self.last_token_text()
                 self.next_token()
+                self.symbol_table.add_attribution(ultimo_token, self.current_token_text(), self.current_token_line())
                 self.value(ultimo_token)
             elif self.match_ART_DOUBLE():
                 self.next_token()
@@ -1040,6 +1131,7 @@ class AnaliseSintatica():
         try:
             if self.current_token_text() == 'class':
                 self.next_token()
+                self.symbol_table.add_class(self.current_token_text(), self.current_token_line())
                 self.ide_class()
             else:
                 self.error('Expected "class"')
@@ -1049,11 +1141,9 @@ class AnaliseSintatica():
     def ide_class(self):
         try:
             if self.current_token_class() == 'IDE':
-                self.symbol_table.add_symbol(self.current_token_text(),None,self.current_token_line(),'class',m)
                 self.next_token()
                 self.extends()
             elif self.current_token_text() == 'main':
-                self.symbol_table.add_symbol(self.current_token_text(),None,self.current_token_line(),'class',m)
                 self.main()
             else:
                 self.error('Expected <IDE> or "main"')
@@ -1064,8 +1154,8 @@ class AnaliseSintatica():
         try:
             if self.current_token_text() == 'extends':
                 self.next_token()
+                self.symbol_table.verif_class(self.current_token_text(), self.current_token_line())
                 if self.current_token_class() == 'IDE' or self.current_token_text() == 'main':
-                    self.symbol_table.exist_symbol(self.current_token_text(), self.current_token_line(),m)
                     self.next_token()
                     self.start_class_block()
                 else:

@@ -1,16 +1,21 @@
 const {
     int IDADE = 13;
+    boolean ID = true;
     real SALARIO = 500.6;
     int i = 2;
 }
 variables {
-    int i; 
     int a, b; 
     real c, d;
     string st;
 }
 class main{
     variables {
+        real var_main; 
+        int f;
+        real f;
+        real z;
+        real z;
     }
     objects {
     }
@@ -19,18 +24,19 @@ class main{
             variables {
                 int i; 
                 int a, b; 
-                real c, d;
+                real c, f;
                 string st;
                 int h;
             }
             objects {
             }
+            f = 2;
             return;
         } 
     }
 }
 
-class main2 extends main5{
+class main2 extends main{
     variables {
     }
     objects {
@@ -42,7 +48,8 @@ class main2 extends main5{
             }
             objects {
             }
-            i = 2; 
+            i = true;
+            uuh = 8;  
             return;
         }
         int metod10(){
@@ -66,7 +73,7 @@ class main2 extends main5{
     }
 }
 
-class aaa extends main{
+class aaa extends main2{
     variables {
     }
     objects {
