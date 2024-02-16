@@ -1,0 +1,16 @@
+<27> <ia> duplicado!
+<31> <i> não declarada
+<32> <uuh> não declarada
+<45> <z> não declarada
+<47> tipo incompatível <kk> <int>
+<80> tipo incompatível <Ffd>
+<80> tipo incompatível <Ffd>
+<82> <d_logico> não declarada
+<83> tipo incompatível <if> <boolean>
+<86> <a> não declarada
+<114> <metod30> não declarado!
+<114> tipo incompatível <a> <int>
+<114> <c> não declarada
+<114> <h> não declarada
+<137> <i> duplicado!
+<144> <a> não declarada

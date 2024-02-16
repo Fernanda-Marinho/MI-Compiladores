@@ -1,0 +1,148 @@
+const {
+    int IDADE = 13, CPF = 123;
+    boolean ID = true;
+    real SALARIO = 500.6;
+    int i = 2;
+    string NOME = "Ana"; 
+    int A = 56;
+    real REAL = 1.1; 
+}
+variables {
+    int a, b;
+    real c; 
+}
+
+class Main2{
+    variables {
+    }
+    objects { 
+        Main2 obj1;
+        Main2 obj2; 
+        Main2 obj3;
+    }
+    methods{ 
+        int metod1(){
+            variables {
+                int ia;
+                int ia; 
+            }
+            objects {
+            }
+            i = true;
+            uuh = 8.1;  
+            return;
+        }
+        int metod10(int p1, int p2, real p3, boolean p4, Pessoa p5){
+            variables {
+                int i; 
+                real h; 
+                string hh; 
+                int kk; 
+
+            }
+            objects {
+            }
+            h = z; 
+            hh = "oi";
+            kk = 5.5 + 8.9 + 8 + 2; 
+            return;
+        } 
+
+    }
+    constructor () {
+        variables{
+            int a;
+            int b;
+            int i;
+        }
+        objects{}
+    }
+}
+
+class Aaa extends Main2{
+    variables {
+    }
+    objects {
+        Main2 objeto, objeto2;
+    }
+    methods{ 
+        int metod2(Main2 param1, int param2, real param3){
+            variables {
+                boolean iii;
+                boolean a_logico, b_logico, c_logico;
+                boolean aaa, bbb;
+                real erro;
+                int i;  
+                real re1; 
+            }
+            objects {
+                Main2 objeto_dentro_metodo; 
+                Ffd objeto_erro; 
+            }
+            aaa = !a_logico && (b_logico) || c_logico && !d_logico;  
+            if (aaa && erro && (d_logico || !b_logico)) then {
+                erro = 8;
+            } else {
+                erro = a + aaa + bbb;
+            }
+            for (i = 0; i < i; i++) {
+                re1 = 8.9;
+            }
+            return;
+        } 
+    }
+    constructor () {
+        variables{}
+        objects{}
+    }
+}
+
+class Ffd extends Aaa{
+    variables {
+    }
+    objects {
+        Aaa teste; 
+        Main2 teste2;
+    }
+    methods{ 
+        int metod3(int p, int o, int hh, int jo){
+            variables {
+                real a; 
+            }
+            objects {
+            }
+            this->metod30(a, 2, c, h);
+            return;
+        }
+    }
+
+    constructor () {
+        variables{}
+        objects{}
+    }
+}
+
+class main{
+    variables {
+        real var_main; 
+        int f;
+        real z;
+    }
+    objects {
+    }
+    methods{ 
+        int main(){
+            variables {
+                int i; 
+                int i, b; 
+                real c, f;
+                string st;
+                int h;
+            }
+            objects {
+            }
+            a = 8.8;
+            return;
+        } 
+    }
+}

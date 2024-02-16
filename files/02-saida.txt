@@ -1,0 +1,2 @@
+<2> tipo incompatível <sete> <int>
+<3> tipo incompatível <um> <real>
